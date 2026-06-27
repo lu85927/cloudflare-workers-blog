@@ -1,321 +1,459 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-	<head>
-		<meta charset="UTF-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<meta name="renderer" content="webkit">
-		<meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width,viewport-fit=cover">
-		<title>{{ &title }}</title>
-		<meta name="keywords" content="{{ &keyWords }}" />
-		<meta name="description" content="{{ &OPT.siteDescription }}" />
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>CF-blog后台</title>
+    <link rel="icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico" />
+	<link rel="shortcut icon" type="image/x-icon"  href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/css/editormd.css" />
+    <link rel="stylesheet" href="https://cdn.staticfile.org/bootstrap-select/1.9.4/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    
+    <script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-zh_CN.min.js"></script>
+	<style>
+		.bootstrap-select>.dropdown-toggle { z-index:auto; }
+		.modal-body .editormd { z-index: 1050; }
+	</style>
+</head>
+<body>
 
-		<link rel='stylesheet' id='stylesheet-css' href='https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/JustNews/files/main.css' type='text/css' media='all' />
-		<link rel='stylesheet' id='font-awesome-css' href='https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/JustNews/files/font-awesome.css?ver=6.1.2' type='text/css' media='all' />
-		<link rel='stylesheet' id='wp-block-library-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/block-library/style.min.css?ver=5.6' type='text/css' media='all' />
-		<link rel='stylesheet' id='wp-components-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/components/style.min.css?ver=5.6' type='text/css' media='all' />
-		<link rel='stylesheet' id='wp-editor-font-css' href='https://fonts.geekzu.org/css?family=Noto+Serif%3A400%2C400i%2C700%2C700i&#038;ver=5.6' type='text/css' media='all' />
-		<link rel='stylesheet' id='wp-block-editor-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/block-editor/style.min.css?ver=5.6' type='text/css' media='all' />
-		<link rel='stylesheet' id='wp-nux-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/nux/style.min.css?ver=5.6' type='text/css' media='all' />
-		<link rel='stylesheet' id='wp-editor-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/editor/style.min.css?ver=5.6' type='text/css' media='all' />
-		<link rel='stylesheet' id='mux_video_block_style-css' href='https://cdn.jsdelivr.net/gh/newexsexy/wp@master/wp-content/plugins/ilab-media-tools/public/blocks/mediacloud-mux.blocks.style.min.css' type='text/css' media='all' />
+<nav class="navbar navbar-default " role="navigation">
+	<div class="container-fluid">
+	<div>
+		<ul id="myTab" class="nav nav-tabs">
+			<li><a href="/" >CF-blog</a></li>
+			<li><a href="#list" data-toggle="tab">我的文章</a></li>
+			<li class="active"><a href="#new" data-toggle="tab">新建</a></li>
+			<li><a href="#pageTab" data-toggle="tab">单页管理</a></li>
+			<li><a href="#config" data-toggle="tab">设置</a></li>
+			<li><a href="#pub" data-toggle="tab">发布</a></li>
+		</ul>
+	</div>
+	</div>
+</nav>
 
-		<link rel='stylesheet' id='emojify-css' href='https://cdn.jsdelivr.net/npm/emojify.js@1.1.0/dist/css/basic/emojify.min.css?ver=1.1.0' type='text/css' media='all' />
-		<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js?ver=3.5.1' id='jquery-core-js'></script>
-		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.6/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.3.2' id='jquery-migrate-js'></script>
-		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/wpcom-cn/assets/fonts/icons-2.6.4.js?ver=6.1.2' id='wpcom-icons-js'></script>
+<div id="myTabContent" class="tab-content" style="padding-top: 60px;">
+	<!-- 文章列表 -->
+	<div class="tab-pane fade" id="list">
+		<div class="container" >
+			<table class="table  table-striped" id="articleList">
+				  <tr><td>ID</td><td>标题</td><td>创建日期</td></tr>
+			</table>
+			<input type="hidden"  name="page" id="page" value='1'>
+			<a id="loadmore" class="btn btn-default">加载更多...</a>
+		</div> 
+	</div>
 
-		{{ &OPT.codeBeforHead }}
-	</head>
-	<body class="archive paged category category-zhishi category-5 paged-2 category-paged-2 lang-cn el-boxed">
-		<header class="header">
-			<div class="container clearfix">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-						<span class="icon-bar icon-bar-1"></span>
-						<span class="icon-bar icon-bar-2"></span>
-						<span class="icon-bar icon-bar-3"></span>
-					</button>
-					<div class="logo">
-						{{ #OPT.logo }}
-						<a href="/" rel="home"><img src="{{ &OPT.logo }}" alt="{{ &OPT.siteName }}"></a>
-						{{ /OPT.logo }}
-						
-						{{ ^OPT.logo }}
-						<a href="/" rel="home"><img src="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/JustNews/files/logo2.png" alt="请自定义OPT.logo"></a>
-						{{ /OPT.logo }}
-					</div>
+	<!-- 新建文章 -->
+	<div class="tab-pane fade in active" id="new">
+		<div class="container">
+			<h3 id="labelNew">新增</h3>   
+			<form id="addNewForm"  class="form-inline" >
+				<div class="form-group" style="width: 98%">
+					<input type="hidden" class="form-control" name="id" id="id" >
+					<input type="text" class="form-control" name="title" id="title" placeholder="标题" style="width: 100%;" required="true">
 				</div>
-				<div class="collapse navbar-collapse">
-					<nav class="navbar-left primary-menu">
-						<ul id="menu-%e5%af%bc%e8%88%aa" class="nav navbar-nav wpcom-adv-menu">
-							{{ #widgetMenuList }}
-								<li class="menu-item"><a href="{{ &url }}">{{ &title }}</a></li>
-							{{ /widgetMenuList }}
-						</ul>
-					</nav>
-					<div class="navbar-action pull-right">
-						<div id="j-user-wrap">
-							<a class="login cur" href="/admin">管理登录</a>
-						</div>
-					</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">特色图片</label>
+					<input type="url" class="form-control" style="width: 400px;"  name="img" id="img" placeholder="" >
 				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">永久链接</label>
+					<input type="text" class="form-control" name="link" id="link" placeholder="" required="true">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">创建日期</label>
+					<input type="datetime-local" class="form-control" id="createDate" name="createDate" placeholder=""  required="true">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">分类</label>
+					<select class="selectpicker" multiple name="category[]" id="category">
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">标签</label>
+					<input type="text" class="form-control" name="tags" id="tags" placeholder="标签1,标签2">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">权重</label>
+					<input type="text" class="form-control" name="priority" id="priority" value='0.5' placeholder="权重">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">更新频率</label>
+					    <select class="form-control" id="changefreq" name="changefreq">
+						<option value="daily" selected  = "selected" >daily</option>
+						<option value="hourly" >hourly</option>
+						<option value="weekly" >weekly</option>
+						<option value="monthly" >monthly</option>
+						<option value="yearly" >yearly</option>
+						<option value="never" >never</option>
+						<option value="always" >always</option>
+					    </select>
+				</div>
+					<a  tabindex="0"  role="button"  type="submit" id="btn_saveAddNew" class="btn btn-default" onclick="saveAddNew()">保存</a>
+				<div id="content"><textarea style="display:none;"></textarea></div>
+			</form>
+		</div>
+	</div>
+
+	<!-- ====== 单页管理面板 ====== -->
+	<div class="tab-pane fade" id="pageTab">
+		<div class="container">
+			<div class="row" style="margin-bottom:15px;">
+				<button class="btn btn-primary" data-toggle="modal" data-target="#pageModal">新建单页</button>
 			</div>
-		</header>
-		<div id="wrap">
-			<div class="container wrap">
-				<div class="main">
-					<div class="sec-panel sec-panel-default">
-						<div class="sec-panel-body">
-							<ul class="post-loop post-loop-default cols-0">
-								{{ #articleList }}
-								<li class="item" id="post-{{&id}}">
-									<div class="item-img">
-										<a class="item-img-inner" href="{{ &url }}" title="{{ &title }}" rel="bookmark">
-											<img width="437" height="300" src="{{ &img }}" class="attachment-post-thumbnail size-post-thumbnail wp-post-image j-lazy" alt="{{ &title }}" title="{{ &title }}" data-original="{{ &img }}" /></a>
-										{{ #category }}
-											<a class="item-category" href="/category/{{&.}}" >{{&.}}</a>
-										{{ /category }}
-										
-									</div>
-									<div class="item-content">
-										<h2 class="item-title">
-											<a href="{{ &url }}" rel="bookmark">{{ &title }}</a></h2>
-										<div class="item-excerpt">
-											<p>{{ &contentText }} ...</p>
-										</div>
-										<div class="item-meta">
-											<span class="item-meta-li date">{{ &createDate10 }}</span>
-											<div class="item-meta-right">
-												<span class="item-meta-li views" title="阅读数">
-													<i class="wpcom-icon wi">
-														<svg aria-hidden="true">
-															<use xlink:href="#wi-eye"></use>
-														</svg>
-													</i>
-													<span id="{{ &url }}" class="leancloud_visitors">
-														<i class="leancloud-visitors-count"></i>
-													</span>	
-												</span>
-											</div>
-												
-												
-										</div>
-									</div>
-								</li>
-								{{ /articleList }}
-		
-							</ul>
-							<ul class="pagination">
-								{{ #pageNewer }}
-								<li class="prev">
-									<a href="{{ &url }}" class="prev">
-										<i class="wpcom-icon wi">
-											<svg aria-hidden="true"><use xlink:href="#wi-arrow-left"></use></svg>
-										</i>
-										<span>上一页</span></a>
-								</li>
-								{{ /pageNewer }}
+			<table class="table table-striped" id="pageListTable">
+				<tr>
+					<th>页面别名(link)</th>
+					<th>页面标题</th>
+					<th>更新日期</th>
+					<th>访问地址</th>
+					<th>操作</th>
+				</tr>
+			</table>
+		</div>
+	</div>
 
-								{{ #pageOlder }}
-								<li class="next">
-									<a href="{{ &url }}" class="next">
-										<span>下一页</span>
-										<i class="wpcom-icon wi">
-											<svg aria-hidden="true"><use xlink:href="#wi-arrow-right"></use></svg>
-										</i>
-									</a>
-								</li>
-								{{ /pageOlder }}
-
-							</ul>
-						</div>
-					</div>
+	<!-- 单页弹窗 -->
+	<div class="modal fade" id="pageModal" tabindex="-1" role="dialog" aria-labelledby="pageModalLabel">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="pageModalLabel">新建自定义单页</h4>
 				</div>
-				<aside class="sidebar">
-					<div id="wpcom-post-thumb-2" class="widget widget_post_thumb">
-						<h3 class="widget-title">
-							<span>近期文章</span></h3>
-						<ul>
-							{{ #widgetRecentlyList }}
-							<li class="item">
-								<div class="item-img">
-									<a class="item-img-inner" href="{{ &url }}" title="{{ &title }}">
-										<img width="480" height="264" src="{{ &img }}" class="attachment-post-thumbnail size-post-thumbnail wp-post-image j-lazy" alt="" title="" data-original="{{ &img }}" /></a>
-								</div>
-								<div class="item-content">
-									<p class="item-title">
-										<a href="{{ &url }}" title="{{ &title }}">{{ &title }}</a></p>
-									<p class="item-date">{{ &createDate10 }}</p></div>
-							</li>
-							{{ /widgetRecentlyList }}									
-						</ul>
-					</div>
-					<div id="categories-3" class="widget widget_categories">
-						<h3 class="widget-title">
-							<span>分类目录</span></h3>
-						<ul>
-							{{ #widgetCategoryList }}
-							<li class="cat-item cat-item-5 current-cat">
-								<a aria-current="page" href="/category/{{&.}}">{{&.}}</a></li>
-							{{ /widgetCategoryList }}
-						</ul>
-					</div>
-					<div id="tag_cloud-3" class="widget widget_tag_cloud">
-						<h3 class="widget-title">
-							<span>标签</span></h3>
-						<div class="tagcloud">
-							{{ #widgetTagsList }}
-							<a href="/tags/{{&.}}" class="tag-cloud-link tag-link-6 tag-link-position-1" style="font-size: 8pt;" aria-label="{{&.}}">{{&.}}</a>
-							{{ /widgetTagsList }}
+				<div class="modal-body">
+					<form id="pageForm">
+						<input type="hidden" id="oldLink" name="oldLink">
+						<div class="form-group">
+							<label>页面别名(唯一，英文，如 about / links)</label>
+							<input class="form-control" id="pageLink" name="link" required>
 						</div>
-					</div>
-
-					<div id="linkcat-0" class="widget widget_links">
-						<h3 class="widget-title">
-							<span>链接</span></h3>
-						<ul class='xoxo blogroll'>
-							{{ #widgetLinkList }}
-									<li><a href="{{ &url }}" target="_blank">{{ &title }}</a></li>
-							{{ /widgetLinkList }}
-						</ul>
-					</div>
-					{{ &OPT.widgetOther }}
-				</aside>
+						<div class="form-group">
+							<label>页面标题</label>
+							<input class="form-control" id="pageTitle" name="title" required>
+						</div>
+						<div class="form-group">
+							<label>SEO关键词(逗号分隔)</label>
+							<input class="form-control" id="pageKeywords" name="keywords">
+						</div>
+						<div class="form-group">
+							<label>页面内容(Markdown)</label>
+							<div id="pageMdEditor">
+								<textarea style="display:none;" name="contentMD"></textarea>
+							</div>
+						</div>
+						<input type="hidden" id="pageHtml" name="contentHtml">
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" onclick="savePageData()">保存单页</button>
+				</div>
 			</div>
 		</div>
-		<footer class="footer">
-			<div class="container">
-				<div class="clearfix">
-					<div class="footer-col footer-col-copy">
-						<div class="copyright">
-							<p>{{ &OPT.copyRight }}</p>
-						</div>
-					</div>
-					<div class="footer-col footer-col-sns">
-						<div class="footer-sns"></div>
-					</div>
+	</div>
+
+	<!-- 设置 -->
+	<div class="tab-pane fade" id="config">
+		<div class="container" >
+			<form id="configForm" role="form" >
+				<div class="form-group">
+				    <label for="name">分类, 例:<code>["类别A","类别B","类别C","类别D"]</code></label>
+					<textarea class="form-control" id="WidgetCategory" name="WidgetCategory" rows="3" placeholder='["分类A","分类B"]'></textarea>
 				</div>
-			</div>
-		</footer>
-		<div class="action action-style-0 action-color-0 action-pos-0" style="bottom:20%;">
-			<div class="action-item gotop j-top">
-				<i class="wpcom-icon wi action-item-icon">
-					<svg aria-hidden="true">
-						<use xlink:href="#wi-arrow-up-2"></use>
-					</svg>
-				</i>
+				<div class="form-group">
+				    <label for="name">菜单, 例:<code>[{"title":"技术文章","url":"/category/技术文章"},{"title":"管理","url":"/admin"}]</code></label>
+					<textarea class="form-control" id="WidgetMenu" name="WidgetMenu" rows="5"  placeholder='[
+	{"title":"菜单A"	,"url":"/category/菜单A"},
+	{"title":"菜单B"	,"url":"/category/菜单B"}
+]'></textarea>
+				</div>
+				<div class="form-group">
+				    <label for="name">其他链接, 例:<code>[{"title":"我的好友","url":"https://blog.gezhong.vip/"},{"title":"谷歌","url":"https://www.google.com/"}]</code></label>
+					<textarea class="form-control" id="WidgetLink" name="WidgetLink" rows="5"  placeholder='[
+	{"title":"好友"	,"url":"https://blog.gezhong.vip/"},
+	{"title":"谷歌"	,"url":"https://www.google.com/"}
+]'></textarea>
+				</div>
+				<a  tabindex="0"  role="button"  type="submit" id="btn_saveConfig" class="btn btn-default" onclick="saveConfig()">保存</a>
+			</form>
+			<form id="importForm" role="form" >
+				<div class="form-group">
+				    <label for="name">导出/导入</label>
+					<textarea class="form-control" id="importJson" name="importJson" rows="3" placeholder='复制完整的导出json'></textarea>
+				</div>
+				<a  tabindex="0"  role="button"  type="submit" id="btn_import" class="btn btn-default" onclick="importBlog()">导入</a>
+				<a  tabindex="0"  role="button"  type="submit" id="btn_export" class="btn btn-default"  href="/admin/export/" >导出</a>
+			</form>
+		</div>
+	</div>
+
+	<!-- 发布 -->
+	<div class="tab-pane fade" id="pub">
+		<div class="container" >
+			<div class="jumbotron" >
+				<p class="lead">
+				由于前端使用缓存,以下操作需要发布:新建文章、发布文章、修改后台配置、修改workers配置、新增/修改单页</br>
+				前端生效需要ctrl+F5 强制刷新
+				</p>
+				<a href="#" class="btn btn-default" onclick="publish()">发布</a>
 			</div>
 		</div>
-		<link rel='stylesheet' id='lazyload-spinner-css' href='https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/JustNews/files/lazyload.css?ver=3.4.9' type='text/css' media='all' />
-		<script type='text/javascript' id='main-js-extra'>/* <![CDATA[ */
-			var _wpcom_js = {
-				"webp": "",
-				"ajaxurl": "",
-				"theme_url": "https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/JustNews/",
-				"slide_speed": "5000",
-				"user_card_height": "356",
-				"video_height": "482",
-				"fixed_sidebar": "1",
-				"login_url": "/admin",
-				"register_url": "/admin",
-				"errors": {
-					"require": "\u4e0d\u80fd\u4e3a\u7a7a",
-					"email": "\u8bf7\u8f93\u5165\u6b63\u786e\u7684\u7535\u5b50\u90ae\u7bb1",
-					"pls_enter": "\u8bf7\u8f93\u5165",
-					"password": "\u5bc6\u7801\u5fc5\u987b\u4e3a6~32\u4e2a\u5b57\u7b26",
-					"passcheck": "\u4e24\u6b21\u5bc6\u7801\u8f93\u5165\u4e0d\u4e00\u81f4",
-					"phone": "\u8bf7\u8f93\u5165\u6b63\u786e\u7684\u624b\u673a\u53f7\u7801",
-					"terms": "Please read and agree with the terms",
-					"sms_code": "\u9a8c\u8bc1\u7801\u9519\u8bef",
-					"captcha_verify": "\u8bf7\u70b9\u51fb\u6309\u94ae\u8fdb\u884c\u9a8c\u8bc1",
-					"captcha_fail": "\u70b9\u51fb\u9a8c\u8bc1\u5931\u8d25\uff0c\u8bf7\u91cd\u8bd5",
-					"nonce": "\u968f\u673a\u6570\u6821\u9a8c\u5931\u8d25",
-					"req_error": "\u8bf7\u6c42\u5931\u8d25"
-				},
-				"follow_btn": "<i class=\"wpcom-icon wi\"><svg aria-hidden=\"true\"><use xlink:href=\"#wi-add\"><\/use><\/svg><\/i>\u5173\u6ce8",
-				"followed_btn": "\u5df2\u5173\u6ce8",
-				"user_card": "1"
-			};
-			/* ]]> */
-			</script>
-		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/JustNews/files/main.js?ver=6.1.2' id='main-js'></script>
-		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/js/clipboard.min.js?ver=5.6' id='clipboard-js'></script>
-		<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/emojify.js@1.1.0/dist/js/emojify.min.js?ver=1.1.0' id='emojify-js'></script>
-		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/JustNews/files/wp-embed.js?ver=6.1.2' id='wp-embed-js'></script>
-		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/JustNews/files/lazySizesConfig.js?ver=3.4.9' id='lazysizes-config-js'></script>
-		<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.2.2/plugins/unveilhooks/ls.unveilhooks.min.js?ver=5.6' id='unveilhooks-js'></script>
-		<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.2.2/plugins/bgset/ls.bgset.min.js?ver=5.6' id='bgset-js'></script>
-		<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.2.2/lazysizes.min.js?ver=5.6' id='lazysizes-js'></script>
-		<script type='text/javascript' id='fifu-image-js-js-extra'>/* <![CDATA[ */
-			var fifuImageVars = {
-				"fifu_lazy": "1",
-				"fifu_woo_lbox_enabled": "1",
-				"fifu_woo_zoom": "inline",
-				"fifu_is_product": "",
-				"fifu_is_flatsome_active": "",
-				"fifu_rest_url": "",
-				"fifu_nonce": "96a15ffec7"
-			};
-			/* ]]> */
-			</script>
-		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/JustNews/files/image.js?ver=3.4.9' id='fifu-image-js-js'></script>
+	</div>	
+</div>
 
-		<script id="module-clipboard">(function($) {
-				$(function() {
-					var pre = document.getElementsByTagName("pre");
-					var pasteContent = document.getElementById("paste-content");
-					var hasLanguage = false;
-					for (var i = 0; i < pre.length; i++) {
-						var codeClass = pre[i].children[0].className;
-						var isLanguage = codeClass.indexOf("language-");
-						var excludedCodeClassNames = ["language-katex", "language-seq", "language-sequence", "language-flow", "language-flowchart", "language-mermaid", ];
-						var isExcluded = excludedCodeClassNames.indexOf(codeClass);
-						if (isExcluded !== -1) {
-							isLanguage = -1;
-						}
-						if (isLanguage !== -1) {
-							var button = document.createElement("button");
-							button.className = "copy-button";
-							button.textContent = "Copy";
-							pre[i].appendChild(button);
-							hasLanguage = true;
-						}
-					};
-					if (hasLanguage) {
-						var copyCode = new ClipboardJS(".copy-button", {
-							target: function(trigger) {
-								return trigger.previousElementSibling;
-							}
-						});
-						copyCode.on("success",
-						function(event) {
-							event.clearSelection();
-							event.trigger.textContent = "Copied";
-							window.setTimeout(function() {
-								event.trigger.textContent = "Copy";
-							},
-							2000);
-						});
-					}
-				});
-			})(jQuery);</script>
-		<script id="module-emojify">(function($) {
-				$(function() {
-					if (typeof emojify !== "undefined") {
-						emojify.setConfig({
-							img_dir: "https://cdn.jsdelivr.net/npm/emojify.js@1.1.0/dist/images/basic",
-							blacklist: {
-								"classes": ["no-emojify"],
-								"elements": ["script", "textarea", "pre", "code"]
-							}
-						});
-						emojify.run();
-					} else {
-						console.log("[wp-githuber-md] emogify is undefined.");
-					}
-				});
-			})(jQuery);</script>
-		{{ &OPT.codeBeforBody }}
-	</body>
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.js"></script>   
+<script type="text/javascript">
+	$(function() {
+		$('#myTab li:eq(0) 1').tab('show');
+		var categoryJson = <!--{categoryJson}-->;
+		var menuJson = <!--{menuJson}-->;
+		var linkJson = <!--{linkJson}-->;
+		var pageJson = <!--{pageJson}-->;
 
+		var mdEditor = editormd("content", {
+			height : 640,
+			path   : "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
+			appendMarkdown : "# MarkDown", 
+			saveHTMLToTextarea : true,
+			mode : "markdown",
+			tex  : true,
+			tocm : true, 
+			codeFold : true
+		});
+
+		window.pageEditor = editormd("pageMdEditor", {
+			height: 400,
+			path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
+			appendMarkdown: "# 自定义页面内容",
+			saveHTMLToTextarea: true,
+			tex: true,
+			tocm: true,
+			codeFold: true
+		});
+
+		$('#createDate').val(new Date().toISOString().slice(0,16));
+		$('#WidgetCategory').val(JSON.stringify(categoryJson));
+		$('#WidgetMenu').val(JSON.stringify(menuJson));
+		$('#WidgetLink').val(JSON.stringify(linkJson));
+		var category = $('#category');
+		category.empty();
+		for (var i = 0; i < categoryJson.length; i++) {
+			category.append('<option id=' + categoryJson[i] + ' value=' + categoryJson[i] + '>' + categoryJson[i] + '</option>');
+		}
+		$("#loadmore").click();
+		renderPageList(pageJson);
+
+		$('#pageModal').on('hidden.bs.modal', function () {
+			$('#pageForm')[0].reset();
+			$('#oldLink').val("");
+			$('#pageModalLabel').text("新建自定义单页");
+			if (window.pageEditor) {
+				window.pageEditor.setMarkdown("# 自定义页面内容");
+			}
+		});
+	});
+
+	// ====== 单页管理函数（已修复 editPage） ======
+	function renderPageList(list) {
+		var html = "";
+		for(var i=0; i<list.length; i++){
+			var item = list[i];
+			var url = "/page/" + item.link;
+			html += `<tr>
+				<td>${item.link}</td>
+				<td>${item.title}</td>
+				<td>${item.updateDate}</td>
+				<td><a target="_blank" href="${url}">${url}</a></td>
+				<td>
+					<button class="btn btn-xs btn-info" onclick="editPage('${item.link}')">编辑</button>
+					<button class="btn btn-xs btn-danger" onclick="delPage('${item.link}')">删除</button>
+				</td>
+			</tr>`;
+		}
+		$("#pageListTable").find("tr:gt(0)").remove();
+		$("#pageListTable").append(html);
+	}
+
+	function editPage(link) {
+		$.get("/admin/getPage/" + link, function(res){
+			// 检查是否返回了错误信息
+			if (res.msg && res.msg === "页面不存在") {
+				alert("该页面数据不存在，请重新创建或刷新列表");
+				location.reload(); // 刷新页面重新加载列表
+				return;
+			}
+			var data = res;
+			$('#oldLink').val(data.link || '');
+			$('#pageLink').val(data.link || '');
+			$('#pageTitle').val(data.title || '');
+			$('#pageKeywords').val(data.keywords || '');
+			if (window.pageEditor) {
+				window.pageEditor.setMarkdown(data.contentMD || '');
+			}
+			$('#pageModalLabel').text("编辑单页：" + (data.title || ''));
+			$('#pageModal').modal('show');
+		}).fail(function() {
+			alert("请求失败，请检查网络或Worker状态");
+		});
+	}
+
+	function savePageData() {
+		var formArray = $("#pageForm").serializeArray();
+		formArray.push({ name: "contentMD", value: window.pageEditor.getMarkdown() });
+		formArray.push({ name: "contentHtml", value: window.pageEditor.getHTML() });
+
+		var apiUrl = ($("#oldLink").val() == "") ? "/admin/saveAddPage/" : "/admin/saveEditPage/";
+		$.ajax({
+			type: "POST",
+			url: apiUrl,
+			contentType: "application/json; charset=utf-8",
+			data: JSON.stringify(formArray),
+			dataType: "json",
+			success: function(ret){
+				alert(ret.msg);
+				if(ret.rst){
+					$('#pageModal').modal('hide');
+					$.get("/admin/list", function(){ location.reload(); });
+				}
+			},
+			error: function(xhr, status, err) {
+				alert("请求失败：" + err);
+			}
+		});
+	}
+
+	function delPage(link) {
+		if(!confirm("确定删除页面 " + link + "？删除后无法恢复！")) return;
+		$.get("/admin/deletePage/" + link, function(ret){
+			alert(ret.msg);
+			if(ret.rst) location.reload();
+		});
+	}
+
+	// ====== 原有函数（未改动） ======
+	$("#loadmore").click(function(){
+		var page=$("#page").val();
+		$.ajax({
+			url:"/admin/getList/" + page + "/",
+			type:'GET',
+			dataType:"json",
+			success:function(data){
+				tableContent="";
+				$.each(data,function(i){
+					var Info = data[i];
+					var num = i+1;
+					tableContent += '<tr><td>'+Info.id+'</td><td><a href="/admin/edit/'+Info.id+'/">'+Info.title+'</a></td><td>'+Info.createDate.replace("T","")+'</td></tr>';
+				})
+				$("#articleList").append(tableContent);
+				$("#page").val(++page);
+			}
+		});
+	});
+
+	function saveAddNew(){
+		if(
+			$('#WidgetMenu').val() == "" || $('#WidgetMenu').val() == null
+			|| $('#createDate').val() == "" || $('#createDate').val() == null
+			|| $('#createDate').val() == "" || $('#createDate').val() == null
+		){
+		   alert("信息不全");
+		   return;
+		}
+		var postURL = "/admin/saveEdit/";
+		if ($('#id').val() == "" || $('#id').val() == null)
+			postURL=  "/admin/saveAddNew/";
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			url: postURL,
+			contentType: "application/json; charset=utf-8",
+			data: JSON.stringify($("#addNewForm").serializeArray()), 
+			success: function (result) {
+				if ("id" in result){
+					$('#id').val(result.id);
+					$('#labelNew').text("编辑:"+result.id);
+					alert(result.msg);
+				} else {
+					alert("失败");
+				}
+			}
+		});
+	}
+
+	function saveConfig(){
+		if(!isJSON($('#WidgetCategory').val())){
+			alert("分类格式错误"); 
+			return false;
+		}
+		if(!isJSON($('#WidgetMenu').val())){
+			alert("菜单格式错误"); 
+			return false;
+		}
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			contentType: "application/json; charset=utf-8",
+			url: "/admin/saveConfig/",
+			data: JSON.stringify($("#configForm").serializeArray()), 
+			success: function (result) {
+				alert(result.msg);
+			}
+		});
+	}
+
+	function importBlog(){
+		if(!isJSON($('#importJson').val())){
+			alert("导入格式错误"); 
+			return false;
+		}
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			contentType: "application/json; charset=utf-8",
+			url: "/admin/import/",
+			data: JSON.stringify($("#importForm").serializeArray()), 
+			success: function (result) {
+				alert(result.msg);
+			}
+		});
+	}
+
+	function publish(){
+		if (confirm("确定吗?发布将清理所有静态缓存,重新生成")==false){ 
+			return false; 
+		}
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			contentType: "application/json; charset=utf-8",
+			url: "/admin/publish/",
+			success: function (result) {
+				alert(result.msg);
+			}
+		});
+	}
+
+	function isJSON(str) {
+		if (typeof str == 'string') {
+			try {
+				var obj=JSON.parse(str);
+				if(typeof obj == 'object' && obj ){
+					return true;
+				}else{
+					return false;
+				}
+			} catch(e) {
+				return false;
+			}
+		}
+		return false;
+	}
+</script>
+</body>
 </html>
