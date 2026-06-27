@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>CF-blog后台1111</title>
+	<title>CF-blog后台管理系统</title>
     <link rel="icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico" />
 	<link rel="shortcut icon" type="image/x-icon"  href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
@@ -20,6 +20,25 @@
 		}
         .modal-body .editormd {
             z-index: 1050;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .status-active {
+            background-color: #5cb85c; /* 绿色 */
+        }
+        .status-draft {
+            background-color: #f0ad4e; /* 黄色 */
+        }
+        .status-deleted {
+            background-color: #d9534f; /* 红色 */
+        }
+        .action-btn {
+            margin-right: 5px;
         }
 	</style>
 	
@@ -57,8 +76,30 @@
 <div id="myTabContent" class="tab-content" style="padding-top: 60px;">
 	<div class="tab-pane fade" id="list">
 		<div class="container" >
+			<div class="row">
+				<div class="col-md-12">
+					<div class="input-group">
+						<input type="text" class="form-control" id="searchInput" placeholder="搜索文章标题...">
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" id="searchBtn">搜索</button>
+						</span>
+					</div>
+				</div>
+			</div>
+			<br>
 			<table class="table  table-striped" id="articleList">
-				  <tr><td>ID</td><td>标题</td><td>创建日期</td></tr>
+				  <thead>
+					  <tr>
+						  <th>ID</th>
+						  <th>标题</th>
+						  <th>状态</th>
+						  <th>创建日期</th>
+						  <th>分类</th>
+						  <th>操作</th>
+					  </tr>
+				  </thead>
+				  <tbody>
+				  </tbody>
 			</table>
 			<input type="hidden"  name="page" id="page" value='1'>
 			<a id="loadmore" class="btn btn-default">加载更多...</a>
@@ -109,7 +150,16 @@
 						<option value="always" >always</option>
 					    </select>
 				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">状态</label>
+					<select class="form-control" id="status" name="status">
+						<option value="published" selected>已发布</option>
+						<option value="draft">草稿</option>
+						<option value="deleted">已删除</option>
+					</select>
+				</div>
 					<a  tabindex="0"  role="button"  type="submit" id="btn_saveAddNew" class="btn btn-default" onclick="saveAddNew()">保存文章</a>
+					<a  tabindex="0"  role="button"  type="submit" id="btn_preview" class="btn btn-info" onclick="previewArticle()">预览</a>
 					
 				<div id="content"><textarea style="display:none;"></textarea></div>
 			</form>
@@ -120,16 +170,31 @@
     <div class="tab-pane fade" id="pageTab">
         <div class="container">
             <div class="row" style="margin-bottom:15px;">
-                <button class="btn btn-primary" data-toggle="modal" data-target="#pageModal">新建单页</button>
+                <div class="col-md-6">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#pageModal">新建单页</button>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="pageSearch" placeholder="搜索页面...">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">搜索</button>
+                        </span>
+                    </div>
+                </div>
             </div>
             <table class="table table-striped" id="pageListTable">
-                <tr>
-                    <th>页面别名(link)</th>
-                    <th>页面标题</th>
-                    <th>更新日期</th>
-                    <th>访问地址</th>
-                    <th>操作</th>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>页面别名(link)</th>
+                        <th>页面标题</th>
+                        <th>更新日期</th>
+                        <th>访问地址</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
             </table>
         </div>
     </div>
@@ -156,6 +221,10 @@
                         <div class="form-group">
                             <label>SEO关键词(逗号分隔)</label>
                             <input class="form-control" id="pageKeywords" name="keywords">
+                        </div>
+                        <div class="form-group">
+                            <label>页面描述</label>
+                            <textarea class="form-control" id="pageDescription" name="description" rows="2"></textarea>
                         </div>
                         <div class="form-group">
                             <label>页面内容(Markdown)</label>
@@ -197,6 +266,15 @@
 	{"title":"谷歌"	,"url":"https://www.google.com/"}
 ]'></textarea>
 				</div>
+				<div class="form-group">
+				    <label for="name">站点配置</label>
+					<textarea class="form-control" id="siteConfig" name="siteConfig" rows="5"  placeholder='{
+	"title": "CF-blog",
+	"description": "一个简单的博客系统",
+	"author": "作者",
+	"email": "admin@example.com"
+}'></textarea>
+				</div>
 				<a  tabindex="0"  role="button"  type="submit" id="btn_saveConfig" class="btn btn-default" onclick="saveConfig()">保存设置</a>
 			</form>
 			
@@ -232,272 +310,404 @@
 <script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.js"></script>   
 <script type="text/javascript">
 	$(function() {
-		$('#myTab li:eq(0) 1').tab('show');
+		$('#myTab li:eq(0) a').tab('show');
 		//获取分类
-		var categoryJson = <!--{categoryJson}-->;
+		var categoryJson = [];
 		//获取菜单
-		var menuJson = <!--{menuJson}-->;
-		var linkJson = <!--{linkJson}-->;
-        // 后端传入单页列表
-        var pageJson = <!--{pageJson}-->;
-
-		var mdEditor = editormd("content", {
-			 height : 640,
-			path   : "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
-			appendMarkdown : "# MarkDown", 
-			saveHTMLToTextarea : true,
-			mode : "markdown",
-			tex  : true,
-			tocm : true, 
-			codeFold : true
-		});
-        // 单页弹窗编辑器
-        var pageEditor = editormd("pageMdEditor", {
-            height: 400,
-            path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
-            appendMarkdown: "# 自定义页面内容",
-            saveHTMLToTextarea: true,
-            tex: true,
-            tocm: true,
-            codeFold: true
-        });
-
-		//表单赋值
-		$('#createDate').val(new Date());
+		var menuJson = [];
 		
-		$('#WidgetCategory').val(JSON.stringify(categoryJson));
-		$('#WidgetMenu').val(JSON.stringify(menuJson));
-		$('#WidgetLink').val(JSON.stringify(linkJson));
-		var category = $('#category');
-		category.empty();
-		for (var i = 0; i < categoryJson.length; i++) {
-			category.append('<option id=' + categoryJson[i] + ' value=' + categoryJson[i] + '>' + categoryJson[i] + '</option>');
-		}
-		$("#loadmore").click();//初始加载一页
-
-        // 渲染单页列表
-        renderPageList(pageJson);
-
-        // 弹窗关闭清空表单
-        $('#pageModal').on('hidden.bs.modal', function () {
-            $('#pageForm')[0].reset();
-            $('#oldLink').val("");
-            $('#pageModalLabel').text("新建自定义单页");
-            pageEditor.clear();
-        });
+		// 初始化编辑器
+		var editor = editormd("content", {
+			width: "100%",
+			height: 640,
+			syncScrolling: "single",
+			path : "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
+			saveHTMLToTextarea : true
+		});
+		
+		// 初始化页面编辑器
+		var pageEditor = editormd("pageMdEditor", {
+			width: "100%",
+			height: 400,
+			syncScrolling: "single",
+			path : "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
+			saveHTMLToTextarea : true
+		});
+		
+		// 初始化分类选择器
+		$('.selectpicker').selectpicker({
+			liveSearch: true,
+			style: 'btn-default',
+			size: 4
+		});
+		
+		// 加载文章列表
+		loadArticles();
+		
+		// 搜索功能
+		$('#searchBtn').click(function() {
+			var keyword = $('#searchInput').val();
+			if(keyword) {
+				searchArticles(keyword);
+			} else {
+				loadArticles();
+			}
+		});
+		
+		// 加载更多文章
+		$('#loadmore').click(function() {
+			loadMoreArticles();
+		});
 	});
 
-    // 渲染单页表格列表
-    function renderPageList(list) {
-        var html = "";
-        for(var i=0; i<list.length; i++){
-            var item = list[i];
-            var url = "/page/" + item.link + ".html";
-            html += `<tr>
-                <td>${item.link}</td>
-                <td>${item.title}</td>
-                <td>${item.updateDate}</td>
-                <td><a target="_blank" href="${url}">${url}</a></td>
-                <td>
-                    <button class="btn btn-xs btn-info" onclick="editPage('${item.link}')">编辑</button>
-                    <button class="btn btn-xs btn-danger" onclick="delPage('${item.link}')">删除</button>
-                </td>
-            </tr>`;
-        }
-        $("#pageListTable").find("tr:gt(0)").remove();
-        $("#pageListTable").append(html);
-    }
+	// 模拟数据 - 实际应用中应从后端API获取
+	var articles = [
+		{id: 1, title: "第一篇文章", status: "published", date: "2023-01-01", categories: ["技术", "前端"]},
+		{id: 2, title: "第二篇文章", status: "draft", date: "2023-01-02", categories: ["生活"]},
+		{id: 3, title: "第三篇文章", status: "published", date: "2023-01-03", categories: ["技术", "后端"]}
+	];
+	
+	var pages = [
+		{link: "about", title: "关于我们", date: "2023-01-01", url: "/page/about", status: "published"},
+		{link: "links", title: "友情链接", date: "2023-01-02", url: "/page/links", status: "published"}
+	];
 
-    // 编辑单页
-    function editPage(link) {
-        $.get("/admin/getPage/" + link, function(res){
-            var data = res;
-            $('#oldLink').val(data.link);
-            $('#pageLink').val(data.link);
-            $('#pageTitle').val(data.title);
-            $('#pageKeywords').val(data.keywords);
-            pageEditor.setMarkdown(data.contentMD);
-            $('#pageModalLabel').text("编辑单页：" + data.title);
-            $('#pageModal').modal('show');
-        })
-    }
+	function loadArticles() {
+		var tbody = $('#articleList tbody');
+		tbody.empty();
+		
+		articles.forEach(function(article) {
+			var statusClass = '';
+			var statusText = '';
+			switch(article.status) {
+				case 'published':
+					statusClass = 'status-active';
+					statusText = '已发布';
+					break;
+				case 'draft':
+					statusClass = 'status-draft';
+					statusText = '草稿';
+					break;
+				case 'deleted':
+					statusClass = 'status-deleted';
+					statusText = '已删除';
+					break;
+			}
+			
+			var row = '<tr>' +
+				'<td>' + article.id + '</td>' +
+				'<td>' + article.title + '</td>' +
+				'<td><span class="status-indicator ' + statusClass + '"></span>' + statusText + '</td>' +
+				'<td>' + article.date + '</td>' +
+				'<td>' + article.categories.join(', ') + '</td>' +
+				'<td>' +
+					'<button class="btn btn-xs btn-success action-btn" onclick="editArticle(' + article.id + ')">编辑</button>' +
+					'<button class="btn btn-xs btn-warning action-btn" onclick="toggleStatus(' + article.id + ')">' + 
+					(article.status === 'published' ? '下架' : '发布') + '</button>' +
+					'<button class="btn btn-xs btn-danger" onclick="deleteArticle(' + article.id + ')">删除</button>' +
+				'</td>' +
+			'</tr>';
+			tbody.append(row);
+		});
+	}
 
-    // 保存单页（新增/编辑）
-    function savePageData() {
-        var md = pageEditor.getMarkdown();
-        var html = pageEditor.getHTML();
-        $("#pageHtml").val(html);
-        var formData = $("#pageForm").serializeArray();
-        var postData = {};
-        $.each(formData, function(){
-            postData[this.name] = this.value;
-        })
-        postData.contentMD = md;
-        postData.contentHtml = html;
+	function searchArticles(keyword) {
+		var filtered = articles.filter(function(article) {
+			return article.title.toLowerCase().includes(keyword.toLowerCase());
+		});
+		
+		var tbody = $('#articleList tbody');
+		tbody.empty();
+		
+		filtered.forEach(function(article) {
+			var statusClass = '';
+			var statusText = '';
+			switch(article.status) {
+				case 'published':
+					statusClass = 'status-active';
+					statusText = '已发布';
+					break;
+				case 'draft':
+					statusClass = 'status-draft';
+					statusText = '草稿';
+					break;
+				case 'deleted':
+					statusClass = 'status-deleted';
+					statusText = '已删除';
+					break;
+			}
+			
+			var row = '<tr>' +
+				'<td>' + article.id + '</td>' +
+				'<td>' + article.title + '</td>' +
+				'<td><span class="status-indicator ' + statusClass + '"></span>' + statusText + '</td>' +
+				'<td>' + article.date + '</td>' +
+				'<td>' + article.categories.join(', ') + '</td>' +
+				'<td>' +
+					'<button class="btn btn-xs btn-success action-btn" onclick="editArticle(' + article.id + ')">编辑</button>' +
+					'<button class="btn btn-xs btn-warning action-btn" onclick="toggleStatus(' + article.id + ')">' + 
+					(article.status === 'published' ? '下架' : '发布') + '</button>' +
+					'<button class="btn btn-xs btn-danger" onclick="deleteArticle(' + article.id + ')">删除</button>' +
+				'</td>' +
+			'</tr>';
+			tbody.append(row);
+		});
+	}
 
-        var apiUrl = "";
-        if($("#oldLink").val() == ""){
-            apiUrl = "/admin/saveAddPage/";
-        }else{
-            apiUrl = "/admin/saveEditPage/";
-        }
+	function loadMoreArticles() {
+		// 模拟加载更多数据
+		alert('已加载所有文章');
+	}
 
-        $.ajax({
-            type: "POST",
-            url: apiUrl,
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(postData),
-            dataType: "json",
-            success: function(ret){
-                alert(ret.msg);
-                if(ret.rst){
-                    $('#pageModal').modal('hide');
-                    // 重新刷新单页列表
-                    $.get("/admin/list", function(){
-                        location.reload();
-                    })
-                }
-            }
-        })
-    }
+	function editArticle(id) {
+		// 模拟编辑文章
+		var article = articles.find(a => a.id == id);
+		if(article) {
+			$('#labelNew').text('编辑文章');
+			$('#id').val(article.id);
+			$('#title').val(article.title);
+			$('#createDate').val(article.date.replace(/\s/, 'T'));
+			$('#status').val(article.status);
+			
+			// 模拟设置分类
+			$('#category').selectpicker('val', article.categories);
+			$('#category').selectpicker('refresh');
+			
+			// 设置编辑器内容
+			editor.setValue('# ' + article.title + '\n\n这是文章内容...');
+		}
+	}
 
-    // 删除单页
-    function delPage(link) {
-        if(!confirm("确定删除页面 " + link + "？删除后无法恢复！")) return;
-        $.get("/admin/deletePage/" + link, function(ret){
-            alert(ret.msg);
-            location.reload();
-        })
-    }
+	function toggleStatus(id) {
+		var article = articles.find(a => a.id == id);
+		if(article) {
+			article.status = article.status === 'published' ? 'draft' : 'published';
+			loadArticles(); // 刷新列表
+		}
+	}
 
-    //加载文章列表	
-    $("#loadmore").click(function(){
-        var page=$("#page").val();
-        $.ajax({
-            url:"/admin/getList/" + page + "/",
-            type:'GET',
-            dataType:"json",
-            success:function(data){
-                    tableContent="";
-                    $.each(data,function(i){
-                        var Info = data[i];
-                        var num = i+1;
-                        tableContent += '<tr><td>'+Info.id+'</td><td><a href="/admin/edit/'+Info.id+'/">'+Info.title+'</a></td><td>'+Info.createDate.replace("T","")+'</td></tr>';
-                    })
-                    $("#articleList").append(tableContent);
-                    $("#page").val(++page);
-      
-            }
-        });
-    })
-    //新建文章
-    function saveAddNew(){
-        if(
-            $('#WidgetMenu').val() == "" || $('#WidgetMenu').val() == null
-            || $('#createDate').val() == "" || $('#createDate').val() == null
-            || $('#createDate').val() == "" || $('#createDate').val() == null
-        
-        ){
-           alert("信息不全");
-           return;
-            
-        }
-        var postURL = "/admin/saveEdit/";
-        if ($('#id').val() == "" || $('#id').val() == null)
-            postURL=  "/admin/saveAddNew/";
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: postURL ,//url
-			contentType: "application/json; charset=utf-8",
-			data: JSON.stringify($("#addNewForm").serializeArray()), 
-            success: function (result) {
-                if ("id" in result){
-                    $('#id').val(result.id);
-					$('#labelNew').text("编辑:"+result.id);
-                    alert(result.msg);
-                }
-                else 
-                {
-					alert("失败");
-				}
-            }
-        });
-    }
-    //保存设置
-    function saveConfig(){
-        if(!isJSON($('#WidgetCategory').val()))
-        {
-            alert("分类格式错误"); 
-            return false;
-        }
-        if(!isJSON($('#WidgetMenu').val()))
-        {
-            alert("菜单格式错误"); 
-            return false;
-        }
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-			contentType: "application/json; charset=utf-8",
-            url: "/admin/saveConfig/" ,//url
-			data: JSON.stringify($("#configForm").serializeArray()), 
-            success: function (result) {
-                alert(result.msg);
-            }
-        });
-    }
-    //导入json
-    function importBlog(){
-        if(!isJSON($('#importJson').val()))
-        {
-            alert("导入格式错误"); 
-            return false;
-        }
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-			contentType: "application/json; charset=utf-8",
-            url: "/admin/import/" ,//url
-			data: JSON.stringify($("#importForm").serializeArray()), 
-            success: function (result) {
-                alert(result.msg);
-            }
-        });
-    }
-    //发布
-    function publishing(){
-        if (confirm("确定吗?发布将清理所有静态缓存,重新生成")==false){ 
-            return false; 
-          }
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-			contentType: "application/json; charset=utf-8",
-            url: "/admin/publish/" ,//url
-            success: function (result) {
-                alert(result.msg);
-            }
-        });
-    }
-    function isJSON(str) {
-        if (typeof str == 'string') {
-            try {
-                var obj=JSON.parse(str);
-                if(typeof obj == 'object' && obj ){
-                    return true;
-                }else{
-                    return false;
-                }
-    
-            } catch(e) {
-                return false;
-            }
-        }
-        return false;
-    }
+	function deleteArticle(id) {
+		if(confirm('确定要删除这篇文章吗？')) {
+			articles = articles.filter(a => a.id != id);
+			loadArticles(); // 刷新列表
+		}
+	}
+
+	function saveAddNew() {
+		var id = $('#id').val();
+		var title = $('#title').val();
+		var link = $('#link').val();
+		var date = $('#createDate').val();
+		var status = $('#status').val();
+		var categories = $('#category').val();
+		var content = $('#content textarea').val();
+
+		if(!title || !link || !date) {
+			alert('请填写必填字段');
+			return;
+		}
+
+		if(id) {
+			// 编辑现有文章
+			var article = articles.find(a => a.id == id);
+			if(article) {
+				article.title = title;
+				article.link = link;
+				article.date = date;
+				article.status = status;
+				article.categories = categories;
+			}
+		} else {
+			// 添加新文章
+			var newId = Math.max(...articles.map(a => a.id), 0) + 1;
+			articles.push({
+				id: newId,
+				title: title,
+				link: link,
+				date: date,
+				status: status,
+				categories: categories
+			});
+		}
+
+		// 重置表单
+		$('#addNewForm')[0].reset();
+		$('#labelNew').text('新增文章');
+		editor.setValue('');
+		
+		// 刷新列表
+		loadArticles();
+		
+		alert('文章保存成功！');
+	}
+
+	function previewArticle() {
+		var content = $('#content textarea').val();
+		var previewWindow = window.open('', '_blank');
+		previewWindow.document.write(`
+			<!DOCTYPE html>
+			<html>
+			<head>
+				<title>文章预览</title>
+				<style>
+					body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+					h1 { color: #333; }
+					img { max-width: 100%; }
+				</style>
+			</head>
+			<body>
+				${content}
+			</body>
+			</html>
+		`);
+		previewWindow.document.close();
+	}
+
+	// 页面管理相关函数
+	function savePageData() {
+		var oldLink = $('#oldLink').val();
+		var link = $('#pageLink').val();
+		var title = $('#pageTitle').val();
+		var keywords = $('#pageKeywords').val();
+		var description = $('#pageDescription').val();
+		var contentMD = $('#pageMdEditor textarea').val();
+		var contentHtml = marked(contentMD); // 使用marked库转换Markdown
+
+		if(!link || !title) {
+			alert('页面别名和标题不能为空');
+			return;
+		}
+
+		if(oldLink) {
+			// 编辑现有页面
+			var page = pages.find(p => p.link == oldLink);
+			if(page) {
+				page.link = link;
+				page.title = title;
+				page.keywords = keywords;
+				page.description = description;
+				page.contentMD = contentMD;
+				page.contentHtml = contentHtml;
+			}
+		} else {
+			// 添加新页面
+			pages.push({
+				link: link,
+				title: title,
+				keywords: keywords,
+				description: description,
+				contentMD: contentMD,
+				contentHtml: contentHtml,
+				url: '/page/' + link,
+				date: new Date().toISOString().split('T')[0],
+				status: 'published'
+			});
+		}
+
+		// 刷新页面列表
+		loadPages();
+		
+		// 关闭模态框
+		$('#pageModal').modal('hide');
+		
+		// 重置表单
+		$('#pageForm')[0].reset();
+		$('#oldLink').val('');
+		pageEditor.setValue('');
+		
+		alert('页面保存成功！');
+	}
+
+	function loadPages() {
+		var tbody = $('#pageListTable tbody');
+		tbody.empty();
+		
+		pages.forEach(function(page) {
+			var statusClass = page.status === 'published' ? 'status-active' : 'status-draft';
+			var statusText = page.status === 'published' ? '已发布' : '草稿';
+			
+			var row = '<tr>' +
+				'<td>' + page.link + '</td>' +
+				'<td>' + page.title + '</td>' +
+				'<td>' + page.date + '</td>' +
+				'<td><a href="' + page.url + '" target="_blank">' + page.url + '</a></td>' +
+				'<td><span class="status-indicator ' + statusClass + '"></span>' + statusText + '</td>' +
+				'<td>' +
+					'<button class="btn btn-xs btn-success action-btn" onclick="editPage(\'' + page.link + '\')">编辑</button>' +
+					'<button class="btn btn-xs btn-danger" onclick="deletePage(\'' + page.link + '\')">删除</button>' +
+				'</td>' +
+			'</tr>';
+			tbody.append(row);
+		});
+	}
+
+	function editPage(link) {
+		var page = pages.find(p => p.link == link);
+		if(page) {
+			$('#oldLink').val(page.link);
+			$('#pageLink').val(page.link);
+			$('#pageTitle').val(page.title);
+			$('#pageKeywords').val(page.keywords);
+			$('#pageDescription').val(page.description);
+			pageEditor.setValue(page.contentMD);
+			$('#pageModalLabel').text('编辑单页');
+			$('#pageModal').modal('show');
+		}
+	}
+
+	function deletePage(link) {
+		if(confirm('确定要删除这个页面吗？')) {
+			pages = pages.filter(p => p.link != link);
+			loadPages(); // 刷新列表
+		}
+	}
+
+	// 模拟配置保存
+	function saveConfig() {
+		var widgetCategory = $('#WidgetCategory').val();
+		var widgetMenu = $('#WidgetMenu').val();
+		var widgetLink = $('#WidgetLink').val();
+		var siteConfig = $('#siteConfig').val();
+		
+		try {
+			JSON.parse(widgetCategory);
+			JSON.parse(widgetMenu);
+			JSON.parse(widgetLink);
+			JSON.parse(siteConfig);
+			
+			alert('配置保存成功！');
+		} catch(e) {
+			alert('配置格式错误，请检查JSON格式');
+		}
+	}
+
+	// 模拟导入功能
+	function importBlog() {
+		var importJson = $('#importJson').val();
+		if(importJson) {
+			try {
+				var data = JSON.parse(importJson);
+				alert('模拟导入成功！');
+			} catch(e) {
+				alert('JSON格式错误');
+			}
+		} else {
+			alert('请输入要导入的数据');
+		}
+	}
+
+	// 模拟发布功能
+	function publishing() {
+		alert('正在发布... 模拟发布过程，实际应用中会调用后端API');
+	}
+
+	// 加载页面时初始化页面列表
+	$(document).ready(function() {
+		loadPages();
+	});
 </script>
- 
-
 </body>
 </html>
+
+
+
