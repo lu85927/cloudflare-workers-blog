@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>老壮的CF-blog后台修改版1</title>
+	<title>CF-blog后台</title>
     <link rel="icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico" />
 	<link rel="shortcut icon" type="image/x-icon"  href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
@@ -16,10 +16,24 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-zh_CN.min.js"></script>
 	<style>
 		.bootstrap-select>.dropdown-toggle {
-		z-index:auto;
+			z-index:auto;
 		}
-        .modal-body .editormd {
-            z-index: 1050;
+        /* 核心修复：解决modal内editor.md被遮挡 */
+        .modal-backdrop {
+            z-index: 1040 !important;
+        }
+        .modal {
+            z-index: 1050 !important;
+        }
+        /* 编辑器全部组件提升层级，覆盖modal */
+        .editormd {
+            z-index: 1060 !important;
+        }
+        .editormd-fullscreen {
+            z-index: 9999 !important;
+        }
+        .editormd-dialog {
+            z-index: 1070 !important;
         }
 	</style>
 	
@@ -28,7 +42,6 @@
 
 <nav class="navbar navbar-default " role="navigation">
 	<div class="container-fluid">
-
 	<div>
 		<ul id="myTab" class="nav nav-tabs">
 			<li>
@@ -40,7 +53,6 @@
 			<li  class="active">
 				<a href="#new" data-toggle="tab">新建文章</a>
 			</li>
-            <!-- 新增单页管理Tab -->
             <li>
 				<a href="#pageTab" data-toggle="tab">单页管理</a>
 			</li>
@@ -73,34 +85,34 @@
 					<input type="text" class="form-control" name="title" id="title" placeholder="标题" style="width: 100%;" required="true">
 				</div>
 				<div class="form-group">
-					<label for="exampleInputEmail2">特色图片</label>
+					<label>特色图片</label>
 					<input type="url" class="form-control" style="width: 400px;"  name="img" id="img" placeholder="" >
 				</div>
 				<div class="form-group">
-					<label for="exampleInputEmail2">永久链接</label>
+					<label>永久链接</label>
 					<input type="text" class="form-control" name="link" id="link" placeholder="" required="true">
 				</div>
 				<div class="form-group">
-					<label for="exampleInputEmail2">创建日期</label>
+					<label>创建日期</label>
 					<input type="datetime-local" class="form-control" id="createDate" name="createDate" placeholder=""  required="true">
 				</div>
 				<div class="form-group">
-					<label for="exampleInputEmail2">分类</label>
+					<label>分类</label>
 					<select class="selectpicker" multiple name="category[]" id="category">
 					</select>
 				</div>
 				<div class="form-group">
-					<label for="exampleInputEmail2">标签</label>
+					<label>标签</label>
 					<input type="text" class="form-control" name="tags" id="tags" placeholder="标签1,标签2">
 				</div>
 				<div class="form-group">
-					<label for="exampleInputEmail2">权重</label>
+					<label>权重</label>
 					<input type="text" class="form-control" name="priority" id="priority" value='0.5' placeholder="权重">
 				</div>
 				<div class="form-group">
-					<label for="exampleInputEmail2">更新频率</label>
+					<label>更新频率</label>
 					    <select class="form-control" id="changefreq" name="changefreq">
-						<option value="daily" selected  = "selected" >daily</option>
+						<option value="daily" selected >daily</option>
 						<option value="hourly" >hourly</option>
 						<option value="weekly" >weekly</option>
 						<option value="monthly" >monthly</option>
@@ -109,14 +121,13 @@
 						<option value="always" >always</option>
 					    </select>
 				</div>
-					<a  tabindex="0"  role="button"  type="submit" id="btn_saveAddNew" class="btn btn-default" onclick="saveAddNew()">保存文章</a>
-					
+					<a class="btn btn-default" onclick="saveAddNew()">保存文章</a>
 				<div id="content"><textarea style="display:none;"></textarea></div>
 			</form>
 		</div>
 	</div>
 
-    <!-- ========== 新增：单页管理面板 ========== -->
+    <!-- 单页管理面板 -->
     <div class="tab-pane fade" id="pageTab">
         <div class="container">
             <div class="row" style="margin-bottom:15px;">
@@ -124,7 +135,7 @@
             </div>
             <table class="table table-striped" id="pageListTable">
                 <tr>
-                    <th>页面别名(link)</th>
+                    <th>页面别名</th>
                     <th>页面标题</th>
                     <th>更新日期</th>
                     <th>访问地址</th>
@@ -134,7 +145,7 @@
         </div>
     </div>
 
-    <!-- 单页弹窗 新建/编辑共用 -->
+    <!-- 单页弹窗 新建/编辑 -->
     <div class="modal fade" id="pageModal" tabindex="-1" role="dialog" aria-labelledby="pageModalLabel">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -146,7 +157,7 @@
                     <form id="pageForm">
                         <input type="hidden" id="oldLink" name="oldLink">
                         <div class="form-group">
-                            <label>页面别名(唯一，英文，如 about / links)</label>
+                            <label>页面别名(唯一英文，如 about / links)</label>
                             <input class="form-control" id="pageLink" name="link" required>
                         </div>
                         <div class="form-group">
@@ -159,6 +170,7 @@
                         </div>
                         <div class="form-group">
                             <label>页面内容(Markdown)</label>
+                            <!-- 编辑器容器，ID固定 -->
                             <div id="pageMdEditor">
                                 <textarea style="display:none;" name="contentMD"></textarea>
                             </div>
@@ -175,43 +187,30 @@
     </div>
 	
 	<div class="tab-pane fade" id="config">
-		
 		<div class="container" >
 			<form id="configForm" role="form" >
 				<div class="form-group">
-				    <label for="name">分类, 例:<code>["类别A","类别B","类别C","类别D"]</code></label>
-					<textarea class="form-control" id="WidgetCategory" name="WidgetCategory" rows="3" placeholder='["分类A","分类B"]'></textarea>
-				</div>
-	
-				<div class="form-group">
-				    <label for="name">菜单, 例:<code>[{"title":"技术文章","url":"/category/技术文章"},{"title":"管理","url":"/admin"}]</code></label>
-					<textarea class="form-control" id="WidgetMenu" name="WidgetMenu" rows="5"  placeholder='[
-	{"title":"菜单A"	,"url":"/category/菜单A"},
-	{"title":"菜单B"	,"url":"/category/菜单B"}
-]'></textarea>
+				    <label>分类, 例:<code>["类别A","类别B"]</code></label>
+					<textarea class="form-control" id="WidgetCategory" name="WidgetCategory" rows="3"></textarea>
 				</div>
 				<div class="form-group">
-				    <label for="name">其他链接, 例:<code>[{"title":"我的好友","url":"https://blog.gezhong.vip/"},{"title":"谷歌","url":"https://www.google.com/"}]</code></label>
-					<textarea class="form-control" id="WidgetLink" name="WidgetLink" rows="5"  placeholder='[
-	{"title":"好友"	,"url":"https://blog.gezhong.vip/"},
-	{"title":"谷歌"	,"url":"https://www.google.com/"}
-]'></textarea>
+				    <label>菜单</label>
+					<textarea class="form-control" id="WidgetMenu" name="WidgetMenu" rows="5"></textarea>
 				</div>
-				<a  tabindex="0"  role="button"  type="submit" id="btn_saveConfig" class="btn btn-default" onclick="saveConfig()">保存设置</a>
+				<div class="form-group">
+				    <label>友情链接</label>
+					<textarea class="form-control" id="WidgetLink" name="WidgetLink" rows="5"></textarea>
+				</div>
+				<a class="btn btn-default" onclick="saveConfig()">保存设置</a>
 			</form>
-			
-
 			<form id="importForm" role="form" >
 				<div class="form-group">
-				    <label for="name">导出/导入</label>
-					<textarea class="form-control" id="importJson" name="importJson" rows="3" placeholder='复制完整的导出json'></textarea>
+				    <label>导出/导入备份JSON</label>
+					<textarea class="form-control" id="importJson" name="importJson" rows="3"></textarea>
 				</div>
-
-				<a  tabindex="0"  role="button"  type="submit" id="btn_import" class="btn btn-default" onclick="importBlog()">导入</a>
-				<a  tabindex="0"  role="button"  type="submit" id="btn_export" class="btn btn-default"  href="/admin/export" >导出</a>
+				<a class="btn btn-default" onclick="importBlog()">导入</a>
+				<a class="btn btn-default" href="/admin/export">导出</a>
 			</form>
-
-			
 		</div>
 	</div>
 
@@ -219,11 +218,9 @@
 		<div class="container" >
 			<div class="jumbotron" >
 				<p class="lead">
-				由于前端使用缓存,以下操作需要发布:新建文章、发布文章、修改后台配置、修改workers配置、新增/修改单页</br>
-				前端生效需要ctrl+F5 强制刷新
+				新建/修改文章、单页、配置后需要发布清理缓存，浏览器Ctrl+F5刷新生效
 				</p>
-				
-				<a href="#" class="btn btn-default" onclick="publishing()">发布</a>
+				<a class="btn btn-default" onclick="publishing()">发布</a>
 			</div>
 		</div>
 	</div>	
@@ -231,18 +228,18 @@
 
 <script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.js"></script>   
 <script type="text/javascript">
+	var pageEditor = null; // 全局缓存单页编辑器实例
+	var mdEditor = null;   // 文章编辑器
 	$(function() {
-		// 修复tab初始化错误
 		$('#myTab li:first a').tab('show');
-		//获取分类
+		// 后端注入数据
 		var categoryJson = <!--{categoryJson}-->;
-		//获取菜单
 		var menuJson = <!--{menuJson}-->;
 		var linkJson = <!--{linkJson}-->;
-        // 后端传入单页列表
         var pageJson = <!--{pageJson}-->;
 
-		var mdEditor = editormd("content", {
+		// 初始化文章主编辑器
+		mdEditor = editormd("content", {
 			 height : 640,
 			path   : "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
 			appendMarkdown : "# MarkDown", 
@@ -252,20 +249,9 @@
 			tocm : true, 
 			codeFold : true
 		});
-        // 单页弹窗编辑器
-        var pageEditor = editormd("pageMdEditor", {
-            height: 400,
-            path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
-            appendMarkdown: "# 自定义页面内容",
-            saveHTMLToTextarea: true,
-            tex: true,
-            tocm: true,
-            codeFold: true
-        });
 
-		//表单赋值
+		// 表单默认日期
 		$('#createDate').val(new Date().toISOString().slice(0,16));
-		
 		$('#WidgetCategory').val(JSON.stringify(categoryJson));
 		$('#WidgetMenu').val(JSON.stringify(menuJson));
 		$('#WidgetLink').val(JSON.stringify(linkJson));
@@ -274,22 +260,37 @@
 		for (var i = 0; i < categoryJson.length; i++) {
 			category.append('<option value="' + categoryJson[i] + '">' + categoryJson[i] + '</option>');
 		}
-		$("#loadmore").click();//初始加载一页
-
-        // 渲染单页列表
+		$("#loadmore").click();
         renderPageList(pageJson);
 
-        // 弹窗关闭清空表单+清空编辑器
+        // 弹窗打开后再初始化编辑器（关键修复：DOM渲染完成再创建editor）
+        $('#pageModal').on('shown.bs.modal', function () {
+            if(!pageEditor){
+                pageEditor = editormd("pageMdEditor", {
+                    height: 400,
+                    path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
+                    appendMarkdown: "# 自定义页面内容",
+                    saveHTMLToTextarea: true,
+                    tex: true,
+                    tocm: true,
+                    codeFold: true
+                });
+            }
+        })
+
+        // 弹窗关闭销毁编辑器，防止残留
         $('#pageModal').on('hidden.bs.modal', function () {
             $('#pageForm')[0].reset();
             $('#oldLink').val("");
             $('#pageModalLabel').text("新建自定义单页");
-            pageEditor.clear();
-            pageEditor.setMarkdown("");
+            if(pageEditor){
+                pageEditor.clear();
+                pageEditor.setMarkdown("");
+            }
         });
 	});
 
-    // 渲染单页表格列表
+    // 渲染单页列表
     function renderPageList(list) {
         var html = "";
         if(!Array.isArray(list)) list = [];
@@ -319,17 +320,23 @@
             $('#pageLink').val(data.link);
             $('#pageTitle').val(data.title);
             $('#pageKeywords').val(data.keywords);
-            pageEditor.setMarkdown(data.contentMD);
             $('#pageModalLabel').text("编辑单页：" + data.title);
             $('#pageModal').modal('show');
+            // 弹窗完全显示后赋值内容
+            setTimeout(function(){
+                if(pageEditor) pageEditor.setMarkdown(data.contentMD);
+            },300)
         }).fail(function(){
             alert("获取页面数据失败");
         });
     }
 
-    // 【核心修复】保存单页（新增/编辑）
+    // 保存单页
     function savePageData() {
-        // 手动读取所有字段，放弃serializeArray避免丢失编辑器数据
+        if(!pageEditor){
+            alert("编辑器未加载，请关闭弹窗重新打开！");
+            return;
+        }
         let postData = {};
         postData.oldLink = $("#oldLink").val().trim();
         postData.link = $("#pageLink").val().trim();
@@ -338,29 +345,12 @@
         postData.contentMD = pageEditor.getMarkdown();
         postData.contentHtml = pageEditor.getHTML();
 
-        // 基础校验
-        if(!postData.link){
-            alert("请填写页面别名");
-            return;
-        }
-        if(!postData.title){
-            alert("请填写页面标题");
-            return;
-        }
-        if(!postData.contentMD){
-            alert("请填写页面内容");
-            return;
-        }
+        if(!postData.link){alert("请填写页面别名");return;}
+        if(!postData.title){alert("请填写页面标题");return;}
+        if(!postData.contentMD){alert("请填写页面内容");return;}
 
-        // 修复1：去掉接口末尾多余斜杠，匹配worker路由
-        let apiUrl = "";
-        if(postData.oldLink === ""){
-            apiUrl = "/admin/saveAddPage";
-        }else{
-            apiUrl = "/admin/saveEditPage";
-        }
-
-        console.log("提交数据：", postData); // F12控制台可打印调试
+        let apiUrl = postData.oldLink === "" ? "/admin/saveAddPage" : "/admin/saveEditPage";
+        console.log("提交数据",postData);
         $.ajax({
             type: "POST",
             url: apiUrl,
@@ -369,20 +359,16 @@
             dataType: "json",
             success: function(ret){
                 alert(ret.msg);
-                if(ret.rst){
-                    $('#pageModal').modal('hide');
-                    // 修复2：成功直接刷新页面，无需无效/api请求
-                    location.reload();
-                }
+                if(ret.rst) location.reload();
             },
             error: function(xhr){
-                alert("请求失败："+xhr.status+"，检查worker脚本路由是否正常");
+                alert("请求失败："+xhr.status);
                 console.error(xhr.responseText);
             }
         })
     }
 
-    // 删除单页（改为POST规范请求）
+    // 删除单页
     function delPage(link) {
         if(!confirm("确定删除页面 " + link + "？删除后无法恢复！")) return;
         $.ajax({
@@ -399,7 +385,7 @@
         })
     }
 
-    //加载文章列表	
+    // 加载文章列表	
     $("#loadmore").click(function(){
         var page=$("#page").val();
         $.ajax({
@@ -414,19 +400,17 @@
                     })
                     $("#articleList").append(tableContent);
                     $("#page").val(++page);
-      
             }
         });
     })
-    //新建文章
+
+    // 保存文章
     function saveAddNew(){
         if( !$('#createDate').val() ){
            alert("请填写创建日期");
            return;
         }
-        var postURL = "/admin/saveEdit";
-        if ($('#id').val() == "")
-            postURL=  "/admin/saveAddNew";
+        var postURL = $("#id").val() ? "/admin/saveEdit" : "/admin/saveAddNew";
         $.ajax({
             type: "POST",
             dataType: "json",
@@ -438,9 +422,7 @@
                     $('#id').val(result.id);
 					$('#labelNew').text("编辑:"+result.id);
                     alert(result.msg);
-                }
-                else 
-                {
+                }else{
 					alert("失败："+result.msg);
 				}
             },
@@ -449,72 +431,46 @@
             }
         });
     }
-    //保存设置
+
+    // 保存设置
     function saveConfig(){
-        if(!isJSON($('#WidgetCategory').val()))
-        {
-            alert("分类格式错误"); 
-            return false;
-        }
-        if(!isJSON($('#WidgetMenu').val()))
-        {
-            alert("菜单格式错误"); 
-            return false;
-        }
+        if(!isJSON($('#WidgetCategory').val())){alert("分类格式错误");return false;}
+        if(!isJSON($('#WidgetMenu').val())){alert("菜单格式错误");return false;}
         $.ajax({
             type: "POST",
-            dataType: "json",
-			contentType: "application/json; charset=utf-8",
             url: "/admin/saveConfig",
+			contentType: "application/json; charset=utf-8",
 			data: JSON.stringify($("#configForm").serializeArray()), 
-            success: function (result) {
-                alert(result.msg);
-            },
-            error:function(){
-                alert("保存设置异常");
-            }
+            success: function (result) {alert(result.msg);},
+            error:function(){alert("保存设置异常");}
         });
     }
-    //导入json
+
+    // 导入备份
     function importBlog(){
-        if(!isJSON($('#importJson').val()))
-        {
-            alert("导入JSON格式错误"); 
-            return false;
-        }
+        if(!isJSON($('#importJson').val())){alert("导入JSON格式错误");return false;}
         $.ajax({
             type: "POST",
-            dataType: "json",
-			contentType: "application/json; charset=utf-8",
             url: "/admin/import",
+			contentType: "application/json; charset=utf-8",
 			data: JSON.stringify($("#importForm").serializeArray()), 
-            success: function (result) {
-                alert(result.msg);
-                location.reload();
-            },
-            error:function(){
-                alert("导入请求异常");
-            }
+            success: function (result) {alert(result.msg);location.reload();},
+            error:function(){alert("导入请求异常");}
         });
     }
-    //发布缓存清理
+
+    // 发布清缓存
     function publishing(){
-        if (confirm("确定吗?发布将清理所有静态缓存,重新生成")==false){ 
-            return false; 
-          }
+        if (!confirm("确定发布清理全站缓存？")) return;
         $.ajax({
             type: "POST",
-            dataType: "json",
-			contentType: "application/json; charset=utf-8",
             url: "/admin/publish",
-            success: function (result) {
-                alert(result.msg);
-            },
-            error:function(){
-                alert("发布接口异常");
-            }
+            success: function (result) {alert(result.msg);},
+            error:function(){alert("发布接口异常");}
         });
     }
+
+    // JSON校验工具
     function isJSON(str) {
         if (typeof str == 'string') {
             try {
@@ -527,7 +483,5 @@
         return false;
     }
 </script>
- 
-
 </body>
 </html>
