@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>{{title}}</title>
+<meta name="keywords" content="{{keyWords}}">
+{{{codeBeforHead}}}
+</head>
+<body>
+{{#widgetMenuList}}
+<a href="{{url}}">{{title}}</a>
+{{/widgetMenuList}}
+
+<h1>{{pageSingle.title}}</h1>
+<p>更新时间：{{pageSingle.updateDate}}</p>
+<div class="page-content">
+{{{pageSingle.contentHtml}}}
+</div>
+
+{{{commentCode}}}
+
+<!-- 侧边栏最近文章 -->
+<div class="sidebar">
+<h3>最新文章</h3>
+{{#widgetRecentlyList}}
+<a href="{{url}}">{{title}}</a>
+{{/widgetRecentlyList}}
+</div>
+
+{{{codeBeforBody}}}
+</body>
+</html>
