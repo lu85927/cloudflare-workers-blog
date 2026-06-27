@@ -208,7 +208,7 @@
 				</div>
 
 				<a  tabindex="0"  role="button"  type="submit" id="btn_import" class="btn btn-default" onclick="importBlog()">导入</a>
-				<a  tabindex="0"  role="button"  type="submit" id="btn_export" class="btn btn-default"  href="/admin/export/" >导出</a>
+				<a  tabindex="0"  role="button"  type="submit" id="btn_export" class="btn btn-default"  href="/admin/export" >导出</a>
 			</form>
 
 			
@@ -232,7 +232,8 @@
 <script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.js"></script>   
 <script type="text/javascript">
 	$(function() {
-		$('#myTab li:eq(0) 1').tab('show');
+		// 修复tab初始化错误
+		$('#myTab li:first a').tab('show');
 		//获取分类
 		var categoryJson = <!--{categoryJson}-->;
 		//获取菜单
@@ -263,7 +264,7 @@
         });
 
 		//表单赋值
-		$('#createDate').val(new Date());
+		$('#createDate').val(new Date().toISOString().slice(0,16));
 		
 		$('#WidgetCategory').val(JSON.stringify(categoryJson));
 		$('#WidgetMenu').val(JSON.stringify(menuJson));
@@ -271,25 +272,27 @@
 		var category = $('#category');
 		category.empty();
 		for (var i = 0; i < categoryJson.length; i++) {
-			category.append('<option id=' + categoryJson[i] + ' value=' + categoryJson[i] + '>' + categoryJson[i] + '</option>');
+			category.append('<option value="' + categoryJson[i] + '">' + categoryJson[i] + '</option>');
 		}
 		$("#loadmore").click();//初始加载一页
 
         // 渲染单页列表
         renderPageList(pageJson);
 
-        // 弹窗关闭清空表单
+        // 弹窗关闭清空表单+清空编辑器
         $('#pageModal').on('hidden.bs.modal', function () {
             $('#pageForm')[0].reset();
             $('#oldLink').val("");
             $('#pageModalLabel').text("新建自定义单页");
             pageEditor.clear();
+            pageEditor.setMarkdown("");
         });
 	});
 
     // 渲染单页表格列表
     function renderPageList(list) {
         var html = "";
+        if(!Array.isArray(list)) list = [];
         for(var i=0; i<list.length; i++){
             var item = list[i];
             var url = "/page/" + item.link + ".html";
@@ -319,29 +322,45 @@
             pageEditor.setMarkdown(data.contentMD);
             $('#pageModalLabel').text("编辑单页：" + data.title);
             $('#pageModal').modal('show');
-        })
+        }).fail(function(){
+            alert("获取页面数据失败");
+        });
     }
 
-    // 保存单页（新增/编辑）
+    // 【核心修复】保存单页（新增/编辑）
     function savePageData() {
-        var md = pageEditor.getMarkdown();
-        var html = pageEditor.getHTML();
-        $("#pageHtml").val(html);
-        var formData = $("#pageForm").serializeArray();
-        var postData = {};
-        $.each(formData, function(){
-            postData[this.name] = this.value;
-        })
-        postData.contentMD = md;
-        postData.contentHtml = html;
+        // 手动读取所有字段，放弃serializeArray避免丢失编辑器数据
+        let postData = {};
+        postData.oldLink = $("#oldLink").val().trim();
+        postData.link = $("#pageLink").val().trim();
+        postData.title = $("#pageTitle").val().trim();
+        postData.keywords = $("#pageKeywords").val().trim();
+        postData.contentMD = pageEditor.getMarkdown();
+        postData.contentHtml = pageEditor.getHTML();
 
-        var apiUrl = "";
-        if($("#oldLink").val() == ""){
-            apiUrl = "/admin/saveAddPage/";
-        }else{
-            apiUrl = "/admin/saveEditPage/";
+        // 基础校验
+        if(!postData.link){
+            alert("请填写页面别名");
+            return;
+        }
+        if(!postData.title){
+            alert("请填写页面标题");
+            return;
+        }
+        if(!postData.contentMD){
+            alert("请填写页面内容");
+            return;
         }
 
+        // 修复1：去掉接口末尾多余斜杠，匹配worker路由
+        let apiUrl = "";
+        if(postData.oldLink === ""){
+            apiUrl = "/admin/saveAddPage";
+        }else{
+            apiUrl = "/admin/saveEditPage";
+        }
+
+        console.log("提交数据：", postData); // F12控制台可打印调试
         $.ajax({
             type: "POST",
             url: apiUrl,
@@ -352,21 +371,31 @@
                 alert(ret.msg);
                 if(ret.rst){
                     $('#pageModal').modal('hide');
-                    // 重新刷新单页列表
-                    $.get("/admin/list", function(){
-                        location.reload();
-                    })
+                    // 修复2：成功直接刷新页面，无需无效/api请求
+                    location.reload();
                 }
+            },
+            error: function(xhr){
+                alert("请求失败："+xhr.status+"，检查worker脚本路由是否正常");
+                console.error(xhr.responseText);
             }
         })
     }
 
-    // 删除单页
+    // 删除单页（改为POST规范请求）
     function delPage(link) {
         if(!confirm("确定删除页面 " + link + "？删除后无法恢复！")) return;
-        $.get("/admin/deletePage/" + link, function(ret){
-            alert(ret.msg);
-            location.reload();
+        $.ajax({
+            type:"POST",
+            url:"/admin/deletePage/"+link,
+            dataType:"json",
+            success:function(ret){
+                alert(ret.msg);
+                location.reload();
+            },
+            error:function(){
+                alert("删除请求异常");
+            }
         })
     }
 
@@ -374,15 +403,14 @@
     $("#loadmore").click(function(){
         var page=$("#page").val();
         $.ajax({
-            url:"/admin/getList/" + page + "/",
+            url:"/admin/getList/" + page,
             type:'GET',
             dataType:"json",
             success:function(data){
                     tableContent="";
                     $.each(data,function(i){
                         var Info = data[i];
-                        var num = i+1;
-                        tableContent += '<tr><td>'+Info.id+'</td><td><a href="/admin/edit/'+Info.id+'/">'+Info.title+'</a></td><td>'+Info.createDate.replace("T","")+'</td></tr>';
+                        tableContent += '<tr><td>'+Info.id+'</td><td><a href="/admin/edit/'+Info.id+'">'+Info.title+'</a></td><td>'+Info.createDate.replace("T","")+'</td></tr>';
                     })
                     $("#articleList").append(tableContent);
                     $("#page").val(++page);
@@ -392,23 +420,17 @@
     })
     //新建文章
     function saveAddNew(){
-        if(
-            $('#WidgetMenu').val() == "" || $('#WidgetMenu').val() == null
-            || $('#createDate').val() == "" || $('#createDate').val() == null
-            || $('#createDate').val() == "" || $('#createDate').val() == null
-        
-        ){
-           alert("信息不全");
+        if( !$('#createDate').val() ){
+           alert("请填写创建日期");
            return;
-            
         }
-        var postURL = "/admin/saveEdit/";
-        if ($('#id').val() == "" || $('#id').val() == null)
-            postURL=  "/admin/saveAddNew/";
+        var postURL = "/admin/saveEdit";
+        if ($('#id').val() == "")
+            postURL=  "/admin/saveAddNew";
         $.ajax({
             type: "POST",
             dataType: "json",
-            url: postURL ,//url
+            url: postURL,
 			contentType: "application/json; charset=utf-8",
 			data: JSON.stringify($("#addNewForm").serializeArray()), 
             success: function (result) {
@@ -419,8 +441,11 @@
                 }
                 else 
                 {
-					alert("失败");
+					alert("失败："+result.msg);
 				}
+            },
+            error:function(){
+                alert("保存文章请求异常");
             }
         });
     }
@@ -440,10 +465,13 @@
             type: "POST",
             dataType: "json",
 			contentType: "application/json; charset=utf-8",
-            url: "/admin/saveConfig/" ,//url
+            url: "/admin/saveConfig",
 			data: JSON.stringify($("#configForm").serializeArray()), 
             success: function (result) {
                 alert(result.msg);
+            },
+            error:function(){
+                alert("保存设置异常");
             }
         });
     }
@@ -451,21 +479,25 @@
     function importBlog(){
         if(!isJSON($('#importJson').val()))
         {
-            alert("导入格式错误"); 
+            alert("导入JSON格式错误"); 
             return false;
         }
         $.ajax({
             type: "POST",
             dataType: "json",
 			contentType: "application/json; charset=utf-8",
-            url: "/admin/import/" ,//url
+            url: "/admin/import",
 			data: JSON.stringify($("#importForm").serializeArray()), 
             success: function (result) {
                 alert(result.msg);
+                location.reload();
+            },
+            error:function(){
+                alert("导入请求异常");
             }
         });
     }
-    //发布
+    //发布缓存清理
     function publishing(){
         if (confirm("确定吗?发布将清理所有静态缓存,重新生成")==false){ 
             return false; 
@@ -474,9 +506,12 @@
             type: "POST",
             dataType: "json",
 			contentType: "application/json; charset=utf-8",
-            url: "/admin/publish/" ,//url
+            url: "/admin/publish",
             success: function (result) {
                 alert(result.msg);
+            },
+            error:function(){
+                alert("发布接口异常");
             }
         });
     }
@@ -484,12 +519,7 @@
         if (typeof str == 'string') {
             try {
                 var obj=JSON.parse(str);
-                if(typeof obj == 'object' && obj ){
-                    return true;
-                }else{
-                    return false;
-                }
-    
+                return typeof obj == 'object' && obj != null;
             } catch(e) {
                 return false;
             }
