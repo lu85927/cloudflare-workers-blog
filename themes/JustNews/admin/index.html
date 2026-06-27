@@ -107,13 +107,16 @@
 				<button class="btn btn-primary" data-toggle="modal" data-target="#pageModal">新建单页</button>
 			</div>
 			<table class="table table-striped" id="pageListTable">
-				<tr>
-					<th>页面别名(link)</th>
-					<th>页面标题</th>
-					<th>更新日期</th>
-					<th>访问地址</th>
-					<th>操作</th>
-				</tr>
+				<thead>
+					<tr>
+						<th>页面别名(link)</th>
+						<th>页面标题</th>
+						<th>更新日期</th>
+						<th>访问地址</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
 			</table>
 		</div>
 	</div>
@@ -259,47 +262,61 @@
 		});
 	});
 
-	// ====== 单页管理函数（已修复 editPage） ======
+	// ====== 单页管理函数（完全重写，确保数据正确） ======
 	function renderPageList(list) {
-		var html = "";
-		for(var i=0; i<list.length; i++){
-			var item = list[i];
-			var url = "/page/" + item.link;
-			html += `<tr>
-				<td>${item.link}</td>
-				<td>${item.title}</td>
-				<td>${item.updateDate}</td>
-				<td><a target="_blank" href="${url}">${url}</a></td>
-				<td>
-					<button class="btn btn-xs btn-info" onclick="editPage('${item.link}')">编辑</button>
-					<button class="btn btn-xs btn-danger" onclick="delPage('${item.link}')">删除</button>
-				</td>
-			</tr>`;
+		var tbody = $("#pageListTable tbody");
+		tbody.empty();
+		if (!list || list.length === 0) {
+			tbody.append('<tr><td colspan="5" class="text-center">暂无单页</td></tr>');
+			return;
 		}
-		$("#pageListTable").find("tr:gt(0)").remove();
-		$("#pageListTable").append(html);
+		for (var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var url = "/page/" + encodeURIComponent(item.link);
+			var row = $('<tr>')
+				.append($('<td>').text(item.link))
+				.append($('<td>').text(item.title))
+				.append($('<td>').text(item.updateDate || ''))
+				.append($('<td>').html('<a target="_blank" href="' + url + '">' + url + '</a>'))
+				.append($('<td>').html(
+					'<button class="btn btn-xs btn-info" onclick="editPage(\'' + item.link + '\')">编辑</button> ' +
+					'<button class="btn btn-xs btn-danger" onclick="delPage(\'' + item.link + '\')">删除</button>'
+				));
+			tbody.append(row);
+		}
 	}
 
 	function editPage(link) {
-		$.get("/admin/getPage/" + link, function(res){
-			// 检查是否返回了错误信息
-			if (res.msg && res.msg === "页面不存在") {
-				alert("该页面数据不存在，请重新创建或刷新列表");
-				location.reload(); // 刷新页面重新加载列表
-				return;
+		$.ajax({
+			url: "/admin/getPage/" + encodeURIComponent(link),
+			type: "GET",
+			dataType: "json",
+			success: function(data) {
+				// 检查是否返回错误
+				if (data.msg && data.msg === "页面不存在") {
+					alert("该页面数据不存在，请刷新列表或重新创建。");
+					location.reload();
+					return;
+				}
+				// 确保 data 是对象且有内容
+				if (typeof data !== 'object' || data === null || Object.keys(data).length === 0) {
+					alert("返回的数据格式错误，请检查 Worker。");
+					return;
+				}
+				// 回填数据（使用 || '' 避免 undefined）
+				$('#oldLink').val(data.link || '');
+				$('#pageLink').val(data.link || '');
+				$('#pageTitle').val(data.title || '');
+				$('#pageKeywords').val(data.keywords || '');
+				if (window.pageEditor) {
+					window.pageEditor.setMarkdown(data.contentMD || '');
+				}
+				$('#pageModalLabel').text("编辑单页：" + (data.title || data.link || ''));
+				$('#pageModal').modal('show');
+			},
+			error: function(xhr, status, err) {
+				alert("请求失败：" + err + "\n请检查网络或Worker状态。");
 			}
-			var data = res;
-			$('#oldLink').val(data.link || '');
-			$('#pageLink').val(data.link || '');
-			$('#pageTitle').val(data.title || '');
-			$('#pageKeywords').val(data.keywords || '');
-			if (window.pageEditor) {
-				window.pageEditor.setMarkdown(data.contentMD || '');
-			}
-			$('#pageModalLabel').text("编辑单页：" + (data.title || ''));
-			$('#pageModal').modal('show');
-		}).fail(function() {
-			alert("请求失败，请检查网络或Worker状态");
 		});
 	}
 
@@ -315,24 +332,35 @@
 			contentType: "application/json; charset=utf-8",
 			data: JSON.stringify(formArray),
 			dataType: "json",
-			success: function(ret){
+			success: function(ret) {
 				alert(ret.msg);
-				if(ret.rst){
+				if (ret.rst) {
 					$('#pageModal').modal('hide');
-					$.get("/admin/list", function(){ location.reload(); });
+					// 刷新单页列表
+					$.get("/admin/list", function() {
+						location.reload();
+					});
 				}
 			},
 			error: function(xhr, status, err) {
-				alert("请求失败：" + err);
+				alert("保存失败：" + err);
 			}
 		});
 	}
 
 	function delPage(link) {
-		if(!confirm("确定删除页面 " + link + "？删除后无法恢复！")) return;
-		$.get("/admin/deletePage/" + link, function(ret){
-			alert(ret.msg);
-			if(ret.rst) location.reload();
+		if (!confirm("确定删除页面 " + link + "？删除后无法恢复！")) return;
+		$.ajax({
+			url: "/admin/deletePage/" + encodeURIComponent(link),
+			type: "GET",
+			dataType: "json",
+			success: function(ret) {
+				alert(ret.msg);
+				if (ret.rst) location.reload();
+			},
+			error: function() {
+				alert("删除请求失败");
+			}
 		});
 	}
 
