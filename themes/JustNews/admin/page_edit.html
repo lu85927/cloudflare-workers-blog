@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>编辑页面 - CF-blog后台</title>
+    <link rel="icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/css/editormd.css" />
+    <script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        .container { margin-top: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { font-weight: bold; }
+        .btn-group { margin-top: 10px; }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <ul class="nav nav-tabs">
+            <li><a href="/admin/pageList">返回页面列表</a></li>
+            <li class="active"><a href="#">编辑页面</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <h3>编辑页面</h3>
+    <form id="editForm" action="/admin/pageSave" method="POST" enctype="application/x-www-form-urlencoded">
+        <!-- 隐藏字段：是否为编辑（用于区分新建/更新） -->
+        <input type="hidden" name="_isEdit" id="_isEdit" value="true" />
+        
+        <div class="form-group">
+            <label for="slug">页面 Slug（唯一标识，如 about）</label>
+            <input type="text" class="form-control" name="slug" id="slug" placeholder="例如 about" value="<!--{pageSlug}-->" required>
+            <small class="text-muted">访问地址为 /p/{{slug}}</small>
+        </div>
+
+        <div class="form-group">
+            <label for="title">页面标题</label>
+            <input type="text" class="form-control" name="title" id="title" placeholder="标题" value="<!--{pageTitle}-->" required>
+        </div>
+
+        <div class="form-group">
+            <label for="content-html">内容（支持 HTML）</label>
+            <!-- 使用 textarea 存储 HTML 内容，或集成 Editor.md -->
+            <textarea class="form-control" name="content-html" id="content-html" rows="15" style="font-family: monospace;"><!--{pageContent}--></textarea>
+            <small>可直接粘贴 HTML，也可后续升级为 Markdown 编辑器</small>
+        </div>
+
+        <div class="form-group">
+            <label for="createDate">创建日期</label>
+            <input type="datetime-local" class="form-control" name="createDate" id="createDate" value="<!--{pageCreateDate}-->" required>
+        </div>
+
+        <div class="form-group">
+            <label for="keywords">SEO 关键词</label>
+            <input type="text" class="form-control" name="keywords" id="keywords" placeholder="关键词1,关键词2" value="<!--{pageKeywords}-->">
+        </div>
+
+        <div class="form-group">
+            <label for="description">SEO 描述</label>
+            <textarea class="form-control" name="description" id="description" rows="3" placeholder="页面描述"><!--{pageDescription}--></textarea>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">保存页面</button>
+            <a href="/admin/pageList" class="btn btn-default">取消</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // 如果是新建页面（没有 slug），隐藏 _isEdit 并清空 slug 字段
+    $(function() {
+        var slug = $('#slug').val();
+        if (!slug) {
+            $('#_isEdit').val('false');
+        }
+    });
+</script>
+</body>
+</html>
