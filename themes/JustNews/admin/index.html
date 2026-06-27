@@ -259,7 +259,7 @@
 		});
 	});
 
-	// ====== 单页管理函数 ======
+	// ====== 单页管理函数（已修复 editPage） ======
 	function renderPageList(list) {
 		var html = "";
 		for(var i=0; i<list.length; i++){
@@ -282,20 +282,27 @@
 
 	function editPage(link) {
 		$.get("/admin/getPage/" + link, function(res){
+			// 检查是否返回了错误信息
+			if (res.msg && res.msg === "页面不存在") {
+				alert("该页面数据不存在，请重新创建或刷新列表");
+				location.reload(); // 刷新页面重新加载列表
+				return;
+			}
 			var data = res;
-			$('#oldLink').val(data.link);
-			$('#pageLink').val(data.link);
-			$('#pageTitle').val(data.title);
-			$('#pageKeywords').val(data.keywords);
+			$('#oldLink').val(data.link || '');
+			$('#pageLink').val(data.link || '');
+			$('#pageTitle').val(data.title || '');
+			$('#pageKeywords').val(data.keywords || '');
 			if (window.pageEditor) {
 				window.pageEditor.setMarkdown(data.contentMD || '');
 			}
-			$('#pageModalLabel').text("编辑单页：" + data.title);
+			$('#pageModalLabel').text("编辑单页：" + (data.title || ''));
 			$('#pageModal').modal('show');
+		}).fail(function() {
+			alert("请求失败，请检查网络或Worker状态");
 		});
 	}
 
-	// ====== 修复：使用表单数组格式 ======
 	function savePageData() {
 		var formArray = $("#pageForm").serializeArray();
 		formArray.push({ name: "contentMD", value: window.pageEditor.getMarkdown() });
