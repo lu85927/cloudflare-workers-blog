@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ &title }}</title>
+    <meta name="keywords" content="{{ &keyWords }}" />
+    <meta name="description" content="{{ &OPT.siteDescription }}" />
+    {{ &OPT.codeBeforHead }}
+    <!-- 自定义 CSS 和字体等，需从原主题迁移 -->
+    <link rel="stylesheet" href="https://你的CDN地址/pure-blog/style.css">
+</head>
+<body class="home">
+    <header class="header" {{ #OPT.banner_url }}style="background-image: url({{ &OPT.banner_url }});"{{ /OPT.banner_url }}>
+        <div class="inner pw">
+            <div class="logo">
+                <a href="/" rel="home">
+                    {{ #OPT.logo_url }}
+                        <img src="{{ &OPT.logo_url }}" alt="{{ &OPT.siteName }}" />
+                    {{ /OPT.logo_url }}
+                    {{ ^OPT.logo_url }}
+                        <strong>{{ &OPT.siteName }}</strong>
+                    {{ /OPT.logo_url }}
+                </a>
+            </div>
+            <!-- 搜索框：CF-Blog 没有内置搜索，可以改为自定义链接或移除 -->
+            <form role="search" method="get" action="/search/" class="search-form">
+                <input type="search" class="search-field" placeholder="搜索…" value="" name="s" />
+                <button type="submit" class="search-submit">搜索</button>
+            </form>
+        </div>
+    </header>
+
+    <div class="container pw container-index">
+        <div class="content-wp">
+            <div class="main">
+                <div class="articles-list" id="J_postList">
+                    {{ #articleList }}
+                    <article class="post-{{ &id }} post type-post status-publish format-standard hentry">
+                        <!-- 文章头部 -->
+                        <div class="entry-header">
+                            <h2 class="entry-title"><a href="{{ &url }}" rel="bookmark">{{ &title }}</a></h2>
+                            <div class="entry-meta">
+                                <span class="posted-on">{{ &createDate10 }}</span>
+                                {{ #category }}
+                                    <span class="cat-links"><a href="/category/{{&.}}" rel="category tag">{{&.}}</a></span>
+                                {{ /category }}
+                            </div>
+                        </div>
+                        <!-- 文章内容摘要 -->
+                        <div class="entry-summary">
+                            <p>{{ &contentText }} ...</p>
+                            <a href="{{ &url }}" class="more-link">阅读全文</a>
+                        </div>
+                    </article>
+                    {{ /articleList }}
+                </div>
+                <div class="loading-bar"></div>
+                <ul class="pagination">
+                    {{ #pageNewer }}
+                        <li class="prev"><a href="{{ &url }}">上一页</a></li>
+                    {{ /pageNewer }}
+                    {{ #pageOlder }}
+                        <li class="next"><a href="{{ &url }}">下一页</a></li>
+                    {{ /pageOlder }}
+                </ul>
+            </div>
+
+            <!-- 侧边栏 -->
+            <aside class="sidebar">
+                <!-- 分类目录 -->
+                <section class="widget widget_categories">
+                    <h3 class="widget-title">分类</h3>
+                    <ul>
+                        {{ #widgetCategoryList }}
+                            <li><a href="/category/{{&.}}">{{&.}}</a></li>
+                        {{ /widgetCategoryList }}
+                    </ul>
+                </section>
+                <!-- 标签 -->
+                <section class="widget widget_tags">
+                    <h3 class="widget-title">标签</h3>
+                    <div class="tagcloud">
+                        {{ #widgetTagsList }}
+                            <a href="/tags/{{&.}}">{{&.}}</a>
+                        {{ /widgetTagsList }}
+                    </div>
+                </section>
+                <!-- 近期文章 -->
+                <section class="widget widget_recent_entries">
+                    <h3 class="widget-title">近期文章</h3>
+                    <ul>
+                        {{ #widgetRecentlyList }}
+                            <li><a href="{{ &url }}">{{ &title }}</a> <span class="post-date">{{ &createDate10 }}</span></li>
+                        {{ /widgetRecentlyList }}
+                    </ul>
+                </section>
+                <!-- 链接（友情链接） -->
+                <section class="widget widget_links">
+                    <h3 class="widget-title">链接</h3>
+                    <ul>
+                        {{ #widgetLinkList }}
+                            <li><a href="{{ &url }}" target="_blank">{{ &title }}</a></li>
+                        {{ /widgetLinkList }}
+                    </ul>
+                </section>
+                {{ &OPT.widgetOther }}
+            </aside>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="pw pw-v">
+            <div class="copyright">
+                {{ &OPT.copyRight }}
+                {{ #OPT.footer.miit_id }}
+                    <a class="pdh" href="https://beian.miit.gov.cn/" rel="nofollow" target="_blank">{{ &OPT.footer.miit_id }}</a>
+                {{ /OPT.footer.miit_id }}
+                {{ #OPT.footer.gongan }}
+                    <a class="pdh item-ga" href="//www.beian.gov.cn/portal/registerSystemInfo" rel="nofollow" target="_blank">{{ &OPT.footer.gongan }}</a>
+                {{ /OPT.footer.gongan }}
+                <span class="pwb">Design by <a href="https://www.wbolt.com" target="_blank">闪电博</a></span>
+            </div>
+            <!-- 社交图标（需从OPT配置中读取，可扩展） -->
+            {{ #OPT.social_items }}
+                <div class="social-icons">
+                    <!-- 循环输出社交链接 -->
+                </div>
+            {{ /OPT.social_items }}
+        </div>
+    </footer>
+
+    {{ &OPT.codeBeforBody }}
+    <a class="bktop" id="J_backTop" href="#" rel="nofollow" title="返回页顶"><svg ...></svg></a>
+</body>
+</html>
