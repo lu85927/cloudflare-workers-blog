@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>CF-blog后台</title>
+    <link rel="icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico" />
+	<link rel="shortcut icon" type="image/x-icon"  href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/css/editormd.css" />
+    <link rel="stylesheet" href="https://cdn.staticfile.org/bootstrap-select/1.9.4/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    
+    <script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-zh_CN.min.js"></script>
+	<style>
+		.bootstrap-select>.dropdown-toggle { z-index:auto; }
+		.modal-body .editormd { z-index: 1050; }
+	</style>
+</head>
+<body>
+
+<nav class="navbar navbar-default " role="navigation">
+	<div class="container-fluid">
+	<div>
+		<ul id="myTab" class="nav nav-tabs">
+			<li><a href="/" >CF-blog</a></li>
+			<li><a href="#list" data-toggle="tab">我的文章</a></li>
+			<li class="active"><a href="#new" data-toggle="tab">新建</a></li>
+			<li><a href="#pageTab" data-toggle="tab">单页管理</a></li>
+			<li><a href="#config" data-toggle="tab">设置</a></li>
+			<li><a href="#pub" data-toggle="tab">发布</a></li>
+		</ul>
+	</div>
+	</div>
+</nav>
+
+<div id="myTabContent" class="tab-content" style="padding-top: 60px;">
+	<!-- 文章列表 -->
+	<div class="tab-pane fade" id="list">
+		<div class="container" >
+			<table class="table  table-striped" id="articleList">
+				  <tr><td>ID</td><td>标题</td><td>创建日期</td></tr>
+			</table>
+			<input type="hidden"  name="page" id="page" value='1'>
+			<a id="loadmore" class="btn btn-default">加载更多...</a>
+		</div> 
+	</div>
+
+	<!-- 新建文章 -->
+	<div class="tab-pane fade in active" id="new">
+		<div class="container">
+			<h3 id="labelNew">新增</h3>   
+			<form id="addNewForm"  class="form-inline" >
+				<div class="form-group" style="width: 98%">
+					<input type="hidden" class="form-control" name="id" id="id" >
+					<input type="text" class="form-control" name="title" id="title" placeholder="标题" style="width: 100%;" required="true">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">特色图片</label>
+					<input type="url" class="form-control" style="width: 400px;"  name="img" id="img" placeholder="" >
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">永久链接</label>
+					<input type="text" class="form-control" name="link" id="link" placeholder="" required="true">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">创建日期</label>
+					<input type="datetime-local" class="form-control" id="createDate" name="createDate" placeholder=""  required="true">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">分类</label>
+					<select class="selectpicker" multiple name="category[]" id="category">
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">标签</label>
+					<input type="text" class="form-control" name="tags" id="tags" placeholder="标签1,标签2">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">权重</label>
+					<input type="text" class="form-control" name="priority" id="priority" value='0.5' placeholder="权重">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail2">更新频率</label>
+					    <select class="form-control" id="changefreq" name="changefreq">
+						<option value="daily" selected  = "selected" >daily</option>
+						<option value="hourly" >hourly</option>
+						<option value="weekly" >weekly</option>
+						<option value="monthly" >monthly</option>
+						<option value="yearly" >yearly</option>
+						<option value="never" >never</option>
+						<option value="always" >always</option>
+					    </select>
+				</div>
+					<a  tabindex="0"  role="button"  type="submit" id="btn_saveAddNew" class="btn btn-default" onclick="saveAddNew()">保存</a>
+				<div id="content"><textarea style="display:none;"></textarea></div>
+			</form>
+		</div>
+	</div>
+
+	<!-- ====== 单页管理面板 ====== -->
+	<div class="tab-pane fade" id="pageTab">
+		<div class="container">
+			<div class="row" style="margin-bottom:15px;">
+				<button class="btn btn-primary" data-toggle="modal" data-target="#pageModal">新建单页</button>
+			</div>
+			<table class="table table-striped" id="pageListTable">
+				<thead>
+					<tr>
+						<th>页面别名(link)</th>
+						<th>页面标题</th>
+						<th>更新日期</th>
+						<th>访问地址</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- 单页弹窗 -->
+	<div class="modal fade" id="pageModal" tabindex="-1" role="dialog" aria-labelledby="pageModalLabel">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="pageModalLabel">新建自定义单页</h4>
+				</div>
+				<div class="modal-body">
+					<form id="pageForm">
+						<input type="hidden" id="oldLink" name="oldLink">
+						<div class="form-group">
+							<label>页面别名(唯一，英文，如 about / links)</label>
+							<input class="form-control" id="pageLink" name="link" required>
+						</div>
+						<div class="form-group">
+							<label>页面标题</label>
+							<input class="form-control" id="pageTitle" name="title" required>
+						</div>
+						<div class="form-group">
+							<label>SEO关键词(逗号分隔)</label>
+							<input class="form-control" id="pageKeywords" name="keywords">
+						</div>
+						<div class="form-group">
+							<label>页面内容(Markdown)</label>
+							<div id="pageMdEditor">
+								<textarea style="display:none;" name="contentMD"></textarea>
+							</div>
+						</div>
+						<input type="hidden" id="pageHtml" name="contentHtml">
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" onclick="savePageData()">保存单页</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 设置 -->
+	<div class="tab-pane fade" id="config">
+		<div class="container" >
+			<form id="configForm" role="form" >
+				<div class="form-group">
+				    <label for="name">分类, 例:<code>["类别A","类别B","类别C","类别D"]</code></label>
+					<textarea class="form-control" id="WidgetCategory" name="WidgetCategory" rows="3" placeholder='["分类A","分类B"]'></textarea>
+				</div>
+				<div class="form-group">
+				    <label for="name">菜单, 例:<code>[{"title":"技术文章","url":"/category/技术文章"},{"title":"管理","url":"/admin"}]</code></label>
+					<textarea class="form-control" id="WidgetMenu" name="WidgetMenu" rows="5"  placeholder='[
+	{"title":"菜单A"	,"url":"/category/菜单A"},
+	{"title":"菜单B"	,"url":"/category/菜单B"}
+]'></textarea>
+				</div>
+				<div class="form-group">
+				    <label for="name">其他链接, 例:<code>[{"title":"我的好友","url":"https://blog.gezhong.vip/"},{"title":"谷歌","url":"https://www.google.com/"}]</code></label>
+					<textarea class="form-control" id="WidgetLink" name="WidgetLink" rows="5"  placeholder='[
+	{"title":"好友"	,"url":"https://blog.gezhong.vip/"},
+	{"title":"谷歌"	,"url":"https://www.google.com/"}
+]'></textarea>
+				</div>
+				<a  tabindex="0"  role="button"  type="submit" id="btn_saveConfig" class="btn btn-default" onclick="saveConfig()">保存</a>
+			</form>
+			<form id="importForm" role="form" >
+				<div class="form-group">
+				    <label for="name">导出/导入</label>
+					<textarea class="form-control" id="importJson" name="importJson" rows="3" placeholder='复制完整的导出json'></textarea>
+				</div>
+				<a  tabindex="0"  role="button"  type="submit" id="btn_import" class="btn btn-default" onclick="importBlog()">导入</a>
+				<a  tabindex="0"  role="button"  type="submit" id="btn_export" class="btn btn-default"  href="/admin/export/" >导出</a>
+			</form>
+		</div>
+	</div>
+
+	<!-- 发布 -->
+	<div class="tab-pane fade" id="pub">
+		<div class="container" >
+			<div class="jumbotron" >
+				<p class="lead">
+				由于前端使用缓存,以下操作需要发布:新建文章、发布文章、修改后台配置、修改workers配置、新增/修改单页</br>
+				前端生效需要ctrl+F5 强制刷新
+				</p>
+				<a href="#" class="btn btn-default" onclick="publish()">发布</a>
+			</div>
+		</div>
+	</div>	
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.js"></script>   
+<script type="text/javascript">
+	$(function() {
+		$('#myTab li:eq(0) 1').tab('show');
+		var categoryJson = <!--{categoryJson}-->;
+		var menuJson = <!--{menuJson}-->;
+		var linkJson = <!--{linkJson}-->;
+		var pageJson = <!--{pageJson}-->;
+
+		var mdEditor = editormd("content", {
+			height : 640,
+			path   : "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
+			appendMarkdown : "# MarkDown", 
+			saveHTMLToTextarea : true,
+			mode : "markdown",
+			tex  : true,
+			tocm : true, 
+			codeFold : true
+		});
+
+		window.pageEditor = editormd("pageMdEditor", {
+			height: 400,
+			path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
+			appendMarkdown: "# 自定义页面内容",
+			saveHTMLToTextarea: true,
+			tex: true,
+			tocm: true,
+			codeFold: true
+		});
+
+		$('#createDate').val(new Date().toISOString().slice(0,16));
+		$('#WidgetCategory').val(JSON.stringify(categoryJson));
+		$('#WidgetMenu').val(JSON.stringify(menuJson));
+		$('#WidgetLink').val(JSON.stringify(linkJson));
+		var category = $('#category');
+		category.empty();
+		for (var i = 0; i < categoryJson.length; i++) {
+			category.append('<option id=' + categoryJson[i] + ' value=' + categoryJson[i] + '>' + categoryJson[i] + '</option>');
+		}
+		$("#loadmore").click();
+		renderPageList(pageJson);
+
+		$('#pageModal').on('hidden.bs.modal', function () {
+			$('#pageForm')[0].reset();
+			$('#oldLink').val("");
+			$('#pageModalLabel').text("新建自定义单页");
+			if (window.pageEditor) {
+				window.pageEditor.setMarkdown("# 自定义页面内容");
+			}
+		});
+	});
+
+	// ====== 单页管理函数（完全重写，确保数据正确） ======
+	function renderPageList(list) {
+		var tbody = $("#pageListTable tbody");
+		tbody.empty();
+		if (!list || list.length === 0) {
+			tbody.append('<tr><td colspan="5" class="text-center">暂无单页</td></tr>');
+			return;
+		}
+		for (var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var url = "/page/" + encodeURIComponent(item.link);
+			var row = $('<tr>')
+				.append($('<td>').text(item.link))
+				.append($('<td>').text(item.title))
+				.append($('<td>').text(item.updateDate || ''))
+				.append($('<td>').html('<a target="_blank" href="' + url + '">' + url + '</a>'))
+				.append($('<td>').html(
+					'<button class="btn btn-xs btn-info" onclick="editPage(\'' + item.link + '\')">编辑</button> ' +
+					'<button class="btn btn-xs btn-danger" onclick="delPage(\'' + item.link + '\')">删除</button>'
+				));
+			tbody.append(row);
+		}
+	}
+
+	function editPage(link) {
+		$.ajax({
+			url: "/admin/getPage/" + encodeURIComponent(link),
+			type: "GET",
+			dataType: "json",
+			success: function(data) {
+				// 检查是否返回错误
+				if (data.msg && data.msg === "页面不存在") {
+					alert("该页面数据不存在，请刷新列表或重新创建。");
+					location.reload();
+					return;
+				}
+				// 确保 data 是对象且有内容
+				if (typeof data !== 'object' || data === null || Object.keys(data).length === 0) {
+					alert("返回的数据格式错误，请检查 Worker。");
+					return;
+				}
+				// 回填数据（使用 || '' 避免 undefined）
+				$('#oldLink').val(data.link || '');
+				$('#pageLink').val(data.link || '');
+				$('#pageTitle').val(data.title || '');
+				$('#pageKeywords').val(data.keywords || '');
+				if (window.pageEditor) {
+					window.pageEditor.setMarkdown(data.contentMD || '');
+				}
+				$('#pageModalLabel').text("编辑单页：" + (data.title || data.link || ''));
+				$('#pageModal').modal('show');
+			},
+			error: function(xhr, status, err) {
+				alert("请求失败：" + err + "\n请检查网络或Worker状态。");
+			}
+		});
+	}
+
+	function savePageData() {
+		var formArray = $("#pageForm").serializeArray();
+		formArray.push({ name: "contentMD", value: window.pageEditor.getMarkdown() });
+		formArray.push({ name: "contentHtml", value: window.pageEditor.getHTML() });
+
+		var apiUrl = ($("#oldLink").val() == "") ? "/admin/saveAddPage/" : "/admin/saveEditPage/";
+		$.ajax({
+			type: "POST",
+			url: apiUrl,
+			contentType: "application/json; charset=utf-8",
+			data: JSON.stringify(formArray),
+			dataType: "json",
+			success: function(ret) {
+				alert(ret.msg);
+				if (ret.rst) {
+					$('#pageModal').modal('hide');
+					// 刷新单页列表
+					$.get("/admin/list", function() {
+						location.reload();
+					});
+				}
+			},
+			error: function(xhr, status, err) {
+				alert("保存失败：" + err);
+			}
+		});
+	}
+
+	function delPage(link) {
+		if (!confirm("确定删除页面 " + link + "？删除后无法恢复！")) return;
+		$.ajax({
+			url: "/admin/deletePage/" + encodeURIComponent(link),
+			type: "GET",
+			dataType: "json",
+			success: function(ret) {
+				alert(ret.msg);
+				if (ret.rst) location.reload();
+			},
+			error: function() {
+				alert("删除请求失败");
+			}
+		});
+	}
+
+	// ====== 原有函数（未改动） ======
+	$("#loadmore").click(function(){
+		var page=$("#page").val();
+		$.ajax({
+			url:"/admin/getList/" + page + "/",
+			type:'GET',
+			dataType:"json",
+			success:function(data){
+				tableContent="";
+				$.each(data,function(i){
+					var Info = data[i];
+					var num = i+1;
+					tableContent += '<tr><td>'+Info.id+'</td><td><a href="/admin/edit/'+Info.id+'/">'+Info.title+'</a></td><td>'+Info.createDate.replace("T","")+'</td></tr>';
+				})
+				$("#articleList").append(tableContent);
+				$("#page").val(++page);
+			}
+		});
+	});
+
+	function saveAddNew(){
+		if(
+			$('#WidgetMenu').val() == "" || $('#WidgetMenu').val() == null
+			|| $('#createDate').val() == "" || $('#createDate').val() == null
+			|| $('#createDate').val() == "" || $('#createDate').val() == null
+		){
+		   alert("信息不全");
+		   return;
+		}
+		var postURL = "/admin/saveEdit/";
+		if ($('#id').val() == "" || $('#id').val() == null)
+			postURL=  "/admin/saveAddNew/";
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			url: postURL,
+			contentType: "application/json; charset=utf-8",
+			data: JSON.stringify($("#addNewForm").serializeArray()), 
+			success: function (result) {
+				if ("id" in result){
+					$('#id').val(result.id);
+					$('#labelNew').text("编辑:"+result.id);
+					alert(result.msg);
+				} else {
+					alert("失败");
+				}
+			}
+		});
+	}
+
+	function saveConfig(){
+		if(!isJSON($('#WidgetCategory').val())){
+			alert("分类格式错误"); 
+			return false;
+		}
+		if(!isJSON($('#WidgetMenu').val())){
+			alert("菜单格式错误"); 
+			return false;
+		}
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			contentType: "application/json; charset=utf-8",
+			url: "/admin/saveConfig/",
+			data: JSON.stringify($("#configForm").serializeArray()), 
+			success: function (result) {
+				alert(result.msg);
+			}
+		});
+	}
+
+	function importBlog(){
+		if(!isJSON($('#importJson').val())){
+			alert("导入格式错误"); 
+			return false;
+		}
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			contentType: "application/json; charset=utf-8",
+			url: "/admin/import/",
+			data: JSON.stringify($("#importForm").serializeArray()), 
+			success: function (result) {
+				alert(result.msg);
+			}
+		});
+	}
+
+	function publish(){
+		if (confirm("确定吗?发布将清理所有静态缓存,重新生成")==false){ 
+			return false; 
+		}
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			contentType: "application/json; charset=utf-8",
+			url: "/admin/publish/",
+			success: function (result) {
+				alert(result.msg);
+			}
+		});
+	}
+
+	function isJSON(str) {
+		if (typeof str == 'string') {
+			try {
+				var obj=JSON.parse(str);
+				if(typeof obj == 'object' && obj ){
+					return true;
+				}else{
+					return false;
+				}
+			} catch(e) {
+				return false;
+			}
+		}
+		return false;
+	}
+</script>
+</body>
+</html>
