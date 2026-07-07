@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ &title }}</title>
+    <meta name="keywords" content="{{ &keyWords }}" />
+    <meta name="description" content="{{ &OPT.siteDescription }}" />
+    {{ &OPT.codeBeforHead }}
+    <!-- 从原主题迁移的样式 -->
+    <link rel="stylesheet" href="https://你的CDN地址/pure-blog/style.css">
+</head>
+<body class="single">
+    <!-- 头部（与 index.html 相同，可复用） -->
+    <header class="header" {{ #OPT.banner_url }}style="background-image: url({{ &OPT.banner_url }});"{{ /OPT.banner_url }}>
+        <div class="inner pw">
+            <div class="logo">
+                <a href="/" rel="home">
+                    {{ #OPT.logo_url }}
+                        <img src="{{ &OPT.logo_url }}" alt="{{ &OPT.siteName }}" />
+                    {{ /OPT.logo_url }}
+                    {{ ^OPT.logo_url }}
+                        <strong>{{ &OPT.siteName }}</strong>
+                    {{ /OPT.logo_url }}
+                </a>
+            </div>
+            <!-- 搜索框（CF-Blog 无内置搜索，可保留或移除） -->
+            <form role="search" method="get" action="/search/" class="search-form">
+                <input type="search" class="search-field" placeholder="搜索…" value="" name="s" />
+                <button type="submit" class="search-submit">搜索</button>
+            </form>
+        </div>
+    </header>
+
+    <div class="container container-single pw">
+        <!-- 面包屑（CF-Blog 无内置，可简化为首页链接） -->
+        <div class="breadcrumbs">
+            <a href="/">首页</a> &raquo; <span>{{ &articleSingle.title }}</span>
+        </div>
+
+        <div class="content-wp">
+            <div class="main main-detail">
+                <div class="detail-container">
+
+                    <!-- 文章内容（对应 template-parts/content-single） -->
+                    <article class="post-{{ &articleSingle.id }} post type-post">
+                        <header class="entry-header">
+                            <h1 class="entry-title">{{ &articleSingle.title }}</h1>
+                            <div class="entry-meta">
+                                <span class="posted-on">{{ &articleSingle.createDate10 }}</span>
+                                {{ #articleSingle.category }}
+                                    <span class="cat-links">
+                                        <a href="/category/{{&.}}" rel="category tag">{{&.}}</a>
+                                    </span>
+                                {{ /articleSingle.category }}
+                            </div>
+                        </header>
+                        <div class="entry-content">
+                            {{ &articleSingle.contentHtml }}
+                        </div>
+                    </article>
+
+                    <!-- 标签（原主题 the_tags） -->
+                    <section class="panel-inner panel-tags">
+                        <div class="tag-items">
+                            {{ #articleSingle.tags }}
+                                <a href="/tags/{{&.}}" rel="tag">{{&.}}</a>
+                            {{ /articleSingle.tags }}
+                            <!-- 如果 tags 是字符串逗号分隔，则使用以下方式：
+                            {{ #articleSingle.tags_split }}
+                                <a href="/tags/{{&.}}">{{&.}}</a>
+                            {{ /articleSingle.tags_split }}
+                            -->
+                        </div>
+                    </section>
+
+                    <!-- 相关文章（原主题 get_wb_related_posts）CF-Blog 无此功能，可省略或用自定义替代 -->
+                    <div class="related-box">
+                        <div class="rb-inner">
+                            <h4>相关文章</h4>
+                            <ul>
+                                <!-- 这里可以手动构造一些链接，或从最近文章中选，但无法自动关联 -->
+                                <li><a href="#">暂无相关文章</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 上下篇导航（对应 the_post_navigation） -->
+                    <nav class="post-navigation">
+                        {{ #articleNewer }}
+                            <div class="nav-previous">
+                                <a href="{{ &url }}" rel="prev">
+                                    <span class="nav-subtitle">上一篇</span>
+                                    <span class="nav-title">{{ &title }}</span>
+                                </a>
+                            </div>
+                        {{ /articleNewer }}
+                        {{ #articleOlder }}
+                            <div class="nav-next">
+                                <a href="{{ &url }}" rel="next">
+                                    <span class="nav-subtitle">下一篇</span>
+                                    <span class="nav-title">{{ &title }}</span>
+                                </a>
+                            </div>
+                        {{ /articleOlder }}
+                    </nav>
+
+                    <!-- 评论（原主题 comments_template，现用 OPT.commentCode） -->
+                    {{ &OPT.commentCode }}
+
+                </div> <!-- .detail-container -->
+            </div> <!-- .main -->
+
+            <!-- 侧边栏（与 index.html 相同） -->
+            <aside class="sidebar">
+                <!-- 分类目录 -->
+                <section class="widget widget_categories">
+                    <h3 class="widget-title">分类</h3>
+                    <ul>
+                        {{ #widgetCategoryList }}
+                            <li><a href="/category/{{&.}}">{{&.}}</a></li>
+                        {{ /widgetCategoryList }}
+                    </ul>
+                </section>
+                <!-- 标签云 -->
+                <section class="widget widget_tags">
+                    <h3 class="widget-title">标签</h3>
+                    <div class="tagcloud">
+                        {{ #widgetTagsList }}
+                            <a href="/tags/{{&.}}">{{&.}}</a>
+                        {{ /widgetTagsList }}
+                    </div>
+                </section>
+                <!-- 近期文章 -->
+                <section class="widget widget_recent_entries">
+                    <h3 class="widget-title">近期文章</h3>
+                    <ul>
+                        {{ #widgetRecentlyList }}
+                            <li><a href="{{ &url }}">{{ &title }}</a> <span class="post-date">{{ &createDate10 }}</span></li>
+                        {{ /widgetRecentlyList }}
+                    </ul>
+                </section>
+                <!-- 链接 -->
+                <section class="widget widget_links">
+                    <h3 class="widget-title">链接</h3>
+                    <ul>
+                        {{ #widgetLinkList }}
+                            <li><a href="{{ &url }}" target="_blank">{{ &title }}</a></li>
+                        {{ /widgetLinkList }}
+                    </ul>
+                </section>
+                {{ &OPT.widgetOther }}
+            </aside>
+        </div> <!-- .content-wp -->
+    </div> <!-- .container -->
+
+    <!-- 页脚（与 index.html 相同） -->
+    <footer class="footer">
+        <div class="pw pw-v">
+            <div class="copyright">
+                {{ &OPT.copyRight }}
+                {{ #OPT.footer.miit_id }}
+                    <a class="pdh" href="https://beian.miit.gov.cn/" rel="nofollow" target="_blank">{{ &OPT.footer.miit_id }}</a>
+                {{ /OPT.footer.miit_id }}
+                {{ #OPT.footer.gongan }}
+                    <a class="pdh item-ga" href="//www.beian.gov.cn/portal/registerSystemInfo" rel="nofollow" target="_blank">{{ &OPT.footer.gongan }}</a>
+                {{ /OPT.footer.gongan }}
+                <span class="pwb">Design by <a href="https://www.wbolt.com" target="_blank">闪电博</a></span>
+            </div>
+            <!-- 社交图标（需从 OPT 读取） -->
+            {{ #OPT.social_items }}
+                <div class="social-icons">
+                    {{ #. }}
+                        {{ #img }}
+                            <a class="social-item with-popover"><!-- 图标 --><div class="popover-img"><img src="{{ img }}"></div></a>
+                        {{ /img }}
+                        {{ ^img }}
+                            <a class="social-item" href="{{ url }}" target="_blank"><!-- 图标 --></a>
+                        {{ /img }}
+                    {{ /. }}
+                </div>
+            {{ /OPT.social_items }}
+        </div>
+    </footer>
+
+    {{ &OPT.codeBeforBody }}
+    <a class="bktop" id="J_backTop" href="#" rel="nofollow" title="返回页顶"><svg xmlns="http://www.w3.org/2000/svg" width="23" height="12"><path fill-rule="evenodd" d="M21.58 12L11.5 2.33 1.42 12 0 10.63 10.79.28c.4-.37 1.03-.37 1.42 0L23 10.63 21.58 12z"/></svg></a>
+</body>
+</html>
