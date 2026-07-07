@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ &title }}</title>
+    <meta name="keywords" content="{{ &keyWords }}" />
+    <meta name="description" content="{{ &description }}" />
+    {{ &OPT.codeBeforHead }}
+    <link rel="stylesheet" href="https://你的CDN地址/pure-blog/style.css">
+</head>
+<body class="page">
+    <!-- 复用 header 部分（与 index.html 相同，可以提取为独立的 header.html 用 Mustache 的 partials 引入，但 CF-Blog 不支持 partials，建议直接复制） -->
+    <header class="header" {{ #OPT.banner_url }}style="background-image: url({{ &OPT.banner_url }});"{{ /OPT.banner_url }}>
+        <div class="inner pw">
+            <div class="logo">
+                <a href="/" rel="home">
+                    {{ #OPT.logo_url }}<img src="{{ &OPT.logo_url }}" alt="{{ &OPT.siteName }}" />{{ /OPT.logo_url }}
+                    {{ ^OPT.logo_url }}<strong>{{ &OPT.siteName }}</strong>{{ /OPT.logo_url }}
+                </a>
+            </div>
+            <form role="search" method="get" action="/search/" class="search-form">
+                <input type="search" class="search-field" placeholder="搜索…" value="" name="s" />
+                <button type="submit" class="search-submit">搜索</button>
+            </form>
+        </div>
+    </header>
+
+    <div class="container pw container-single">
+        <div class="content-wp">
+            <div class="main">
+                <article class="post page">
+                    <header class="entry-header">
+                        <h1 class="entry-title">{{ &pageTitle }}</h1>
+                        <div class="entry-meta">
+                            <span class="posted-on">创建：{{ &pageCreateDate }}</span>
+                            <span class="updated-on">更新：{{ &pageUpdateDate }}</span>
+                        </div>
+                    </header>
+                    <div class="entry-content">
+                        {{ &pageContent }}
+                    </div>
+                    <!-- 可添加评论 -->
+                    {{ &OPT.commentCode }}
+                </article>
+            </div>
+            <!-- 侧边栏与 index.html 相同，可复制 -->
+            <aside class="sidebar">
+                <!-- 分类、标签、近期文章、链接等，同 index.html -->
+                ...
+            </aside>
+        </div>
+    </div>
+
+    <!-- 页脚同 index.html -->
+    <footer class="footer">...</footer>
+    {{ &OPT.codeBeforBody }}
+    <a class="bktop" id="J_backTop" href="#" ...></a>
+</body>
+</html>
