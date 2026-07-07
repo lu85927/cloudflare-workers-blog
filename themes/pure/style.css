@@ -63,7 +63,7 @@ input:focus {
 /* ==================== 头部 ==================== */
 .header {
     background-color: #f7f7f7;
-    background-image: url(https://cdn.jsdelivr.net/gh/你的用户名/pure-blog@main/images/mask_header.png);
+    background-image: url(https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/pure/images/mask_header.png);
     background-position: 100% 0;
     background-repeat: no-repeat;
     background-size: auto 100%;
