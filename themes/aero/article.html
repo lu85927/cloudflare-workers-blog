@@ -161,46 +161,23 @@
         {{ /OPT.copyright_notice }}
 
         <!-- ====== 上一篇 / 下一篇（新增） ====== -->
-						<div class="entry-footer">
-								<div class="entry-tag">
-									{{ #articleSingle.tags }}
-										<a href="/tags/{{&.}}" rel="tag">{{&.}}</a>
-									{{ /articleSingle.tags }}
-								</div>
+ <nav class="post-navigation">
+            <span class="nav-previous">
+                {{ #articleNewer }}
+                    <a href="{{ &url }}" rel="prev">
+                        <span class="nav-title">← {{ &title }}</span>
+                    </a>
+                {{ /articleNewer }}
+            </span>
+            <span class="nav-next">
+                {{ #articleOlder }}
+                    <a href="{{ &url }}" rel="next">
+                        <span class="nav-title">{{ &title }} →</span>
+                    </a>
+                {{ /articleOlder }}
+            </span>
+        </nav>
 
-								<div class="entry-page">
-
-									{{ #articleNewer }}	
-									<div class="entry-page-prev j-lazy lazyloaded" style="background-image: url(&quot;{{ &img }}&quot;); display: block;" data-original="{{ &img }}" data-bg="{{ &img }}" fifu-width="392" fifu-height="86">
-										<a href="{{ &url }}" title="{{ &title }}" rel="prev" >
-											<span>{{ &title }}</span></a>
-										<div class="entry-page-info">
-											<span class="pull-left">
-												<i class="wpcom-icon wi">
-													<svg aria-hidden="true">
-														<use xlink:href="#wi-arrow-left-double"></use>
-													</svg>
-												</i>上一篇</span>
-											<span class="pull-right">{{ &createDate10 }}</span></div>
-									</div>
-									{{ /articleNewer }}
-
-									{{ #articleOlder }}
-									<div class="entry-page-next j-lazy lazyloaded" style="background-image: url(&quot;{{ &img }}&quot;); display: block;" data-original="{{ &img }}" data-bg="{{ &img }}" fifu-width="392" fifu-height="86">
-										<a href="{{ &url }}" title="{{ &title }}" rel="next" >
-											<span>{{ &title }}</span></a>
-										<div class="entry-page-info">
-											<span class="pull-right">下一篇
-												<i class="wpcom-icon wi">
-													<svg aria-hidden="true">
-														<use xlink:href="#wi-arrow-right-double"></use></svg>
-												</i>
-											</span>
-											<span class="pull-left">{{ &createDate10 }}</span></div>
-									</div>
-									{{ /articleOlder }}
-								</div>
-							</div>
         <!-- 评论 -->
         <div id="app-comments">
             {{ &OPT.commentCode }}
