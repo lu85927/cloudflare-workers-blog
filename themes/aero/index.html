@@ -9,7 +9,7 @@
     <link rel="shortcut icon" href="{{ &OPT.favicon }}">
     {{ &OPT.codeBeforHead }}
     <!-- 主题样式（请替换为实际CDN地址） -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/css/main.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/pure/static/css/main.min.css">
     <style>
         :root {
             --theme-color: {{ &OPT.theme_color }};
@@ -18,16 +18,88 @@
             --header-bg-color: #ffffff;
         }
         {{ &OPT.custom_css }}
+
+        /* ====== 修复：强制文章列表文字颜色（浅色模式） ====== */
+        /* 文章标题 */
+        .article-item__title a,
+        .article-item__title {
+            color: #2c3e50 !important; /* 深色文字 */
+        }
+        /* 文章摘要 */
+        .article-item__excerpt {
+            color: #555 !important;
+        }
+        /* 文章元数据（日期、统计） */
+        .article-item__meta .article-item__date,
+        .article-item__meta .article-item__stat,
+        .article-item__meta .article-item__stat i {
+            color: #888 !important;
+        }
+        /* 文章作者名 */
+        .article-item__author-name {
+            color: #555 !important;
+        }
+        /* 分类标签（如果存在） */
+        .article-item__cats a,
+        .single-article__cats a {
+            color: var(--theme-color, #409EFF) !important;
+        }
+
+        /* ====== 深色模式下的文字颜色（自动适配） ====== */
+        html[data-theme="dark"] .article-item__title a,
+        html[data-theme="dark"] .article-item__title {
+            color: #ecf0f1 !important;
+        }
+        html[data-theme="dark"] .article-item__excerpt {
+            color: #bdc3c7 !important;
+        }
+        html[data-theme="dark"] .article-item__meta .article-item__date,
+        html[data-theme="dark"] .article-item__meta .article-item__stat,
+        html[data-theme="dark"] .article-item__meta .article-item__stat i {
+            color: #95a5a6 !important;
+        }
+        html[data-theme="dark"] .article-item__author-name {
+            color: #bdc3c7 !important;
+        }
+
+        /* 上一篇/下一篇导航样式（保持一致） */
+        .post-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0 20px;
+            padding: 10px 0;
+            border-top: 1px solid var(--wb-bbc, #ebebeb);
+            border-bottom: 1px solid var(--wb-bbc, #ebebeb);
+        }
+        .post-navigation a {
+            color: var(--theme-color, #409EFF);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            display: inline-block;
+        }
+        .post-navigation a:hover {
+            background-color: rgba(64, 158, 255, 0.08);
+        }
+        .post-navigation .nav-previous { margin-right: 15px; }
+        .post-navigation .nav-next { margin-left: 15px; }
+        .post-navigation .nav-title { font-weight: 500; }
+        @media (max-width: 768px) {
+            .post-navigation { flex-direction: column; }
+            .post-navigation .nav-previous { margin-bottom: 10px; }
+            .post-navigation .nav-next { margin-left: 0; }
+        }
     </style>
 </head>
 <body class="home blog header-style-classic header-light-bg img-shadow">
 
-<!-- ====== 头部 ====== -->
+<!-- ====== 头部（与首页一致，无搜索） ====== -->
 <header class="site-header site-header--classic site-header--bg-color site-header--light-bg">
     <div class="site-header__top">
         <div class="site-header__top-inner">
             <div class="site-header__left">
-                <!-- Logo -->
                 <a href="/" class="site-logo">
                     {{ #OPT.logo_url }}
                         <img src="{{ &OPT.logo_url }}" alt="{{ &OPT.siteName }}" class="site-logo-img">
@@ -70,7 +142,7 @@
     </div>
 </header>
 
-<!-- ====== 移动端导航菜单 ====== -->
+<!-- ====== 移动端导航（同首页） ====== -->
 <nav class="site-nav site-nav--mobile">
     <div class="mobile-nav__topbar">
         <button class="mobile-nav__close nav-toggle" aria-label="关闭菜单">
@@ -102,7 +174,7 @@
     </div>
 </nav>
 
-<!-- ====== 主内容区 ====== -->
+<!-- ====== 主内容区（文章列表） ====== -->
 <div class="page-container">
     <div class="layout-container">
         <div class="layout-grid" style="display: grid; grid-template-columns: 1fr 300px; gap: 20px;">
@@ -237,35 +309,43 @@
     </div>
 </footer>
 
-<!-- ====== 主题脚本 ====== -->
-<script src="https://你的CDN地址/AeroCoreFree/static/js/main.min.js"></script>
-
-<!-- 深色模式切换 & 移动端菜单控制 -->
+<!-- ====== 唯一脚本（深色模式 + 移动菜单） ====== -->
 <script>
 (function() {
+    // 深色模式初始状态
     var default_theme_mode = "light";
-    var local_theme_mode = localStorage.getItem('theme');
-    var current_theme_mode = (local_theme_mode === 'dark' || local_theme_mode === 'light') ? local_theme_mode : default_theme_mode;
-    if (current_theme_mode === 'dark') {
+    var stored = localStorage.getItem('theme');
+    var current_theme = (stored === 'dark' || stored === 'light') ? stored : default_theme_mode;
+    if (current_theme === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
     } else {
         document.documentElement.removeAttribute('data-theme');
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        // 深色模式切换
-        var toggles = document.querySelectorAll('.theme-toggle, .mobile-nav__switch-input');
-        toggles.forEach(function(toggle) {
-            toggle.addEventListener('click', function() {
-                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-                var newTheme = isDark ? 'light' : 'dark';
-                if (newTheme === 'dark') {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                } else {
-                    document.documentElement.removeAttribute('data-theme');
-                }
-                localStorage.setItem('theme', newTheme);
-            });
+        var toggleBtns = document.querySelectorAll('.theme-toggle, .mobile-nav__switch-input');
+        var mobileSwitch = document.getElementById('mobile-nav-theme-switch');
+
+        if (mobileSwitch) {
+            mobileSwitch.checked = (document.documentElement.getAttribute('data-theme') === 'dark');
+        }
+
+        function toggleTheme() {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            var newTheme = isDark ? 'light' : 'dark';
+            if (newTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+            }
+            localStorage.setItem('theme', newTheme);
+            if (mobileSwitch) {
+                mobileSwitch.checked = (newTheme === 'dark');
+            }
+        }
+
+        toggleBtns.forEach(function(btn) {
+            btn.addEventListener('click', toggleTheme);
         });
 
         // 移动端菜单开关
@@ -277,29 +357,19 @@
                 mobileNav.classList.toggle('open');
                 document.body.classList.toggle('nav-open');
             });
-            // 点击遮罩关闭菜单（点击菜单外部区域）
             document.addEventListener('click', function(e) {
                 if (mobileNav.classList.contains('open') && !mobileNav.contains(e.target) && !navToggle.contains(e.target)) {
                     mobileNav.classList.remove('open');
                     document.body.classList.remove('nav-open');
                 }
             });
-        }
-
-        // 移动端菜单内的关闭按钮
-        var closeBtn = mobileNav ? mobileNav.querySelector('.mobile-nav__close') : null;
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function() {
-                mobileNav.classList.remove('open');
-                document.body.classList.remove('nav-open');
-            });
-        }
-
-        // 页面加载后，更新移动端开关状态
-        var mobileSwitch = document.getElementById('mobile-nav-theme-switch');
-        if (mobileSwitch) {
-            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            mobileSwitch.checked = isDark;
+            var closeBtn = mobileNav.querySelector('.mobile-nav__close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    mobileNav.classList.remove('open');
+                    document.body.classList.remove('nav-open');
+                });
+            }
         }
     });
 })();
