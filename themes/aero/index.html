@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ &title }}</title>
+    <meta name="keywords" content="{{ &keyWords }}" />
+    <meta name="description" content="{{ &OPT.siteDescription }}" />
+    <link rel="shortcut icon" href="{{ &OPT.favicon }}">
+    {{ &OPT.codeBeforHead }}
+    <!-- 主题样式（请替换为实际CDN地址） -->
+    <link rel="stylesheet" href="https://你的CDN地址/AeroCoreFree/static/css/main.min.css">
+    <style>
+        :root {
+            --theme-color: {{ &OPT.theme_color }};
+            --color-link: {{ &OPT.theme_color }};
+            --border-radius: 10px;
+            --header-bg-color: #ffffff;
+        }
+        {{ &OPT.custom_css }}
+    </style>
+</head>
+<body class="home blog header-style-classic header-light-bg img-shadow">
+
+<!-- ====== 头部 ====== -->
+<header class="site-header site-header--classic site-header--bg-color site-header--light-bg">
+    <div class="site-header__top">
+        <div class="site-header__top-inner">
+            <div class="site-header__left">
+                <!-- Logo -->
+                <a href="/" class="site-logo">
+                    {{ #OPT.logo_url }}
+                        <img src="{{ &OPT.logo_url }}" alt="{{ &OPT.siteName }}" class="site-logo-img">
+                    {{ /OPT.logo_url }}
+                    {{ ^OPT.logo_url }}
+                        <div class="site-logo-placeholder">{{ &OPT.siteName|first }}</div>
+                    {{ /OPT.logo_url }}
+                    <span class="site-logo-text">{{ &OPT.siteName }}</span>
+                </a>
+
+                <!-- 导航菜单（PC） -->
+                <nav class="site-nav site-nav--inline">
+                    <ul class="nav-list">
+                        {{ #widgetMenuList }}
+                            <li class="menu-item"><a href="{{ &url }}">{{ &title }}</a></li>
+                        {{ /widgetMenuList }}
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="site-header__actions">
+                <!-- 深色模式切换 -->
+                <button class="theme-toggle" aria-label="切换深色模式" id="theme-toggle">
+                    <svg class="theme-toggle__light" width="20" height="20" viewBox="0 0 36 36"><circle cx="18" cy="18" r="18" fill="#ffd983"/><g fill="#ffcc4d"><circle cx="10.5" cy="8.5" r="3.5"/><circle cx="20" cy="17" r="3"/><circle cx="24.5" cy="28.5" r="3.5"/><circle cx="22" cy="5" r="2"/><circle cx="3" cy="18" r="1"/><circle cx="30" cy="9" r="1"/><circle cx="15" cy="31" r="1"/><circle cx="32" cy="19" r="2"/><circle cx="10" cy="23" r="2"/></g></svg>
+                    <svg class="theme-toggle__dark" width="20" height="20" viewBox="0 0 36 36"><path fill="#ffac33" d="M16 2s0-2 2-2s2 2 2 2v2s0 2-2 2s-2-2-2-2zm18 14s2 0 2 2s-2 2-2 2h-2s-2 0-2-2s2-2 2-2zM4 16s2 0 2 2s-2 2-2 2H2s-2 0-2-2s2-2 2-2zm5.121-8.707s1.414 1.414 0 2.828s-2.828 0-2.828 0L4.878 8.708s-1.414-1.414 0-2.829c1.415-1.414 2.829 0 2.829 0zm21 21s1.414 1.414 0 2.828s-2.828 0-2.828 0l-1.414-1.414s-1.414-1.414 0-2.828s2.828 0 2.828 0zm-.413-18.172s-1.414 1.414-2.828 0s0-2.828 0-2.828l1.414-1.414s1.414-1.414 2.828 0s0 2.828 0 2.828zm-21 21s-1.414 1.414-2.828 0s0-2.828 0-2.828l1.414-1.414s1.414-1.414 2.828 0s0 2.828 0 2.828zM16 32s0-2 2-2s2 2 2 2v2s0 2-2 2s-2-2-2-2z"/><circle cx="18" cy="18" r="10" fill="#ffac33"/></svg>
+                </button>
+
+                <!-- 管理登录 -->
+                <div class="user-menu">
+                    <a href="/admin" class="header-login-btn">管理</a>
+                </div>
+
+                <!-- 移动端菜单按钮 -->
+                <button class="nav-toggle" aria-label="菜单">
+                    <svg class="nav-toggle__open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    <svg class="nav-toggle__close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ====== 移动端导航菜单 ====== -->
+<nav class="site-nav site-nav--mobile">
+    <div class="mobile-nav__topbar">
+        <button class="mobile-nav__close nav-toggle" aria-label="关闭菜单">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </div>
+    <div class="mobile-nav__body">
+        <div class="mobile-nav__section-title">浏览</div>
+        <div class="mobile-nav__menu">
+            <ul class="nav-list">
+                {{ #widgetMenuList }}
+                    <li class="menu-item"><a href="{{ &url }}">{{ &title }}</a></li>
+                {{ /widgetMenuList }}
+            </ul>
+        </div>
+        <div class="mobile-nav__section-title">设置</div>
+        <div class="mobile-nav__group">
+            <label class="mobile-nav__row mobile-nav__row--switch">
+                <span class="mobile-nav__row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </span>
+                <span class="mobile-nav__row-label">深色模式</span>
+                <span class="mobile-nav__switch">
+                    <input type="checkbox" class="mobile-nav__switch-input" id="mobile-nav-theme-switch">
+                    <span class="mobile-nav__switch-track"><span class="mobile-nav__switch-thumb"></span></span>
+                </span>
+            </label>
+        </div>
+    </div>
+</nav>
+
+<!-- ====== 主内容区 ====== -->
+<div class="page-container">
+    <div class="layout-container">
+        <div class="layout-grid" style="display: grid; grid-template-columns: 1fr 300px; gap: 20px;">
+            <!-- 左侧：文章列表 -->
+            <div>
+                <div class="main-article-list">
+                    <!-- 分类标签（可选） -->
+                    <div class="article-tabs article-tabs--left">
+                        <button class="article-tab active" data-category-id="0">最新文章</button>
+                    </div>
+
+                    <!-- 文章列表 -->
+                    <div class="article-list article-list--image_text">
+                        {{ #articleList }}
+                        <div class="article-item">
+                            <a href="{{ &url }}" class="article-item__thumb">
+                                {{ #img }}
+                                    <img src="{{ &img }}" alt="{{ &title }}" loading="lazy">
+                                {{ /img }}
+                                {{ ^img }}
+                                    <img src="https://你的CDN地址/AeroCoreFree/static/img/thumb_placeholder.svg" alt="{{ &title }}" loading="lazy">
+                                {{ /img }}
+                            </a>
+                            <div class="article-item__content">
+                                <h3 class="article-item__title">
+                                    <a href="{{ &url }}" title="{{ &title }}">{{ &title }}</a>
+                                </h3>
+                                <p class="article-item__excerpt">{{ &contentText }}...</p>
+                                <div class="article-item__meta">
+                                    <div class="article-item__meta-main">
+                                        <span class="article-item__date">{{ &createDate10 }}</span>
+                                    </div>
+                                    <div class="article-item__stats">
+                                        <span class="article-item__stat"><i class="aerocore-icon-eye"></i>{{ &views }}</span>
+                                        <span class="article-item__stat"><i class="aerocore-icon-comment"></i>{{ &comments }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{ /articleList }}
+                        {{ ^articleList }}
+                        <div class="article-empty">暂无文章</div>
+                        {{ /articleList }}
+                    </div>
+
+                    <!-- 分页 -->
+                    <div class="article-load-more" style="display:none;">
+                        <button class="load-more-btn">加载更多</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：侧边栏 -->
+            <div class="layout-col--sidebar">
+                <div class="widget-area">
+                    <!-- 近期文章 -->
+                    <div class="widget widget_block">
+                        <div class="wp-block-group">
+                            <h2 class="wp-block-heading">近期文章</h2>
+                            <ul class="wp-block-latest-posts__list wp-block-latest-posts">
+                                {{ #widgetRecentlyList }}
+                                <li><a class="wp-block-latest-posts__post-title" href="{{ &url }}">{{ &title }}</a></li>
+                                {{ /widgetRecentlyList }}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 分类 -->
+                    <div class="widget widget_categories">
+                        <h2 class="widget-title">分类</h2>
+                        <ul>
+                            {{ #widgetCategoryList }}
+                                <li><a href="/category/{{&.}}">{{&.}}</a></li>
+                            {{ /widgetCategoryList }}
+                        </ul>
+                    </div>
+
+                    <!-- 标签 -->
+                    <div class="widget widget_tags">
+                        <h2 class="widget-title">标签</h2>
+                        <div class="tagcloud">
+                            {{ #widgetTagsList }}
+                                <a href="/tags/{{&.}}" class="tag-cloud-link">{{&.}}</a>
+                            {{ /widgetTagsList }}
+                        </div>
+                    </div>
+
+                    <!-- 链接 -->
+                    <div class="widget widget_links">
+                        <h2 class="widget-title">链接</h2>
+                        <ul>
+                            {{ #widgetLinkList }}
+                                <li><a href="{{ &url }}" target="_blank">{{ &title }}</a></li>
+                            {{ /widgetLinkList }}
+                        </ul>
+                    </div>
+
+                    {{ &OPT.widgetOther }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== 页脚 ====== -->
+<footer class="site-footer">
+    <div class="site-footer__waves">
+        <svg class="site-footer__wave-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none">
+            <defs>
+                <path id="core-wave" d="M-160 44c30 0 58-18 88-18s58 18 88 18 58-18 88-18 58 18 88 18v44h-352z"></path>
+            </defs>
+            <g class="site-footer__wave-parallax">
+                <use xlink:href="#core-wave" x="48" y="0" fill="#6a7277" opacity="0.7"></use>
+                <use xlink:href="#core-wave" x="48" y="3" fill="#3f4549" opacity="0.5"></use>
+                <use xlink:href="#core-wave" x="48" y="6" fill="#22292d"></use>
+            </g>
+        </svg>
+    </div>
+    <div class="site-footer__inner">
+        <div class="site-footer__main">
+            <div class="site-footer__left">
+                <div class="site-footer__info">
+                    <div class="site-footer__name">{{ &OPT.siteName }}</div>
+                    <div class="site-footer__desc">{{ &OPT.siteDescription }}</div>
+                </div>
+                <div class="site-footer__bottom">
+                    <span>Copyright &copy; {{ &current_year }} {{ &OPT.siteName }}</span>
+                    <span>{{ &OPT.copyRight }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ====== 主题脚本 ====== -->
+<script src="https://你的CDN地址/AeroCoreFree/static/js/main.min.js"></script>
+
+<!-- 深色模式切换 & 移动端菜单控制 -->
+<script>
+(function() {
+    var default_theme_mode = "light";
+    var local_theme_mode = localStorage.getItem('theme');
+    var current_theme_mode = (local_theme_mode === 'dark' || local_theme_mode === 'light') ? local_theme_mode : default_theme_mode;
+    if (current_theme_mode === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // 深色模式切换
+        var toggles = document.querySelectorAll('.theme-toggle, .mobile-nav__switch-input');
+        toggles.forEach(function(toggle) {
+            toggle.addEventListener('click', function() {
+                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                var newTheme = isDark ? 'light' : 'dark';
+                if (newTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                }
+                localStorage.setItem('theme', newTheme);
+            });
+        });
+
+        // 移动端菜单开关
+        var navToggle = document.querySelector('.nav-toggle');
+        var mobileNav = document.querySelector('.site-nav--mobile');
+        if (navToggle && mobileNav) {
+            navToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                mobileNav.classList.toggle('open');
+                document.body.classList.toggle('nav-open');
+            });
+            // 点击遮罩关闭菜单（点击菜单外部区域）
+            document.addEventListener('click', function(e) {
+                if (mobileNav.classList.contains('open') && !mobileNav.contains(e.target) && !navToggle.contains(e.target)) {
+                    mobileNav.classList.remove('open');
+                    document.body.classList.remove('nav-open');
+                }
+            });
+        }
+
+        // 移动端菜单内的关闭按钮
+        var closeBtn = mobileNav ? mobileNav.querySelector('.mobile-nav__close') : null;
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                mobileNav.classList.remove('open');
+                document.body.classList.remove('nav-open');
+            });
+        }
+
+        // 页面加载后，更新移动端开关状态
+        var mobileSwitch = document.getElementById('mobile-nav-theme-switch');
+        if (mobileSwitch) {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            mobileSwitch.checked = isDark;
+        }
+    });
+})();
+</script>
+
+{{ &OPT.codeBeforBody }}
+</body>
+</html>
