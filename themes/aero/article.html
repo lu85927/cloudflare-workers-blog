@@ -10,6 +10,20 @@
     {{ &OPT.codeBeforHead }}
     <!-- 主题样式（请替换为实际CDN地址） -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/css/main.min.css">
+    		<link rel='stylesheet' id='stylesheet-css' href='https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/JustNews/files/main.css' type='text/css' media='all' />
+		<link rel='stylesheet' id='font-awesome-css' href='https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/JustNews/files/font-awesome.css?ver=6.1.2' type='text/css' media='all' />
+		<link rel='stylesheet' id='wp-block-library-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/block-library/style.min.css?ver=5.6' type='text/css' media='all' />
+		<link rel='stylesheet' id='wp-components-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/components/style.min.css?ver=5.6' type='text/css' media='all' />
+		<link rel='stylesheet' id='wp-editor-font-css' href='https://fonts.geekzu.org/css?family=Noto+Serif%3A400%2C400i%2C700%2C700i&#038;ver=5.6' type='text/css' media='all' />
+		<link rel='stylesheet' id='wp-block-editor-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/block-editor/style.min.css?ver=5.6' type='text/css' media='all' />
+		<link rel='stylesheet' id='wp-nux-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/nux/style.min.css?ver=5.6' type='text/css' media='all' />
+		<link rel='stylesheet' id='wp-editor-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/editor/style.min.css?ver=5.6' type='text/css' media='all' />
+		<link rel='stylesheet' id='mux_video_block_style-css' href='https://cdn.jsdelivr.net/gh/newexsexy/wp@master/wp-content/plugins/ilab-media-tools/public/blocks/mediacloud-mux.blocks.style.min.css' type='text/css' media='all' />
+		
+		<link rel='stylesheet' id='emojify-css' href='https://cdn.jsdelivr.net/npm/emojify.js@1.1.0/dist/css/basic/emojify.min.css?ver=1.1.0' type='text/css' media='all' />
+		<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js?ver=3.5.1' id='jquery-core-js'></script>
+		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.6/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.3.2' id='jquery-migrate-js'></script>
+		<link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.3.2/styles/tomorrow-night-bright.min.css">
     <style>
         :root {
             --theme-color: {{ &OPT.theme_color }};
@@ -160,23 +174,46 @@
         {{ /OPT.copyright_notice }}
 
         <!-- ====== 上一篇 / 下一篇（新增） ====== -->
-        <nav class="post-navigation">
-            <span class="nav-previous">
-                {{ #articleNewer }}
-                    <a href="{{ &url }}" rel="prev">
-                        <span class="nav-title">← {{ &title }}</span>
-                    </a>
-                {{ /articleNewer }}
-            </span>
-            <span class="nav-next">
-                {{ #articleOlder }}
-                    <a href="{{ &url }}" rel="next">
-                        <span class="nav-title">{{ &title }} →</span>
-                    </a>
-                {{ /articleOlder }}
-            </span>
-        </nav>
+						<div class="entry-footer">
+								<div class="entry-tag">
+									{{ #articleSingle.tags }}
+										<a href="/tags/{{&.}}" rel="tag">{{&.}}</a>
+									{{ /articleSingle.tags }}
+								</div>
 
+								<div class="entry-page">
+
+									{{ #articleNewer }}	
+									<div class="entry-page-prev j-lazy lazyloaded" style="background-image: url(&quot;{{ &img }}&quot;); display: block;" data-original="{{ &img }}" data-bg="{{ &img }}" fifu-width="392" fifu-height="86">
+										<a href="{{ &url }}" title="{{ &title }}" rel="prev" >
+											<span>{{ &title }}</span></a>
+										<div class="entry-page-info">
+											<span class="pull-left">
+												<i class="wpcom-icon wi">
+													<svg aria-hidden="true">
+														<use xlink:href="#wi-arrow-left-double"></use>
+													</svg>
+												</i>上一篇</span>
+											<span class="pull-right">{{ &createDate10 }}</span></div>
+									</div>
+									{{ /articleNewer }}
+
+									{{ #articleOlder }}
+									<div class="entry-page-next j-lazy lazyloaded" style="background-image: url(&quot;{{ &img }}&quot;); display: block;" data-original="{{ &img }}" data-bg="{{ &img }}" fifu-width="392" fifu-height="86">
+										<a href="{{ &url }}" title="{{ &title }}" rel="next" >
+											<span>{{ &title }}</span></a>
+										<div class="entry-page-info">
+											<span class="pull-right">下一篇
+												<i class="wpcom-icon wi">
+													<svg aria-hidden="true">
+														<use xlink:href="#wi-arrow-right-double"></use></svg>
+												</i>
+											</span>
+											<span class="pull-left">{{ &createDate10 }}</span></div>
+									</div>
+									{{ /articleOlder }}
+								</div>
+							</div>
         <!-- 评论 -->
         <div id="app-comments">
             {{ &OPT.commentCode }}
