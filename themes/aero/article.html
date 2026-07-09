@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ &title }}</title>
+    <meta name="keywords" content="{{ &keyWords }}" />
+    <meta name="description" content="{{ &OPT.siteDescription }}" />
+    <link rel="shortcut icon" href="{{ &OPT.favicon }}">
+    {{ &OPT.codeBeforHead }}
+    <!-- 主题样式（请替换为实际CDN地址） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/css/main.min.css">
+    <style>
+        :root {
+            --theme-color: {{ &OPT.theme_color }};
+            --color-link: {{ &OPT.theme_color }};
+            --border-radius: 10px;
+            --header-bg-color: #ffffff;
+        }
+        {{ &OPT.custom_css }}
+        /* 评论区域样式调整（可选） */
+        #app-comments { margin-top: 30px; }
+    </style>
+</head>
+<body class="single post header-style-classic header-light-bg img-shadow">
+
+<!-- ====== 头部（与首页一致，无搜索） ====== -->
+<header class="site-header site-header--classic site-header--bg-color site-header--light-bg">
+    <div class="site-header__top">
+        <div class="site-header__top-inner">
+            <div class="site-header__left">
+                <a href="/" class="site-logo">
+                    {{ #OPT.logo_url }}
+                        <img src="{{ &OPT.logo_url }}" alt="{{ &OPT.siteName }}" class="site-logo-img">
+                    {{ /OPT.logo_url }}
+                    {{ ^OPT.logo_url }}
+                        <div class="site-logo-placeholder">{{ &OPT.siteName|first }}</div>
+                    {{ /OPT.logo_url }}
+                    <span class="site-logo-text">{{ &OPT.siteName }}</span>
+                </a>
+
+                <!-- 导航菜单（PC） -->
+                <nav class="site-nav site-nav--inline">
+                    <ul class="nav-list">
+                        {{ #widgetMenuList }}
+                            <li class="menu-item"><a href="{{ &url }}">{{ &title }}</a></li>
+                        {{ /widgetMenuList }}
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="site-header__actions">
+                <!-- 深色模式切换 -->
+                <button class="theme-toggle" aria-label="切换深色模式" id="theme-toggle">
+                    <svg class="theme-toggle__light" width="20" height="20" viewBox="0 0 36 36"><circle cx="18" cy="18" r="18" fill="#ffd983"/><g fill="#ffcc4d"><circle cx="10.5" cy="8.5" r="3.5"/><circle cx="20" cy="17" r="3"/><circle cx="24.5" cy="28.5" r="3.5"/><circle cx="22" cy="5" r="2"/><circle cx="3" cy="18" r="1"/><circle cx="30" cy="9" r="1"/><circle cx="15" cy="31" r="1"/><circle cx="32" cy="19" r="2"/><circle cx="10" cy="23" r="2"/></g></svg>
+                    <svg class="theme-toggle__dark" width="20" height="20" viewBox="0 0 36 36"><path fill="#ffac33" d="M16 2s0-2 2-2s2 2 2 2v2s0 2-2 2s-2-2-2-2zm18 14s2 0 2 2s-2 2-2 2h-2s-2 0-2-2s2-2 2-2zM4 16s2 0 2 2s-2 2-2 2H2s-2 0-2-2s2-2 2-2zm5.121-8.707s1.414 1.414 0 2.828s-2.828 0-2.828 0L4.878 8.708s-1.414-1.414 0-2.829c1.415-1.414 2.829 0 2.829 0zm21 21s1.414 1.414 0 2.828s-2.828 0-2.828 0l-1.414-1.414s-1.414-1.414 0-2.828s2.828 0 2.828 0zm-.413-18.172s-1.414 1.414-2.828 0s0-2.828 0-2.828l1.414-1.414s1.414-1.414 2.828 0s0 2.828 0 2.828zm-21 21s-1.414 1.414-2.828 0s0-2.828 0-2.828l1.414-1.414s1.414-1.414 2.828 0s0 2.828 0 2.828zM16 32s0-2 2-2s2 2 2 2v2s0 2-2 2s-2-2-2-2z"/><circle cx="18" cy="18" r="10" fill="#ffac33"/></svg>
+                </button>
+
+                <!-- 管理登录 -->
+                <div class="user-menu">
+                    <a href="/admin" class="header-login-btn">管理</a>
+                </div>
+
+                <!-- 移动端菜单按钮 -->
+                <button class="nav-toggle" aria-label="菜单">
+                    <svg class="nav-toggle__open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    <svg class="nav-toggle__close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ====== 移动端导航（同首页） ====== -->
+<nav class="site-nav site-nav--mobile">
+    <div class="mobile-nav__topbar">
+        <button class="mobile-nav__close nav-toggle" aria-label="关闭菜单">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </div>
+    <div class="mobile-nav__body">
+        <div class="mobile-nav__section-title">浏览</div>
+        <div class="mobile-nav__menu">
+            <ul class="nav-list">
+                {{ #widgetMenuList }}
+                    <li class="menu-item"><a href="{{ &url }}">{{ &title }}</a></li>
+                {{ /widgetMenuList }}
+            </ul>
+        </div>
+        <div class="mobile-nav__section-title">设置</div>
+        <div class="mobile-nav__group">
+            <label class="mobile-nav__row mobile-nav__row--switch">
+                <span class="mobile-nav__row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </span>
+                <span class="mobile-nav__row-label">深色模式</span>
+                <span class="mobile-nav__switch">
+                    <input type="checkbox" class="mobile-nav__switch-input" id="mobile-nav-theme-switch">
+                    <span class="mobile-nav__switch-track"><span class="mobile-nav__switch-thumb"></span></span>
+                </span>
+            </label>
+        </div>
+    </div>
+</nav>
+
+<!-- ====== 主内容区（文章详情） ====== -->
+<div class="page-container">
+    <div class="single-article">
+        <!-- 文章标题 & 元数据 -->
+        <div class="single-article__header">
+            <h1 class="single-article__title">{{ &articleSingle.title }}</h1>
+            <div class="single-article__meta">
+                <span>{{ &articleSingle.createDate10 }}</span>
+                {{ #articleSingle.category }}
+                    <span class="single-article__cats">
+                        <a href="/category/{{&.}}">{{&.}}</a>
+                    </span>
+                {{ /articleSingle.category }}
+                <!-- 作者信息（CF-Blog 无作者数据，可保留静态或移除） -->
+                <span>{{ &OPT.author_name }}</span>
+            </div>
+        </div>
+
+        <!-- 文章正文 -->
+        <div class="single-article__content">
+            {{ &articleSingle.contentHtml }}
+        </div>
+
+        <!-- 版权声明（可选） -->
+        {{ #OPT.copyright_notice }}
+        <div class="single-copyright">
+            <div>版权声明：</div>
+            <div>作者：{{ &OPT.author_name }}</div>
+            <div>链接：{{ &current_url }}</div>
+            <div>{{ &OPT.copyright_notice }}</div>
+        </div>
+        {{ /OPT.copyright_notice }}
+
+        <!-- 相关文章（CF-Blog 无内置，可省略或手动构造） -->
+        {{ #articleRelated }}
+        <div class="app-related-articles">
+            <div class="related-articles">
+                <div class="related-articles__title">相关文章</div>
+                <div class="related-articles__list">
+                    {{ #. }}
+                        <div class="related-article-item">
+                            <a href="{{ &url }}" class="related-article-item__link">{{ &title }}</a>
+                        </div>
+                    {{ /. }}
+                </div>
+            </div>
+        </div>
+        {{ /articleRelated }}
+
+        <!-- 评论 -->
+        <div id="app-comments">
+            {{ &OPT.commentCode }}
+        </div>
+    </div>
+</div>
+
+<!-- ====== 页脚（同首页） ====== -->
+<footer class="site-footer">
+    <div class="site-footer__waves">
+        <svg class="site-footer__wave-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none">
+            <defs>
+                <path id="core-wave" d="M-160 44c30 0 58-18 88-18s58 18 88 18 58-18 88-18 58 18 88 18v44h-352z"></path>
+            </defs>
+            <g class="site-footer__wave-parallax">
+                <use xlink:href="#core-wave" x="48" y="0" fill="#6a7277" opacity="0.7"></use>
+                <use xlink:href="#core-wave" x="48" y="3" fill="#3f4549" opacity="0.5"></use>
+                <use xlink:href="#core-wave" x="48" y="6" fill="#22292d"></use>
+            </g>
+        </svg>
+    </div>
+    <div class="site-footer__inner">
+        <div class="site-footer__main">
+            <div class="site-footer__left">
+                <div class="site-footer__info">
+                    <div class="site-footer__name">{{ &OPT.siteName }}</div>
+                    <div class="site-footer__desc">{{ &OPT.siteDescription }}</div>
+                </div>
+                <div class="site-footer__bottom">
+                    <span>Copyright &copy; {{ &current_year }} {{ &OPT.siteName }}</span>
+                    <span>{{ &OPT.copyRight }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ====== 主题脚本 ====== -->
+<script src="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/js/main.min.js"></script>
+<!-- 如果主题有单独的 single.js，也可引用 -->
+<script src="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/js/single.min.js"></script>
+
+<!-- 深色模式切换 & 移动端菜单控制（同首页） -->
+<script>
+(function() {
+    var default_theme_mode = "light";
+    var local_theme_mode = localStorage.getItem('theme');
+    var current_theme_mode = (local_theme_mode === 'dark' || local_theme_mode === 'light') ? local_theme_mode : default_theme_mode;
+    if (current_theme_mode === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // 深色模式切换
+        var toggles = document.querySelectorAll('.theme-toggle, .mobile-nav__switch-input');
+        toggles.forEach(function(toggle) {
+            toggle.addEventListener('click', function() {
+                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                var newTheme = isDark ? 'light' : 'dark';
+                if (newTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                }
+                localStorage.setItem('theme', newTheme);
+            });
+        });
+
+        // 移动端菜单开关
+        var navToggle = document.querySelector('.nav-toggle');
+        var mobileNav = document.querySelector('.site-nav--mobile');
+        if (navToggle && mobileNav) {
+            navToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                mobileNav.classList.toggle('open');
+                document.body.classList.toggle('nav-open');
+            });
+            document.addEventListener('click', function(e) {
+                if (mobileNav.classList.contains('open') && !mobileNav.contains(e.target) && !navToggle.contains(e.target)) {
+                    mobileNav.classList.remove('open');
+                    document.body.classList.remove('nav-open');
+                }
+            });
+        }
+
+        // 移动端关闭按钮
+        var closeBtn = mobileNav ? mobileNav.querySelector('.mobile-nav__close') : null;
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                mobileNav.classList.remove('open');
+                document.body.classList.remove('nav-open');
+            });
+        }
+
+        // 同步移动端开关状态
+        var mobileSwitch = document.getElementById('mobile-nav-theme-switch');
+        if (mobileSwitch) {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            mobileSwitch.checked = isDark;
+        }
+    });
+})();
+</script>
+
+{{ &OPT.codeBeforBody }}
+</body>
+</html>
