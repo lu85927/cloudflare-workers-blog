@@ -10,6 +10,9 @@
     {{ &OPT.codeBeforHead }}
     <!-- 主题样式（请替换为实际CDN地址） -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/css/main.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/js/main.min.js?v=1783263947"></script>
+    <script src="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/js/single.041cd7cb.min.js?v=1783263947"></script>
+    <script src="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/js/highlight.min.js?v=1783263947"></script>
     <style>
         :root {
             --theme-color: {{ &OPT.theme_color }};
@@ -91,6 +94,65 @@
             .post-navigation .nav-previous { margin-bottom: 10px; }
             .post-navigation .nav-next { margin-left: 0; }
         }
+        /* ====== 头部深色模式强制适配 ====== */
+/* 头部背景 */
+html[data-theme="dark"] .site-header {
+    background-color: #1e1e1e !important;
+    border-bottom: 1px solid #333 !important;
+}
+
+/* 头部 Logo 文字 */
+html[data-theme="dark"] .site-logo-text,
+html[data-theme="dark"] .site-logo-placeholder {
+    color: #ecf0f1 !important;
+}
+
+/* 导航菜单文字（PC 和移动端） */
+html[data-theme="dark"] .nav-list a,
+html[data-theme="dark"] .site-nav--inline .menu-item a {
+    color: #bdc3c7 !important;
+}
+html[data-theme="dark"] .nav-list a:hover,
+html[data-theme="dark"] .site-nav--inline .menu-item a:hover {
+    color: #ffffff !important;
+}
+
+/* 头部操作按钮（深色模式切换按钮、管理按钮） */
+html[data-theme="dark"] .site-header__actions .theme-toggle svg {
+    stroke: #ecf0f1 !important;
+}
+html[data-theme="dark"] .header-login-btn {
+    color: #bdc3c7 !important;
+}
+html[data-theme="dark"] .header-login-btn:hover {
+    color: #ffffff !important;
+}
+
+/* 移动端菜单顶部栏 */
+html[data-theme="dark"] .mobile-nav__topbar {
+    background-color: #1e1e1e !important;
+    border-bottom: 1px solid #333 !important;
+}
+html[data-theme="dark"] .mobile-nav__topbar svg {
+    stroke: #ecf0f1 !important;
+}
+
+/* 移动端菜单主体 */
+html[data-theme="dark"] .site-nav--mobile {
+    background-color: #1e1e1e !important;
+}
+html[data-theme="dark"] .mobile-nav__section-title {
+    color: #95a5a6 !important;
+}
+html[data-theme="dark"] .mobile-nav__row-label {
+    color: #bdc3c7 !important;
+}
+html[data-theme="dark"] .mobile-nav__user-name {
+    color: #ecf0f1 !important;
+}
+html[data-theme="dark"] .mobile-nav__user-role {
+    color: #95a5a6 !important;
+}
     </style>
 </head>
 <body class="home blog header-style-classic header-light-bg img-shadow">
@@ -195,7 +257,7 @@
                                     <img src="{{ &img }}" alt="{{ &title }}" loading="lazy">
                                 {{ /img }}
                                 {{ ^img }}
-                                    <img src="https://你的CDN地址/AeroCoreFree/static/img/thumb_placeholder.svg" alt="{{ &title }}" loading="lazy">
+                                    <img src="https://https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/img/thumb_placeholder.svg" alt="{{ &title }}" loading="lazy">
                                 {{ /img }}
                             </a>
                             <div class="article-item__content">
