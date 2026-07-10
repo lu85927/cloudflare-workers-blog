@@ -10,9 +10,7 @@
     {{ &OPT.codeBeforHead }}
     <!-- 主题样式（请替换为实际CDN地址） -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/css/main.min.css">
-    <script src="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/js/main.min.js?v=1783263947"></script>
-    <script src="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/js/single.041cd7cb.min.js?v=1783263947"></script>
-    <script src="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/js/highlight.min.js?v=1783263947"></script>
+
     <style>
         :root {
             --theme-color: {{ &OPT.theme_color }};
@@ -436,7 +434,9 @@ html[data-theme="dark"] .mobile-nav__user-role {
     });
 })();
 </script>
-
+    <script src="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/js/main.min.js?v=1783263947"></script>
+    <script src="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/js/single.041cd7cb.min.js?v=1783263947"></script>
+    <script src="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/aero/static/js/highlight.min.js?v=1783263947"></script>
 {{ &OPT.codeBeforBody }}
 </body>
 </html>
