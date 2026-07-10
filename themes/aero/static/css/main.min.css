@@ -9850,3 +9850,13 @@ html[data-theme="dark"] .aerocore-toc__toggle:hover {
 	opacity: .85;
 	color: #fff
 }
+
+.tagcloud {
+  display: inline-block;
+  color: white;
+  padding: 8px 20px;
+  font-family: Arial;
+  border-radius: 25px;
+  background-color: #2196F3;
+  margin-top: 8px;
+}
