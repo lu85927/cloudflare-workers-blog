@@ -9860,3 +9860,57 @@ html[data-theme="dark"] .aerocore-toc__toggle:hover {
   background-color: #2196F3;
   margin-top: 8px;
 }
+.widget .tagcloud {
+	font-size:0
+}
+.widget .tagcloud a {
+	display:inline-block;
+	width:32.39%;
+	margin:0 .7% 1.4%;
+	padding:5px 12px;
+	font-size:12px!important;
+	line-height:1.2;
+	text-align:center;
+	color:#666;
+	border:1px solid rgba(100,100,100,.3);
+	border-radius:2px;
+	text-decoration:none;
+	background:rgba(255,255,255,.2);
+	overflow:hidden;
+	-o-text-overflow:ellipsis;
+	text-overflow:ellipsis;
+	white-space:nowrap
+}
+.widget .tagcloud a:nth-child(3n+1) {
+	margin-left:0
+}
+.widget .tagcloud a:nth-child(3n+3) {
+	margin-right:0
+}
+.widget .tagcloud a:hover {
+	color:#fff;
+	background:var(--theme-hover);
+	border-color:var(--theme-hover)
+}
+.widget-title {
+	margin:2px 0 15px;
+	padding:0 0 0 12px;
+	font-size:16px;
+	font-weight:500;
+	line-height:1
+}
+.widget-title:before {
+	position:absolute;
+	left:0;
+	top:0;
+	width:3px;
+	height:100%;
+	content:"";
+	background-color:var(--theme-color);
+	background-image:-o-linear-gradient(top,rgba(255,255,255,.15),transparent);
+	background-image:linear-gradient(180deg,rgba(255,255,255,.15),transparent);
+	border-radius:3px
+}
+.widget_tag_cloud a {
+	margin:0 2px
+}
