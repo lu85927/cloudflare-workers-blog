@@ -9851,46 +9851,57 @@ html[data-theme="dark"] .aerocore-toc__toggle:hover {
 	color: #fff
 }
 
+/* 容器：去掉椭圆背景，改为透明 */
 .tagcloud {
-  display: inline-block;
-  color: white;
-  padding: 8px 20px;
-  font-family: Arial;
-  border-radius: 25px;
-  background-color: #2196F3;
-  margin-top: 8px;
+    display: block;                 /* 改为块级，撑满父容器宽度 */
+    color: inherit;                /* 文字颜色继承父级 */
+    padding: 0;                    /* 去掉内边距 */
+    border-radius: 0;              /* 去掉圆角 */
+    background-color: transparent; /* 背景透明 */
+    margin-top: 8px;
+    font-family: Arial;            /* 保留字体（可选） */
 }
+
+/* 针对侧边栏小工具内的标签云容器 */
 .widget .tagcloud {
-	font-size:0
+    font-size: 0;                  /* 消除空格，保持布局 */
 }
+
+/* 单个标签链接：自适应宽度，文字完整显示 */
 .widget .tagcloud a {
-	display:inline-block;
-	width:32.39%;
-	margin:0 .7% 1.4%;
-	padding:5px 12px;
-	font-size:12px!important;
-	line-height:1.2;
-	text-align:center;
-	color:#666;
-	border:1px solid rgba(100,100,100,.3);
-	border-radius:2px;
-	text-decoration:none;
-	background:rgba(255,255,255,.2);
-	overflow:hidden;
-	-o-text-overflow:ellipsis;
-	text-overflow:ellipsis;
-	white-space:nowrap
+    display: inline-block;
+    width: auto !important;        /* 宽度由内容撑开 */
+    margin: 0 8px 8px 0 !important; /* 右边距和下边距 */
+    padding: 5px 16px;
+    font-size: 14px !important;    /* 可调大一点便于阅读 */
+    line-height: 1.4;
+    text-align: center;
+    color: #333;                   /* 深色文字（原为#666） */
+    border: 1px solid rgba(100,100,100,.3);
+    border-radius: 4px;            /* 稍微圆润（可改为2px） */
+    text-decoration: none;
+    background: rgba(255,255,255,.2);
+    overflow: visible !important;  /* 显示完整文字 */
+    text-overflow: clip !important;
+    white-space: normal !important; /* 允许换行（若不想换行可改为 nowrap） */
+    box-sizing: border-box;
 }
+
+/* 每行第一个标签左边距为0（保持左对齐） */
 .widget .tagcloud a:nth-child(3n+1) {
-	margin-left:0
+    margin-left: 0 !important;
 }
+
+/* 每行第三个标签右边距为0（避免溢出） */
 .widget .tagcloud a:nth-child(3n+3) {
-	margin-right:0
+    margin-right: 0 !important;
 }
+
+/* 悬停效果 */
 .widget .tagcloud a:hover {
-	color:#fff;
-	background:var(--theme-hover);
-	border-color:var(--theme-hover)
+    color: #fff;
+    background: var(--theme-hover);
+    border-color: var(--theme-hover);
 }
 .widget-title {
 	margin:2px 0 15px;
