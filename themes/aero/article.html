@@ -105,6 +105,32 @@ html[data-theme="dark"] .mobile-nav__user-name {
 html[data-theme="dark"] .mobile-nav__user-role {
     color: #95a5a6 !important;
 }
+        .tag-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 20px 0;
+}
+.tag-items a {
+    background: #f0f2f5;
+    padding: 4px 12px;
+    border-radius: 16px;
+    color: var(--theme-color, #409EFF);
+    text-decoration: none;
+    font-size: 13px;
+}
+.tag-items a:hover {
+    background: var(--theme-color, #409EFF);
+    color: #fff;
+}
+html[data-theme="dark"] .tag-items a {
+    background: #2d2d2d;
+    color: #bdc3c7;
+}
+html[data-theme="dark"] .tag-items a:hover {
+    background: var(--theme-color, #409EFF);
+    color: #fff;
+}
     </style>
 </head>
 <body class="single post header-style-classic header-light-bg img-shadow">
@@ -208,11 +234,13 @@ html[data-theme="dark"] .mobile-nav__user-role {
         <div class="single-article__content">
             {{ &articleSingle.contentHtml }}
         </div>
-<div class="widget tagcloud">
-    {{ #articleSingle.tags }}
-        <a href="/tags/{{&.}}" rel="tag">{{&.}}</a>
-    {{ /articleSingle.tags }}
-</div>
+<section class="panel-inner panel-tags">
+    <div class="tag-items">
+        {{ #articleSingle.tags_split }}
+            <a href="/tags/{{&.}}" rel="tag">{{&.}}</a>
+        {{ /articleSingle.tags_split }}
+    </div>
+</section>
         <!-- 版权声明（可选） -->
         {{ #OPT.copyright_notice }}
         <div class="single-copyright">
