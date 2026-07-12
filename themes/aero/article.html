@@ -236,9 +236,9 @@ html[data-theme="dark"] .tag-items a:hover {
         </div>
 
     <div class="tag-items">
-        {{ #articleSingle.tags_split }}
-            <a href="/tags/{{&.}}" rel="tag">{{&.}}</a>
-        {{ /articleSingle.tags_split }}
+    {{ #articleSingle.tags }}
+        <a href="/tags/{{&.}}" rel="tag">{{&.}}</a>
+    {{ /articleSingle.tags }}
     </div>
 
         <!-- 版权声明（可选） -->
