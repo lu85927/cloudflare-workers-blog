@@ -9925,3 +9925,17 @@ html[data-theme="dark"] .aerocore-toc__toggle:hover {
 .widget_tag_cloud a {
 	margin:0 2px
 }
+/* ====== 分类列表前添加小三角形 ====== */
+.widget_categories ul li a::before {
+    content: "▶ ";                  /* 右三角符号，可换成 ▸ 或 ► */
+    color: var(--theme-color, #409EFF);
+    font-size: 12px;
+    margin-right: 6px;
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+/* 悬停时三角形旋转（可选） */
+.widget_categories ul li a:hover::before {
+    transform: rotate(90deg);
+}
