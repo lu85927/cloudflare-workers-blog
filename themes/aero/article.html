@@ -208,7 +208,11 @@ html[data-theme="dark"] .mobile-nav__user-role {
         <div class="single-article__content">
             {{ &articleSingle.contentHtml }}
         </div>
-
+<div class="widget tagcloud">
+    {{ #articleSingle.tags }}
+        <a href="/tags/{{&.}}" rel="tag">{{&.}}</a>
+    {{ /articleSingle.tags }}
+</div>
         <!-- 版权声明（可选） -->
         {{ #OPT.copyright_notice }}
         <div class="single-copyright">
