@@ -137,3 +137,15 @@
         height: 20px;
     }
 }
+/* ====== 链接列表前添加铁链图标 ====== */
+.widget_links ul li a::before {
+    content: "🔗 ";
+    color: var(--theme-color, #409EFF);
+    font-size: 14px;
+    margin-right: 6px;
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+.widget_links ul li a:hover::before {
+    transform: rotate(15deg) scale(1.1);
+}
