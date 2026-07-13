@@ -149,3 +149,10 @@
 .widget_links ul li a:hover::before {
     transform: rotate(15deg) scale(1.1);
 }
+/* ====== 侧边栏所有链接：点击区域仅限文字+图标 ====== */
+.layout-col--sidebar a,
+.widget-area a,
+.sidebar a {
+    display: inline-block !important;
+    width: auto !important;
+}
