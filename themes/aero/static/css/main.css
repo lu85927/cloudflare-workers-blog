@@ -1,3 +1,92 @@
+/* 容器：去掉椭圆背景，改为透明 */
+.tagcloud {
+    display: block;                 /* 改为块级，撑满父容器宽度 */
+    color: inherit;                /* 文字颜色继承父级 */
+    padding: 0;                    /* 去掉内边距 */
+    border-radius: 0;              /* 去掉圆角 */
+    background-color: transparent; /* 背景透明 */
+    margin-top: 8px;
+    font-family: Arial;            /* 保留字体（可选） */
+}
+
+/* 针对侧边栏小工具内的标签云容器 */
+.widget .tagcloud {
+    font-size: 0;                  /* 消除空格，保持布局 */
+}
+
+/* 单个标签链接：自适应宽度，文字完整显示 */
+.widget .tagcloud a {
+    display: inline-block;
+    width: auto !important;        /* 宽度由内容撑开 */
+    margin: 0 8px 8px 0 !important; /* 右边距和下边距 */
+    padding: 5px 16px;
+    font-size: 14px !important;    /* 可调大一点便于阅读 */
+    line-height: 1.4;
+    text-align: center;
+    color: #333;                   /* 深色文字（原为#666） */
+    border: 1px solid rgba(100,100,100,.3);
+    border-radius: 4px;            /* 稍微圆润（可改为2px） */
+    text-decoration: none;
+    background: rgba(255,255,255,.2);
+    overflow: visible !important;  /* 显示完整文字 */
+    text-overflow: clip !important;
+    white-space: normal !important; /* 允许换行（若不想换行可改为 nowrap） */
+    box-sizing: border-box;
+}
+
+/* 每行第一个标签左边距为0（保持左对齐） */
+.widget .tagcloud a:nth-child(3n+1) {
+    margin-left: 0 !important;
+}
+
+/* 每行第三个标签右边距为0（避免溢出） */
+.widget .tagcloud a:nth-child(3n+3) {
+    margin-right: 0 !important;
+}
+
+/* 悬停效果 */
+.widget .tagcloud a:hover {
+    color: #fff !important;
+    background: #07c !important;          /* 可直接替换为 var(--theme-hover) */
+    border-color: #07c !important;
+}
+.widget-title {
+	margin:2px 0 15px;
+	padding:0 0 0 12px;
+	font-size:16px;
+	font-weight:500;
+	line-height:1
+}
+.widget-title:before {
+	position:absolute;
+	left:0;
+	top:0;
+	width:3px;
+	height:100%;
+	content:"";
+	background-color:var(--theme-color);
+	background-image:-o-linear-gradient(top,rgba(255,255,255,.15),transparent);
+	background-image:linear-gradient(180deg,rgba(255,255,255,.15),transparent);
+	border-radius:3px
+}
+.widget_tag_cloud a {
+	margin:0 2px
+}
+/* ====== 分类列表前添加小三角形 ====== */
+.widget_categories ul li a::before {
+    content: "▶ ";                  /* 右三角符号，可换成 ▸ 或 ► */
+    color: var(--theme-color, #409EFF);
+    font-size: 12px;
+    margin-right: 6px;
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+/* 悬停时三角形旋转（可选） */
+.widget_categories ul li a:hover::before {
+    transform: rotate(90deg);
+}
+
 /* ====== 返回顶部按钮 ====== */
 #back-to-top {
     position: fixed;
