@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>CF-blog后台</title>
+	<title>老壮'blog后台</title>
     <link rel="icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico" />
 	<link rel="shortcut icon" type="image/x-icon"  href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
@@ -17,6 +17,17 @@
 	<style>
 		.bootstrap-select>.dropdown-toggle { z-index:auto; }
 		.modal-body .editormd { z-index: 1050; }
+		/* ====== 单页弹窗宽度调整 ====== */
+#pageModal .modal-dialog.modal-lg {
+    max-width: 1000px !important;  /* 可改为任意值，例如 80% 或 900px */
+    width: 95% !important;         /* 保证在小屏幕上也有良好占比 */
+    margin: 30px auto;             /* 水平居中，上下留白 */
+}
+
+/* 可选：调整弹窗内边距，让内容更舒展 */
+#pageModal .modal-body {
+    padding: 20px 30px;
+}
 	</style>
 </head>
 <body>
@@ -25,7 +36,7 @@
 	<div class="container-fluid">
 	<div>
 		<ul id="myTab" class="nav nav-tabs">
-			<li><a href="/" >CF-blog</a></li>
+			<li><a href="/" >老壮'blog首页</a></li>
 			<li><a href="#list" data-toggle="tab">我的文章</a></li>
 			<li class="active"><a href="#new" data-toggle="tab">新建</a></li>
 			<li><a href="#pageTab" data-toggle="tab">单页管理</a></li>
