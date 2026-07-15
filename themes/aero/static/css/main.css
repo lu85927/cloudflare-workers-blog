@@ -156,3 +156,12 @@
     display: inline-block !important;
     width: auto !important;
 }
+/* ====== 近期文章标题自动换行 ====== */
+.wp-block-latest-posts__list li a {
+    white-space: normal !important;      /* 允许换行 */
+    overflow: visible !important;        /* 取消隐藏溢出 */
+    text-overflow: clip !important;      /* 取消省略号 */
+    display: inline-block;               /* 或 block，确保宽度可控 */
+    word-wrap: break-word;               /* 长单词换行 */
+    max-width: 100%;                     /* 限制宽度不超出容器 */
+}
