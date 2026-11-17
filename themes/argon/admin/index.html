@@ -260,7 +260,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vditor@3.11.3/dist/index.min.js"></script>
 <script type="text/javascript">
 	// ====== Vditor 公共配置 ======
-	var VDITOR_CDN = "https://cdn.jsdelivr.net/npm/vditor@3.11.3/dist";
+	var VDITOR_CDN = "https://cdn.jsdelivr.net/npm/vditor@3.11.3";
 	function agIsDark(){ return document.documentElement.getAttribute('data-theme') === 'dark'; }
 	function applyVditorTheme(){
 		var t  = agIsDark() ? "dark" : "classic";
@@ -298,7 +298,10 @@
 				"upload", "table", "record", "|", "undo", "redo", "|",
 				"fullscreen", "edit-mode", "both", "preview", "outline", "help"
 			],
-			after: function(){ this.setValue("# MarkDown"); }
+			after: function(){
+				// Vditor 的 after 回调中 this 是 options 而非实例，必须用实例变量赋值
+				try { if (window.mdEditor) window.mdEditor.setValue("# MarkDown"); } catch (e) {}
+			}
 		});
 
 		$('#createDate').val(new Date().toISOString().slice(0,16));
