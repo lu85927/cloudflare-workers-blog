@@ -116,7 +116,17 @@
 </div>
 
 <footer class="argon-footer">
-  <div><span class="argon-brand">{{ &OPT.siteName }}</span> · {{ &OPT.siteDescription }}</div>
+  <div><span id="runtime_span"></span></div>
+  <script type="text/javascript">
+  function show_runtime(){
+    window.setTimeout(show_runtime,1000);
+    X=new Date("6/19/2026 00:00:00"); //初始建站时间修改此处
+    Y=new Date();T=(Y.getTime()-X.getTime());M=24*60*60*1000;
+    a=T/M;A=Math.floor(a);b=(a-A)*24;B=Math.floor(b);c=(b-B)*60;C=Math.floor(c);D=Math.floor((c-C)*60);
+    document.getElementById("runtime_span").innerHTML="老壮的小破站已运行: "+A+"天"+B+"小时"+C+"分"+D+"秒";
+  }
+  show_runtime();
+  </script>
   <div style="margin-top:6px">Copyright &copy; {{ &current_year }} {{ &OPT.siteName }} &nbsp; {{ &OPT.copyRight }}</div>
 </footer>
 
