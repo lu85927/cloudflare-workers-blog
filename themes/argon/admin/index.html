@@ -274,16 +274,6 @@
 			codeFold : true
 		});
 
-		window.pageEditor = editormd("pageMdEditor", {
-			height: 640,
-			path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
-			appendMarkdown: "# 自定义页面内容",
-			saveHTMLToTextarea: true,
-			tex: true,
-			tocm: true,
-			codeFold: true
-		});
-
 		$('#createDate').val(new Date().toISOString().slice(0,16));
 		$('#WidgetCategory').val(JSON.stringify(categoryJson));
 		$('#WidgetMenu').val(JSON.stringify(menuJson));
@@ -320,14 +310,40 @@
 
 	// ====== 单页管理函数（完全重写，确保数据正确） ======
 	// 在「列表 / 编辑」视图之间切换（替代原来的弹窗）
-	function showPageView(mode) {
+	// 单页编辑器延迟初始化：必须在容器可见时初始化，
+	// 否则 CodeMirror 会把编辑区宽度算成 0，导致内容文字竖排错位
+	function ensurePageEditor() {
+		if (window.pageEditor) return window.pageEditor;
+		window.pageEditor = editormd("pageMdEditor", {
+			height: 640,
+			path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
+			appendMarkdown: "# 自定义页面内容",
+			saveHTMLToTextarea: true,
+			tex: true,
+			tocm: true,
+			codeFold: true
+		});
+		return window.pageEditor;
+	}
+
+	function showPageView(mode, markdown) {
 		if (mode === 'edit') {
 			$('#pageListView').hide();
 			$('#pageEditorView').show();
-			// 编辑器在隐藏容器中初始化，显示后需要刷新以恢复宽度与预览
-			if (window.pageEditor) {
-				setTimeout(function(){ window.pageEditor.refresh(); }, 30);
-			}
+			// 等容器 show() 完成布局后再初始化/刷新，确保宽度计算正确
+			setTimeout(function() {
+				if ($('#pageEditorView').css('display') === 'none') return;
+				ensurePageEditor();
+				if (typeof markdown === 'string') {
+					window.pageEditor.setMarkdown(markdown);
+				}
+				// 强制 CodeMirror 铺满容器（双保险，修复窄宽度竖排）
+				try {
+					var cmEl = document.querySelector('#pageMdEditor .CodeMirror');
+					if (cmEl && cmEl.CodeMirror) cmEl.CodeMirror.setSize('100%', 640);
+				} catch (e) {}
+				window.pageEditor.refresh();
+			}, 60);
 		} else {
 			$('#pageEditorView').hide();
 			$('#pageListView').show();
@@ -341,11 +357,8 @@
 		$('#pageLink').val("");
 		$('#pageTitle').val("");
 		$('#pageKeywords').val("");
-		if (window.pageEditor) {
-			window.pageEditor.setMarkdown("# 自定义页面内容");
-		}
 		$('#pageEditorTitle').text("新建单页");
-		showPageView('edit');
+		showPageView('edit', "# 自定义页面内容");
 	}
 
 	function renderPageList(list) {
@@ -386,15 +399,12 @@
 					alert("返回的数据格式错误，请检查 Worker。");
 					return;
 				}
-				$('#oldLink').val(data.link || '');
-				$('#pageLink').val(data.link || '');
-				$('#pageTitle').val(data.title || '');
-				$('#pageKeywords').val(data.keywords || '');
-				if (window.pageEditor) {
-					window.pageEditor.setMarkdown(data.contentMD || '');
-				}
-				$('#pageEditorTitle').text("编辑单页：" + (data.title || data.link || ''));
-				showPageView('edit');
+			$('#oldLink').val(data.link || '');
+			$('#pageLink').val(data.link || '');
+			$('#pageTitle').val(data.title || '');
+			$('#pageKeywords').val(data.keywords || '');
+			$('#pageEditorTitle').text("编辑单页：" + (data.title || data.link || ''));
+			showPageView('edit', data.contentMD || '');
 			},
 			error: function(xhr, status, err) {
 				alert("请求失败：" + err + "\n请检查网络或Worker状态。");
@@ -403,6 +413,7 @@
 	}
 
 	function savePageData() {
+		ensurePageEditor();
 		var formArray = $("#pageForm").serializeArray();
 		formArray.push({ name: "contentMD", value: window.pageEditor.getMarkdown() });
 		formArray.push({ name: "contentHtml", value: window.pageEditor.getHTML() });
