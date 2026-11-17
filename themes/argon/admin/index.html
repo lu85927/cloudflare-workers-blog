@@ -151,16 +151,54 @@
 
 				<!-- 单页管理 -->
 				<div class="tab-pane fade" id="pageTab">
-					<div class="ag-page-head">
-						<div><h2>单页管理</h2><p>自定义独立页面，如关于、友链等</p></div>
-						<button class="ag-btn ag-btn-primary" data-toggle="modal" data-target="#pageModal"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>新建单页</button>
+					<!-- 列表视图 -->
+					<div id="pageListView">
+						<div class="ag-page-head">
+							<div><h2>单页管理</h2><p>自定义独立页面，如关于、友链等</p></div>
+							<button class="ag-btn ag-btn-primary" onclick="newPage()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>新建单页</button>
+						</div>
+						<div class="ag-card">
+							<div class="ag-table-wrap">
+								<table class="ag-table" id="pageListTable">
+									<thead><tr><th>页面别名</th><th>页面标题</th><th>更新日期</th><th>访问地址</th><th>操作</th></tr></thead>
+									<tbody></tbody>
+								</table>
+							</div>
+						</div>
 					</div>
-					<div class="ag-card">
-						<div class="ag-table-wrap">
-							<table class="ag-table" id="pageListTable">
-								<thead><tr><th>页面别名</th><th>页面标题</th><th>更新日期</th><th>访问地址</th><th>操作</th></tr></thead>
-								<tbody></tbody>
-							</table>
+					<!-- 编辑视图（与新建文章一致的内嵌表单） -->
+					<div id="pageEditorView" style="display:none;">
+						<div class="ag-page-head">
+							<div><h2 id="pageEditorTitle">新建单页</h2><p>自定义独立页面内容，支持 Markdown</p></div>
+							<button class="ag-btn ag-btn-ghost" onclick="showPageView('list')"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>返回列表</button>
+						</div>
+						<div class="ag-card">
+							<form id="pageForm" class="ag-form">
+								<input type="hidden" id="oldLink" name="oldLink">
+								<div class="ag-grid">
+									<div class="form-group">
+										<label>页面别名（唯一，英文，如 about / links）</label>
+										<input class="form-control" id="pageLink" name="link" required>
+									</div>
+									<div class="form-group">
+										<label>页面标题</label>
+										<input class="form-control" id="pageTitle" name="title" required>
+									</div>
+								</div>
+								<div class="form-group">
+									<label>SEO 关键词（逗号分隔）</label>
+									<input class="form-control" id="pageKeywords" name="keywords">
+								</div>
+								<div class="form-group" style="margin-top:6px">
+									<label>页面内容（Markdown）</label>
+									<div class="ag-editor-wrap"><div id="pageMdEditor"><textarea style="display:none;" name="contentMD"></textarea></div></div>
+								</div>
+								<input type="hidden" id="pageHtml" name="contentHtml">
+								<div class="ag-actions">
+									<button type="button" class="ag-btn ag-btn-primary" onclick="savePageData()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>保存单页</button>
+									<button type="button" class="ag-btn ag-btn-ghost" onclick="showPageView('list')">取消</button>
+								</div>
+							</form>
 						</div>
 					</div>
 				</div>
@@ -216,46 +254,6 @@
 	</div>
 </div>
 
-<!-- 单页弹窗 -->
-<div class="modal fade" id="pageModal" tabindex="-1" role="dialog" aria-labelledby="pageModalLabel">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="pageModalLabel">新建自定义单页</h4>
-			</div>
-			<div class="modal-body">
-				<form id="pageForm" class="ag-form">
-					<input type="hidden" id="oldLink" name="oldLink">
-					<div class="ag-grid">
-						<div class="form-group">
-							<label>页面别名（唯一，英文，如 about / links）</label>
-							<input class="form-control" id="pageLink" name="link" required>
-						</div>
-						<div class="form-group">
-							<label>页面标题</label>
-							<input class="form-control" id="pageTitle" name="title" required>
-						</div>
-					</div>
-					<div class="form-group">
-						<label>SEO 关键词（逗号分隔）</label>
-						<input class="form-control" id="pageKeywords" name="keywords">
-					</div>
-					<div class="form-group">
-						<label>页面内容（Markdown）</label>
-						<div class="ag-editor-wrap"><div id="pageMdEditor"><textarea style="display:none;" name="contentMD"></textarea></div></div>
-					</div>
-					<input type="hidden" id="pageHtml" name="contentHtml">
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="ag-btn ag-btn-ghost" data-dismiss="modal">关闭</button>
-				<button type="button" class="ag-btn ag-btn-primary" onclick="savePageData()">保存单页</button>
-			</div>
-		</div>
-	</div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.js"></script>
 <script type="text/javascript">
 	$(function() {
@@ -277,7 +275,7 @@
 		});
 
 		window.pageEditor = editormd("pageMdEditor", {
-			height: 400,
+			height: 640,
 			path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
 			appendMarkdown: "# 自定义页面内容",
 			saveHTMLToTextarea: true,
@@ -297,15 +295,11 @@
 		}
 		$("#loadmore").click();
 		renderPageList(pageJson);
-
-		$('#pageModal').on('hidden.bs.modal', function () {
-			$('#pageForm')[0].reset();
-			$('#oldLink').val("");
-			$('#pageModalLabel').text("新建自定义单页");
-			if (window.pageEditor) {
-				window.pageEditor.setMarkdown("# 自定义页面内容");
-			}
-		});
+		// 保存/删除单页刷新后，自动回到单页管理标签
+		if (sessionStorage.getItem('agGoPageTab') === '1') {
+			sessionStorage.removeItem('agGoPageTab');
+			$('a[href="#pageTab"]').tab('show');
+		}
 
 		// tab 切换：更新标题与侧边栏高亮
 		$('#myTab a[data-toggle="tab"]').on('shown.bs.tab', function(e){
@@ -325,6 +319,35 @@
 	});
 
 	// ====== 单页管理函数（完全重写，确保数据正确） ======
+	// 在「列表 / 编辑」视图之间切换（替代原来的弹窗）
+	function showPageView(mode) {
+		if (mode === 'edit') {
+			$('#pageListView').hide();
+			$('#pageEditorView').show();
+			// 编辑器在隐藏容器中初始化，显示后需要刷新以恢复宽度与预览
+			if (window.pageEditor) {
+				setTimeout(function(){ window.pageEditor.refresh(); }, 30);
+			}
+		} else {
+			$('#pageEditorView').hide();
+			$('#pageListView').show();
+		}
+	}
+
+	// 新建单页：清空表单并进入编辑视图
+	function newPage() {
+		$('#pageForm')[0].reset();
+		$('#oldLink').val("");
+		$('#pageLink').val("");
+		$('#pageTitle').val("");
+		$('#pageKeywords').val("");
+		if (window.pageEditor) {
+			window.pageEditor.setMarkdown("# 自定义页面内容");
+		}
+		$('#pageEditorTitle').text("新建单页");
+		showPageView('edit');
+	}
+
 	function renderPageList(list) {
 		var tbody = $("#pageListTable tbody");
 		tbody.empty();
@@ -370,8 +393,8 @@
 				if (window.pageEditor) {
 					window.pageEditor.setMarkdown(data.contentMD || '');
 				}
-				$('#pageModalLabel').text("编辑单页：" + (data.title || data.link || ''));
-				$('#pageModal').modal('show');
+				$('#pageEditorTitle').text("编辑单页：" + (data.title || data.link || ''));
+				showPageView('edit');
 			},
 			error: function(xhr, status, err) {
 				alert("请求失败：" + err + "\n请检查网络或Worker状态。");
@@ -394,10 +417,8 @@
 			success: function(ret) {
 				alert(ret.msg);
 				if (ret.rst) {
-					$('#pageModal').modal('hide');
-					$.get("/admin/list", function() {
-						location.reload();
-					});
+					sessionStorage.setItem('agGoPageTab', '1');
+					location.reload();
 				}
 			},
 			error: function(xhr, status, err) {
@@ -414,7 +435,10 @@
 			dataType: "json",
 			success: function(ret) {
 				alert(ret.msg);
-				if (ret.rst) location.reload();
+				if (ret.rst) {
+					sessionStorage.setItem('agGoPageTab', '1');
+					location.reload();
+				}
 			},
 			error: function() {
 				alert("删除请求失败");
