@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ &title }}</title>
+<meta name="keywords" content="{{ &keyWords }}">
+<meta name="description" content="{{ &OPT.siteDescription }}">
+{{ #OPT.favicon }}<link rel="shortcut icon" href="{{ &OPT.favicon }}">{{ /OPT.favicon }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/argon/static/css/main.css?v=1.0">
+{{ &OPT.codeBeforHead }}
+</head>
+<body>
+
+<!-- ======= Cover ======= -->
+<header class="argon-cover" style="--argon-header-h:230px">
+  <span class="argon-cover-shape s1"></span>
+  <span class="argon-cover-shape s2"></span>
+  <div class="argon-cover-inner" style="padding-top:48px">
+    {{ #OPT.logo_url }}
+    <img class="argon-cover-avatar" style="width:72px;height:72px" src="{{ &OPT.logo_url }}" alt="{{ &OPT.siteName }}">
+    {{ /OPT.logo_url }}
+    {{ ^OPT.logo_url }}
+    <div class="argon-cover-avatar" style="width:72px;height:72px;font-size:30px">
+      <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M4 15l5-5 4 4 3-3 4 4"/><circle cx="9" cy="9" r="1.4"/></svg>
+    </div>
+    {{ /OPT.logo_url }}
+    <h1 class="argon-cover-title" style="font-size:24px">{{ &OPT.siteName }}</h1>
+    <p class="argon-cover-desc">{{ &OPT.siteDescription }}</p>
+  </div>
+</header>
+
+<!-- ======= Navbar ======= -->
+<nav class="argon-nav">
+  <div class="argon-nav-inner">
+    <a href="/" class="argon-nav-brand"><span class="dot"></span>{{ &OPT.siteName }}</a>
+    <ul class="argon-nav-menu" id="argon-menu">
+      {{ #widgetMenuList }}<li><a href="{{ &url }}">{{ &title }}</a></li>{{ /widgetMenuList }}
+    </ul>
+    <div class="argon-nav-tools">
+      <button class="argon-icon-btn" id="argon-theme-btn" title="切换深浅色" aria-label="切换深浅色">
+        <svg class="argon-theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="argon-theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+      </button>
+      <button class="argon-icon-btn argon-nav-toggle" id="argon-nav-toggle" aria-label="菜单">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ======= Body ======= -->
+<div class="argon-wrap">
+  <main class="argon-main">
+
+    <article class="argon-article argon-card">
+      <div class="argon-crumb"><a href="/">首页</a> / {{ #articleSingle.category }}<a href="/category/{{&.}}">{{&.}}</a> / {{ /articleSingle.category }}正文</div>
+      <h1 class="argon-article-title">{{ &articleSingle.title }}</h1>
+      <div class="argon-article-meta">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>{{ &articleSingle.createDate10 }}</span>
+        {{ #OPT.author_name }}<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>{{ &OPT.author_name }}</span>{{ /OPT.author_name }}
+      </div>
+
+      <div class="argon-article-content">
+        {{ &articleSingle.contentHtml }}
+      </div>
+
+      <div class="argon-tag-items">
+        {{ #articleSingle.tags }}<a href="/tags/{{&.}}" rel="tag"># {{&.}}</a>{{ /articleSingle.tags }}
+      </div>
+
+      {{ #OPT.copyright_notice }}
+      <div class="argon-copyright">
+        <div><strong>版权声明：</strong>{{ &OPT.copyright_notice }}</div>
+        <div><strong>本文链接：</strong>https://{{ &OPT.siteDomain }}{{ &articleSingle.url }}</div>
+      </div>
+      {{ /OPT.copyright_notice }}
+    </article>
+
+    <nav class="argon-postnav">
+      {{ #articleNewer }}<a class="prev" href="{{ &url }}"><span>← 上一篇</span>{{ &title }}</a>{{ /articleNewer }}
+      {{ #articleOlder }}<a class="next" href="{{ &url }}"><span>下一篇 →</span>{{ &title }}</a>{{ /articleOlder }}
+    </nav>
+
+    <div class="argon-comments argon-card" id="argon-comments">
+      {{ &OPT.commentCode }}
+    </div>
+  </main>
+
+  <aside class="argon-sidebar">
+    <section class="argon-widget argon-card argon-widget-about">
+      <div class="mini-avatar">A</div>
+      <div style="font-weight:600;color:var(--argon-text)">{{ &OPT.siteName }}</div>
+      <p>{{ &OPT.siteDescription }}</p>
+    </section>
+    <section class="argon-widget argon-card">
+      <h3 class="argon-widget-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>近期文章</h3>
+      <ul class="argon-recent">
+        {{ #widgetRecentlyList }}<li><a href="{{ &url }}">{{ &title }}</a><time>{{ &createDate10 }}</time></li>{{ /widgetRecentlyList }}
+      </ul>
+    </section>
+    <section class="argon-widget argon-card">
+      <h3 class="argon-widget-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h7l2 2h9v10H3z"/></svg>分类</h3>
+      <div class="argon-cats">{{ #widgetCategoryList }}<a href="/category/{{&.}}">{{&.}}</a>{{ /widgetCategoryList }}</div>
+    </section>
+    <section class="argon-widget argon-card">
+      <h3 class="argon-widget-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 17h16M8 4v16M16 4v16"/></svg>标签</h3>
+      <div class="argon-tags">{{ #widgetTagsList }}<a href="/tags/{{&.}}">{{&.}}</a>{{ /widgetTagsList }}</div>
+    </section>
+    <section class="argon-widget argon-card">
+      <h3 class="argon-widget-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg>友情链接</h3>
+      <ul class="argon-links">{{ #widgetLinkList }}<li><a href="{{ &url }}" target="_blank" rel="noopener">{{ &title }}</a></li>{{ /widgetLinkList }}</ul>
+    </section>
+    {{ &OPT.widgetOther }}
+  </aside>
+</div>
+
+<footer class="argon-footer">
+  <div><span class="argon-brand">{{ &OPT.siteName }}</span> · {{ &OPT.siteDescription }}</div>
+  <div style="margin-top:6px">Copyright &copy; {{ &current_year }} {{ &OPT.siteName }} &nbsp; {{ &OPT.copyRight }}</div>
+</footer>
+
+<button class="argon-top" id="argon-top" aria-label="返回顶部">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+(function(){
+  var stored=localStorage.getItem('argon-theme');
+  if(stored==='dark') document.documentElement.setAttribute('data-theme','dark');
+  document.getElementById('argon-theme-btn').addEventListener('click',function(){
+    var dark=document.documentElement.getAttribute('data-theme')==='dark';
+    if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('argon-theme','light');}
+    else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('argon-theme','dark');}
+  });
+  document.getElementById('argon-nav-toggle').addEventListener('click',function(){
+    document.getElementById('argon-menu').classList.toggle('open');
+  });
+  var top=document.getElementById('argon-top');
+  window.addEventListener('scroll',function(){
+    if(window.scrollY>300) top.classList.add('show'); else top.classList.remove('show');
+  },{passive:true});
+  top.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+})();
+</script>
+{{ &OPT.codeBeforBody }}
+</body>
+</html>
