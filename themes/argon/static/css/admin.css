@@ -240,19 +240,15 @@ a:hover{color:var(--ag-primary-2)}
 .ag-btn-sm{height:32px;padding:0 13px;font-size:12px;border-radius:9px}
 .ag-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
 
-/* ---------- Editor (editor.md) ---------- */
+/* ---------- Editor (Vditor) ---------- */
 .ag-editor-wrap{
   border:1.5px solid var(--ag-border);border-radius:var(--ag-radius-sm);
   overflow:hidden;background:var(--ag-surface);
 }
-.editormd{border:none !important}
-/* editor.md 深色适配：editor.md 自带样式优先级极高，用整体反色方案
-   不依赖其内部 DOM 结构，稳定生效。hue-rotate 修正反色后的色相偏移。 */
-[data-theme="dark"] .ag-editor-wrap{
-  filter:invert(0.9) hue-rotate(180deg);
-  border-color:#3a3f55;
-}
-[data-theme="dark"] .ag-editor-wrap .editormd{background:#fff}
+/* Vditor 自带明暗主题（由 setTheme 切换），这里只去掉它的外边框避免与容器双边框叠加 */
+.ag-editor-wrap .vditor{border:none !important;border-radius:0}
+.ag-editor-wrap .vditor-toolbar{border-radius:0}
+[data-theme="dark"] .ag-editor-wrap{border-color:#3a3f55;background:transparent}
 
 /* ---------- Table ---------- */
 .ag-table{width:100%;border-collapse:collapse;font-size:13px}
@@ -313,11 +309,7 @@ a:hover{color:var(--ag-primary-2)}
 .modal-header .close{color:var(--ag-muted);opacity:1;text-shadow:none}
 .modal-body{padding:24px}
 .modal-footer{border-top:1px solid var(--ag-border);padding:16px 24px;display:flex;gap:10px;justify-content:flex-end}
-#pageModal .modal-dialog.modal-lg{max-width:1080px;width:95%;margin:36px auto}
 .modal-backdrop.in{opacity:.5}
-
-/* 保留：editor.md 在弹窗内层级 */
-.modal-body .editormd{z-index:1050}
 
 /* ---------- Responsive ---------- */
 @media (max-width:900px){
