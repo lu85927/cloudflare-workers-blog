@@ -7,9 +7,9 @@
 	<link rel="icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico" />
 	<link rel="shortcut icon" type="image/x-icon"  href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico"/>
 	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/css/editormd.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.11.3/dist/index.css" />
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/argon/static/css/admin.css?v=1.0">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/argon/static/css/admin.css?v=1.1">
 
 	<script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -140,7 +140,9 @@
 							</div>
 							<div class="form-group" style="margin-top:6px">
 								<label>正文内容（Markdown）</label>
-								<div class="ag-editor-wrap"><div id="content"><textarea style="display:none;"></textarea></div></div>
+								<div class="ag-editor-wrap"><div id="content"></div></div>
+								<input type="hidden" name="content-markdown-doc" id="content-markdown-doc">
+								<input type="hidden" name="content-html-code" id="content-html-code">
 							</div>
 							<div class="ag-actions">
 								<button type="button" id="btn_saveAddNew" class="ag-btn ag-btn-primary" onclick="saveAddNew()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>保存文章</button>
@@ -191,8 +193,9 @@
 								</div>
 								<div class="form-group" style="margin-top:6px">
 									<label>页面内容（Markdown）</label>
-									<div class="ag-editor-wrap"><div id="pageMdEditor"><textarea style="display:none;" name="contentMD"></textarea></div></div>
+									<div class="ag-editor-wrap"><div id="pageMdEditor"></div></div>
 								</div>
+								<input type="hidden" id="pageMdDoc" name="contentMD">
 								<input type="hidden" id="pageHtml" name="contentHtml">
 								<div class="ag-actions">
 									<button type="button" class="ag-btn ag-btn-primary" onclick="savePageData()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>保存单页</button>
@@ -254,8 +257,27 @@
 	</div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vditor@3.11.3/dist/index.min.js"></script>
 <script type="text/javascript">
+	// ====== Vditor 公共配置 ======
+	var VDITOR_CDN = "https://cdn.jsdelivr.net/npm/vditor@3.11.3/dist";
+	function agIsDark(){ return document.documentElement.getAttribute('data-theme') === 'dark'; }
+	function applyVditorTheme(){
+		var t  = agIsDark() ? "dark" : "classic";
+		var pt = agIsDark() ? "dark" : "default";
+		[window.mdEditor, window.pageEditor].forEach(function(ed){
+			if (ed && typeof ed.setTheme === 'function') {
+				try { ed.setTheme(t, pt); } catch (e) {}
+			}
+		});
+	}
+	// 保存文章前：把 Vditor 内容同步到隐藏字段（Worker 依赖 content-markdown-doc / content-html-code）
+	function syncArticleFields(){
+		if (window.mdEditor) {
+			$('#content-markdown-doc').val(window.mdEditor.getValue());
+			$('#content-html-code').val(window.mdEditor.getHTML());
+		}
+	}
 	$(function() {
 		$('#myTab li:eq(0) 1').tab('show');
 		var categoryJson = <!--{categoryJson}-->;
@@ -263,15 +285,20 @@
 		var linkJson = <!--{linkJson}-->;
 		var pageJson = <!--{pageJson}-->;
 
-		var mdEditor = editormd("content", {
-			height : 640,
-			path   : "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
-			appendMarkdown : "# MarkDown",
-			saveHTMLToTextarea : true,
-			mode : "markdown",
-			tex  : true,
-			tocm : true,
-			codeFold : true
+		window.mdEditor = new Vditor("content", {
+			height: 640,
+			cdn: VDITOR_CDN,
+			mode: "sv",
+			theme: agIsDark() ? "dark" : "classic",
+			preview: { theme: agIsDark() ? "dark" : "default", math: { inlineDigit: true } },
+			toolbar: [
+				"emoji", "headings", "bold", "italic", "strike", "link", "|",
+				"list", "ordered-list", "check", "outdent", "indent", "|",
+				"quote", "line", "code", "inline-code", "insert-before", "insert-after", "|",
+				"upload", "table", "record", "|", "undo", "redo", "|",
+				"fullscreen", "edit-mode", "both", "preview", "outline", "help"
+			],
+			after: function(){ this.setValue("# MarkDown"); }
 		});
 
 		$('#createDate').val(new Date().toISOString().slice(0,16));
@@ -303,6 +330,7 @@
 			var dark=document.documentElement.getAttribute('data-theme')==='dark';
 			if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('argon-admin-theme','light');}
 			else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('argon-admin-theme','dark');}
+			applyVditorTheme();
 		});
 		// 移动端菜单
 		$('#agMenuToggle').on('click',function(){ $('#agApp').toggleClass('nav-open'); });
@@ -310,18 +338,22 @@
 
 	// ====== 单页管理函数（完全重写，确保数据正确） ======
 	// 在「列表 / 编辑」视图之间切换（替代原来的弹窗）
-	// 单页编辑器延迟初始化：必须在容器可见时初始化，
-	// 否则 CodeMirror 会把编辑区宽度算成 0，导致内容文字竖排错位
+	// 单页编辑器延迟初始化：必须在容器可见时初始化，否则预览区宽度会算错
 	function ensurePageEditor() {
 		if (window.pageEditor) return window.pageEditor;
-		window.pageEditor = editormd("pageMdEditor", {
+		window.pageEditor = new Vditor("pageMdEditor", {
 			height: 640,
-			path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
-			appendMarkdown: "# 自定义页面内容",
-			saveHTMLToTextarea: true,
-			tex: true,
-			tocm: true,
-			codeFold: true
+			cdn: VDITOR_CDN,
+			mode: "sv",
+			theme: agIsDark() ? "dark" : "classic",
+			preview: { theme: agIsDark() ? "dark" : "default", math: { inlineDigit: true } },
+			toolbar: [
+				"emoji", "headings", "bold", "italic", "strike", "link", "|",
+				"list", "ordered-list", "check", "outdent", "indent", "|",
+				"quote", "line", "code", "inline-code", "insert-before", "insert-after", "|",
+				"upload", "table", "record", "|", "undo", "redo", "|",
+				"fullscreen", "edit-mode", "both", "preview", "outline", "help"
+			]
 		});
 		return window.pageEditor;
 	}
@@ -330,19 +362,15 @@
 		if (mode === 'edit') {
 			$('#pageListView').hide();
 			$('#pageEditorView').show();
-			// 等容器 show() 完成布局后再初始化/刷新，确保宽度计算正确
+			// 等容器 show() 完成布局后再初始化，确保宽度计算正确
 			setTimeout(function() {
 				if ($('#pageEditorView').css('display') === 'none') return;
 				ensurePageEditor();
 				if (typeof markdown === 'string') {
-					window.pageEditor.setMarkdown(markdown);
+					window.pageEditor.setValue(markdown);
 				}
-				// 强制 CodeMirror 铺满容器（双保险，修复窄宽度竖排）
-				try {
-					var cmEl = document.querySelector('#pageMdEditor .CodeMirror');
-					if (cmEl && cmEl.CodeMirror) cmEl.CodeMirror.setSize('100%', 640);
-				} catch (e) {}
-				window.pageEditor.refresh();
+				// Vditor 支持 size() 手动重算，修复从隐藏到显示时的宽度问题
+				try { window.pageEditor.size(); } catch (e) {}
 			}, 60);
 		} else {
 			$('#pageEditorView').hide();
@@ -415,7 +443,9 @@
 	function savePageData() {
 		ensurePageEditor();
 		var formArray = $("#pageForm").serializeArray();
-		formArray.push({ name: "contentMD", value: window.pageEditor.getMarkdown() });
+		// 用 Vditor 内容覆盖隐藏字段（serializeArray 会先读到空的隐藏 input）
+		formArray = formArray.filter(function(f){ return f.name !== "contentMD" && f.name !== "contentHtml"; });
+		formArray.push({ name: "contentMD", value: window.pageEditor.getValue() });
 		formArray.push({ name: "contentHtml", value: window.pageEditor.getHTML() });
 
 		var apiUrl = ($("#oldLink").val() == "") ? "/admin/saveAddPage/" : "/admin/saveEditPage/";
@@ -486,6 +516,7 @@
 		   alert("信息不全");
 		   return;
 		}
+		syncArticleFields();
 		var postURL = "/admin/saveEdit/";
 		if ($('#id').val() == "" || $('#id').val() == null)
 			postURL=  "/admin/saveAddNew/";
