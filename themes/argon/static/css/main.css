@@ -316,14 +316,33 @@ body{
   .argon-postnav{grid-template-columns:1fr}
 }
 
-/* == TagOutline v1 (WorkBuddy) — outline tag style == */
-/* 描边轮廓风格：透明底 + 细边框，悬停填充。用 !important 覆盖原主题样式，删除本块即可还原。 */
+/* == TagColor v1 (WorkBuddy) — colorful tag style == */
+/* 彩色分类风格：标签按位置循环分配柔和色，浅底深字、深色模式深底亮字、悬停填实色。删除本块即可还原。 */
 
 .argon-tag-items a,.argon-tags a{
-  background:transparent!important;box-shadow:none!important;border:1px solid #5e72e4!important;border-radius:6px!important;color:#5e72e4!important;
+  border:0!important;box-shadow:none!important;border-radius:6px!important;
+  font-weight:500!important;padding:5px 13px!important;line-height:1.6!important;
 }
-.argon-tag-items a:hover,.argon-tags a:hover{
-  background:#5e72e4!important;color:#fff!important;border-color:#5e72e4!important;
-}
-[data-theme="dark"] .argon-tag-items a,[data-theme="dark"] .argon-tags a{color:#a9b4f0!important;}
+.argon-tag-items a:nth-child(6n+1),.argon-tags a:nth-child(6n+1){background:#eaf3de!important;color:#3B6D11!important;}
+.argon-tag-items a:nth-child(6n+2),.argon-tags a:nth-child(6n+2){background:#e6f1fb!important;color:#0C447C!important;}
+.argon-tag-items a:nth-child(6n+3),.argon-tags a:nth-child(6n+3){background:#fbeaf0!important;color:#993556!important;}
+.argon-tag-items a:nth-child(6n+4),.argon-tags a:nth-child(6n+4){background:#faeeda!important;color:#854F0B!important;}
+.argon-tag-items a:nth-child(6n+5),.argon-tags a:nth-child(6n+5){background:#eeedfe!important;color:#3C3489!important;}
+.argon-tag-items a:nth-child(6n+6),.argon-tags a:nth-child(6n+6){background:#e1f5ee!important;color:#0F6E56!important;}
+
+/* 悬停：填充实色 + 白字 */
+.argon-tag-items a:hover:nth-child(6n+1),.argon-tags a:hover:nth-child(6n+1){background:#639922!important;color:#fff!important;}
+.argon-tag-items a:hover:nth-child(6n+2),.argon-tags a:hover:nth-child(6n+2){background:#378ADD!important;color:#fff!important;}
+.argon-tag-items a:hover:nth-child(6n+3),.argon-tags a:hover:nth-child(6n+3){background:#D4537E!important;color:#fff!important;}
+.argon-tag-items a:hover:nth-child(6n+4),.argon-tags a:hover:nth-child(6n+4){background:#BA7517!important;color:#fff!important;}
+.argon-tag-items a:hover:nth-child(6n+5),.argon-tags a:hover:nth-child(6n+5){background:#7F77DD!important;color:#fff!important;}
+.argon-tag-items a:hover:nth-child(6n+6),.argon-tags a:hover:nth-child(6n+6){background:#1D9E75!important;color:#fff!important;}
+
+/* 深色模式：半透明深底 + 亮字 */
+[data-theme="dark"] .argon-tag-items a:nth-child(6n+1),[data-theme="dark"] .argon-tags a:nth-child(6n+1){background:rgba(99,153,34,.18)!important;color:#b7d98c!important;}
+[data-theme="dark"] .argon-tag-items a:nth-child(6n+2),[data-theme="dark"] .argon-tags a:nth-child(6n+2){background:rgba(55,138,221,.18)!important;color:#9ccbf5!important;}
+[data-theme="dark"] .argon-tag-items a:nth-child(6n+3),[data-theme="dark"] .argon-tags a:nth-child(6n+3){background:rgba(212,83,126,.18)!important;color:#f2aac6!important;}
+[data-theme="dark"] .argon-tag-items a:nth-child(6n+4),[data-theme="dark"] .argon-tags a:nth-child(6n+4){background:rgba(186,117,23,.18)!important;color:#f5c77b!important;}
+[data-theme="dark"] .argon-tag-items a:nth-child(6n+5),[data-theme="dark"] .argon-tags a:nth-child(6n+5){background:rgba(127,119,221,.18)!important;color:#bdb8f5!important;}
+[data-theme="dark"] .argon-tag-items a:nth-child(6n+6),[data-theme="dark"] .argon-tags a:nth-child(6n+6){background:rgba(29,158,117,.18)!important;color:#8fe0c4!important;}
 
