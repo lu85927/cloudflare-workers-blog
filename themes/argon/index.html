@@ -7,7 +7,7 @@
 <meta name="keywords" content="{{ &keyWords }}">
 <meta name="description" content="{{ &OPT.siteDescription }}">
 {{ #OPT.favicon }}<link rel="shortcut icon" href="{{ &OPT.favicon }}">{{ /OPT.favicon }}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@541d2b8d299cf1f923b0c181fce55297d680cb62/themes/argon/static/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@d2f991e4e9f174be286e51cc177803f8cc23ac83/themes/argon/static/css/main.css">
 {{ &OPT.codeBeforHead }}
 </head>
 <body>
@@ -102,12 +102,8 @@
       </ul>
     </section>
 
-    <section class="argon-widget argon-card">
-      <h3 class="argon-widget-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h7l2 2h9v10H3z"/></svg>分类</h3>
-      <div class="argon-cats">{{ #widgetCategoryList }}<a href="/category/{{&.}}">{{&.}}</a>{{ /widgetCategoryList }}</div>
-    </section>
-
-    <section class="argon-widget argon-card">
+    
+<section class="argon-widget argon-card">
       <h3 class="argon-widget-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 17h16M8 4v16M16 4v16"/></svg>标签</h3>
       <div class="argon-tags">{{ #widgetTagsList }}<a href="/tags/{{&.}}">{{&.}}</a>{{ /widgetTagsList }}</div>
     </section>
