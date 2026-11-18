@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ &title }}</title>
+<meta name="keywords" content="{{ &keyWords }}">
+<meta name="description" content="{{ &OPT.siteDescription }}">
+{{ #OPT.favicon }}<link rel="shortcut icon" href="{{ &OPT.favicon }}">{{ /OPT.favicon }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/meadow/static/css/main.css?v=1.0">
+{{ &OPT.codeBeforHead }}
+</head>
+<body>
+
+<!-- ======= Cover ======= -->
+<header class="md-cover">
+  <span class="md-cover-shape s1"></span>
+  <span class="md-cover-shape s2"></span>
+  <svg class="md-wheat-deco" viewBox="0 0 100 100" aria-hidden="true">
+    <path d="M50 96 C50 70 50 45 50 14"/>
+    <path d="M50 22 C58 18 62 12 62 6 M50 22 C42 18 38 12 38 6"/>
+    <path d="M50 36 C59 32 64 25 64 18 M50 36 C41 32 36 25 36 18"/>
+    <path d="M50 50 C59 46 65 38 65 31 M50 50 C41 46 35 38 35 31"/>
+    <path d="M50 64 C58 60 63 53 63 46 M50 64 C42 60 37 53 37 46"/>
+  </svg>
+  <div class="md-cover-inner">
+    {{ #OPT.logo_url }}
+    <img class="md-cover-avatar" src="{{ &OPT.logo_url }}" alt="{{ &OPT.siteName }}">
+    {{ /OPT.logo_url }}
+    {{ ^OPT.logo_url }}
+    <div class="md-cover-avatar">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c0-6 3-10 8-12-1 6-4 9-8 12z"/><path d="M12 21c0-6-3-10-8-12 1 6 4 9 8 12z"/><path d="M12 21V9"/></svg>
+    </div>
+    {{ /OPT.logo_url }}
+    <h1 class="md-cover-title">{{ &OPT.siteName }}</h1>
+    <p class="md-cover-desc">{{ &OPT.siteDescription }}</p>
+  </div>
+</header>
+
+<!-- ======= Navbar ======= -->
+<nav class="md-nav">
+  <div class="md-nav-inner">
+    <a href="/" class="md-nav-brand">
+      <svg class="leaf" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c0-6 3-10 8-12-1 6-4 9-8 12z"/><path d="M12 21c0-6-3-10-8-12 1 6 4 9 8 12z"/><path d="M12 21V9"/></svg>
+      {{ &OPT.siteName }}
+    </a>
+    <ul class="md-nav-menu" id="md-menu">
+      {{ #widgetMenuList }}<li><a href="{{ &url }}">{{ &title }}</a></li>{{ /widgetMenuList }}
+    </ul>
+    <div class="md-nav-tools">
+      <button class="md-icon-btn" id="md-theme-btn" title="切换深浅色" aria-label="切换深浅色">
+        <svg class="md-theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="md-theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+      </button>
+      <button class="md-icon-btn md-nav-toggle" id="md-nav-toggle" aria-label="菜单">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ======= Body ======= -->
+<div class="md-wrap">
+  <main class="md-main">
+
+    <div class="md-list-heading">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      <span>{{ &title }}</span>
+    </div>
+
+    {{ #articleList }}
+    <article class="md-post md-card">
+      <a href="{{ &url }}" class="md-post-thumb">
+        {{ #img }}<img src="{{ &img }}" alt="{{ &title }}" loading="lazy">{{ /img }}
+        {{ ^img }}<img src="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/meadow/static/img/thumb.svg" alt="{{ &title }}" loading="lazy">{{ /img }}
+      </a>
+      <div class="md-post-body">
+        <h2 class="md-post-title"><a href="{{ &url }}">{{ &title }}</a></h2>
+        <p class="md-post-excerpt">{{ &contentText }}</p>
+        <div class="md-post-meta">
+          <span><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>{{ &createDate10 }}</span>
+          {{ #category }}<span class="md-post-tag">{{ &. }}</span>{{ /category }}
+          {{ #views }}<span><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>{{ &views }}</span>{{ /views }}
+        </div>
+      </div>
+    </article>
+    {{ /articleList }}
+    {{ ^articleList }}
+    <div class="md-card" style="padding:44px;text-align:center;color:var(--md-muted);font-family:var(--md-serif)">田里还没有文章，先种下一篇吧 🌱</div>
+    {{ /articleList }}
+
+    <div class="md-pager">
+      {{ #pageOlder }}<a href="{{ &url }}">← {{ &title }}</a>{{ /pageOlder }}
+      {{ #pageNewer }}<a href="{{ &url }}">{{ &title }} →</a>{{ /pageNewer }}
+    </div>
+  </main>
+
+  <!-- ======= Sidebar ======= -->
+  <aside class="md-sidebar">
+    <section class="md-widget md-card md-widget-about">
+      <div class="mini-avatar">{{ &OPT.siteName }}</div>
+      <div style="font-weight:600;color:var(--md-text);font-family:var(--md-serif);letter-spacing:1px">{{ &OPT.siteName }}</div>
+      <p>{{ &OPT.siteDescription }}</p>
+    </section>
+
+    <section class="md-widget md-card">
+      <h3 class="md-widget-title"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>近期文章</h3>
+      <ul class="md-recent">
+        {{ #widgetRecentlyList }}
+        <li><a href="{{ &url }}">{{ &title }}</a><time>{{ &createDate10 }}</time></li>
+        {{ /widgetRecentlyList }}
+      </ul>
+    </section>
+
+    <section class="md-widget md-card">
+      <h3 class="md-widget-title"><svg viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3z"/></svg>分类</h3>
+      <div class="md-cats">{{ #widgetCategoryList }}<a href="/category/{{&.}}">{{&.}}</a>{{ /widgetCategoryList }}</div>
+    </section>
+
+    <section class="md-widget md-card">
+      <h3 class="md-widget-title"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 17h16M8 4v16M16 4v16"/></svg>标签</h3>
+      <div class="md-tags">{{ #widgetTagsList }}<a href="/tags/{{&.}}">{{&.}}</a>{{ /widgetTagsList }}</div>
+    </section>
+
+    <section class="md-widget md-card">
+      <h3 class="md-widget-title"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg>友情链接</h3>
+      <ul class="md-links">{{ #widgetLinkList }}<li><a href="{{ &url }}" target="_blank" rel="noopener">{{ &title }}</a></li>{{ /widgetLinkList }}</ul>
+    </section>
+
+    {{ &OPT.widgetOther }}
+  </aside>
+</div>
+
+<footer class="md-footer">
+  <div class="md-runtime"><span id="runtime_span"></span></div>
+  <script type="text/javascript">
+  function show_runtime(){
+    window.setTimeout(show_runtime,1000);
+    X=new Date("6/19/2026 00:00:00"); //初始建站时间修改此处
+    Y=new Date();T=(Y.getTime()-X.getTime());M=24*60*60*1000;
+    a=T/M;A=Math.floor(a);b=(a-A)*24;B=Math.floor(b);c=(b-B)*60;C=Math.floor(c);D=Math.floor((c-C)*60);
+    document.getElementById("runtime_span").innerHTML="老壮的小破站已运行: "+A+"天"+B+"小时"+C+"分"+D+"秒";
+  }
+  show_runtime();
+  </script>
+  <div style="margin-top:4px">Copyright &copy; {{ &current_year }} {{ &OPT.siteName }} &nbsp; {{ &OPT.copyRight }}</div>
+</footer>
+
+<button class="md-top" id="md-top" aria-label="返回顶部">
+  <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+(function(){
+  var stored=localStorage.getItem('meadow-theme');
+  if(stored==='dark') document.documentElement.setAttribute('data-theme','dark');
+  document.getElementById('md-theme-btn').addEventListener('click',function(){
+    var dark=document.documentElement.getAttribute('data-theme')==='dark';
+    if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('meadow-theme','light');}
+    else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('meadow-theme','dark');}
+  });
+  document.getElementById('md-nav-toggle').addEventListener('click',function(){
+    document.getElementById('md-menu').classList.toggle('open');
+  });
+  var top=document.getElementById('md-top');
+  window.addEventListener('scroll',function(){
+    if(window.scrollY>300) top.classList.add('show'); else top.classList.remove('show');
+  },{passive:true});
+  top.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+})();
+</script>
+{{ &OPT.codeBeforBody }}
+</body>
+</html>
