@@ -165,3 +165,17 @@
     word-wrap: break-word;               /* 长单词换行 */
     max-width: 100%;                     /* 限制宽度不超出容器 */
 }
+
+/* == TagOutline v1 (WorkBuddy) — outline tag style == */
+/* 描边轮廓风格：透明底 + 细边框，悬停填充。用 !important 覆盖原主题样式，删除本块即可还原。 */
+
+.tag-items a,.widget .tagcloud a{
+  background:transparent!important;box-shadow:none!important;border:1px solid #2f8fd8!important;border-radius:6px!important;color:#2f8fd8!important;
+}
+.tag-items a:hover,.widget .tagcloud a:hover{
+  background:#2f8fd8!important;color:#fff!important;border-color:#2f8fd8!important;
+}
+html[data-theme="dark"] .tag-items a,html[data-theme="dark"] .widget .tagcloud a{color:#8fc9f0!important;}
+.widget .tagcloud a{width:auto!important;margin:0 8px 8px 0!important;white-space:normal!important;text-align:center!important;overflow:visible!important;text-overflow:clip!important;}
+.widget .tagcloud a{font-size:14px!important;}
+
