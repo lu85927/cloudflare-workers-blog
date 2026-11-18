@@ -315,3 +315,15 @@ body{
   .argon-article-title{font-size:23px}
   .argon-postnav{grid-template-columns:1fr}
 }
+
+/* == TagOutline v1 (WorkBuddy) — outline tag style == */
+/* 描边轮廓风格：透明底 + 细边框，悬停填充。用 !important 覆盖原主题样式，删除本块即可还原。 */
+
+.argon-tag-items a,.argon-tags a{
+  background:transparent!important;box-shadow:none!important;border:1px solid #5e72e4!important;border-radius:6px!important;color:#5e72e4!important;
+}
+.argon-tag-items a:hover,.argon-tags a:hover{
+  background:#5e72e4!important;color:#fff!important;border-color:#5e72e4!important;
+}
+[data-theme="dark"] .argon-tag-items a,[data-theme="dark"] .argon-tags a{color:#a9b4f0!important;}
+
