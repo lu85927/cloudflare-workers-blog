@@ -693,3 +693,15 @@ input:focus {
     height: 38px;
     text-indent: 10px;
 }
+
+/* == TagOutline v1 (WorkBuddy) — outline tag style == */
+/* 描边轮廓风格：透明底 + 细边框，悬停填充。用 !important 覆盖原主题样式，删除本块即可还原。 */
+
+.tag-items a,.tagcloud a{
+  background:transparent!important;box-shadow:none!important;border:1px solid #397af9!important;border-radius:6px!important;color:#397af9!important;
+}
+.tag-items a:hover,.tagcloud a:hover{
+  background:#397af9!important;color:#fff!important;border-color:#397af9!important;
+}
+html[data-theme="dark"] .tag-items a,html[data-theme="dark"] .tagcloud a{color:#8fb8ff!important;}
+
