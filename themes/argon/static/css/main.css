@@ -346,3 +346,14 @@ body{
 [data-theme="dark"] .argon-tag-items a:nth-child(6n+5),[data-theme="dark"] .argon-tags a:nth-child(6n+5){background:rgba(127,119,221,.18)!important;color:#bdb8f5!important;}
 [data-theme="dark"] .argon-tag-items a:nth-child(6n+6),[data-theme="dark"] .argon-tags a:nth-child(6n+6){background:rgba(29,158,117,.18)!important;color:#8fe0c4!important;}
 
+/* == TagLayout v2 (WorkBuddy) == */
+/* 标签紧凑流式排列：文字不折行、标签不被压缩、缩小间距以减少行末空白。彩色配色沿用 TagColor v1。删除本块即可还原布局。 */
+.argon-tags,.argon-tag-items{gap:6px!important}
+.argon-tags a,.argon-tag-items a{
+  white-space:nowrap!important;
+  flex:0 0 auto!important;
+  padding:4px 10px!important;
+  font-size:12px!important;
+  line-height:1.5!important;
+  border-radius:5px!important;
+}
