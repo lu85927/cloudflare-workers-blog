@@ -1,217 +1,283 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hans">
 <head>
 	<meta charset="utf-8">
-	<title>CF-blog后台</title>
-    <link rel="icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico" />
-	<link rel="shortcut icon" type="image/x-icon"  href="https://cdn.jsdelivr.net/gh/gdtool/zhaopp/cfblog/favicon.ico"/>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/css/editormd.css" />
-    <link rel="stylesheet" href="https://cdn.staticfile.org/bootstrap-select/1.9.4/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
-    
-    <script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-zh_CN.min.js"></script>
-	<style>
-		.bootstrap-select>.dropdown-toggle { z-index:auto; }
-		.modal-body .editormd { z-index: 1050; }
-	</style>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pure · 管理后台</title>
+	<link rel="icon" type="image/svg+xml" href="https://img.lblog.cc/blog/logo/favicon.svg" />
+	<link rel="shortcut icon" type="image/png" href="https://img.lblog.cc/blog/logo/favicon.png"/>
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.11.3/dist/index.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/pure/static/css/admin.css?v=1.2">
+
+	<script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-zh_CN.min.js"></script>
+	<script>
+	(function(){
+		var s=localStorage.getItem('pure-admin-theme');
+		if(s==='dark')document.documentElement.setAttribute('data-theme','dark');
+	})();
+	</script>
 </head>
 <body>
 
-<nav class="navbar navbar-default " role="navigation">
-	<div class="container-fluid">
-	<div>
-		<ul id="myTab" class="nav nav-tabs">
-			<li><a href="/" >CF-blog</a></li>
-			<li><a href="#list" data-toggle="tab">我的文章</a></li>
-			<li class="active"><a href="#new" data-toggle="tab">新建</a></li>
-			<li><a href="#pageTab" data-toggle="tab">单页管理</a></li>
-			<li><a href="#config" data-toggle="tab">设置</a></li>
-			<li><a href="#pub" data-toggle="tab">发布</a></li>
-		</ul>
-	</div>
-	</div>
-</nav>
+<div class="ag-app" id="agApp">
 
-<div id="myTabContent" class="tab-content" style="padding-top: 60px;">
-	<!-- 文章列表 -->
-	<div class="tab-pane fade" id="list">
-		<div class="container" >
-			<table class="table  table-striped" id="articleList">
-				  <tr><td>ID</td><td>标题</td><td>创建日期</td></tr>
-			</table>
-			<input type="hidden"  name="page" id="page" value='1'>
-			<a id="loadmore" class="btn btn-default">加载更多...</a>
-		</div> 
-	</div>
-
-	<!-- 新建文章 -->
-	<div class="tab-pane fade in active" id="new">
-		<div class="container">
-			<h3 id="labelNew">新增</h3>   
-			<form id="addNewForm"  class="form-inline" >
-				<div class="form-group" style="width: 98%">
-					<input type="hidden" class="form-control" name="id" id="id" >
-					<input type="text" class="form-control" name="title" id="title" placeholder="标题" style="width: 100%;" required="true">
-				</div>
-				<div class="form-group">
-					<label for="exampleInputEmail2">特色图片</label>
-					<input type="url" class="form-control" style="width: 400px;"  name="img" id="img" placeholder="" >
-				</div>
-				<div class="form-group">
-					<label for="exampleInputEmail2">永久链接</label>
-					<input type="text" class="form-control" name="link" id="link" placeholder="" required="true">
-				</div>
-				<div class="form-group">
-					<label for="exampleInputEmail2">创建日期</label>
-					<input type="datetime-local" class="form-control" id="createDate" name="createDate" placeholder=""  required="true">
-				</div>
-				<div class="form-group">
-					<label for="exampleInputEmail2">分类</label>
-					<select class="selectpicker" multiple name="category[]" id="category">
-					</select>
-				</div>
-				<div class="form-group">
-					<label for="exampleInputEmail2">标签</label>
-					<input type="text" class="form-control" name="tags" id="tags" placeholder="标签1,标签2">
-				</div>
-				<div class="form-group">
-					<label for="exampleInputEmail2">权重</label>
-					<input type="text" class="form-control" name="priority" id="priority" value='0.5' placeholder="权重">
-				</div>
-				<div class="form-group">
-					<label for="exampleInputEmail2">更新频率</label>
-					    <select class="form-control" id="changefreq" name="changefreq">
-						<option value="daily" selected  = "selected" >daily</option>
-						<option value="hourly" >hourly</option>
-						<option value="weekly" >weekly</option>
-						<option value="monthly" >monthly</option>
-						<option value="yearly" >yearly</option>
-						<option value="never" >never</option>
-						<option value="always" >always</option>
-					    </select>
-				</div>
-					<a  tabindex="0"  role="button"  type="submit" id="btn_saveAddNew" class="btn btn-default" onclick="saveAddNew()">保存</a>
-				<div id="content"><textarea style="display:none;"></textarea></div>
-			</form>
-		</div>
-	</div>
-
-	<!-- ====== 单页管理面板 ====== -->
-	<div class="tab-pane fade" id="pageTab">
-		<div class="container">
-			<div class="row" style="margin-bottom:15px;">
-				<button class="btn btn-primary" data-toggle="modal" data-target="#pageModal">新建单页</button>
+	<!-- ======= Sidebar ======= -->
+	<aside class="ag-sidebar">
+		<div class="ag-brand">
+			<div class="ag-brand-logo">
+				<img src="https://img.lblog.cc/blog/logo/avatar-square.png" alt="站点头像">
 			</div>
-			<table class="table table-striped" id="pageListTable">
-				<thead>
-					<tr>
-						<th>页面别名(link)</th>
-						<th>页面标题</th>
-						<th>更新日期</th>
-						<th>访问地址</th>
-						<th>操作</th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-			</table>
+			<div class="ag-brand-txt"><strong>Pure Blog</strong><span>管理后台</span></div>
 		</div>
-	</div>
+		<div class="ag-nav-label">控制台</div>
+		<ul id="myTab" class="ag-nav" role="tablist">
+			<li><a href="/"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>返回首页</a></li>
+			<li data-tab="list"><a href="#list" data-toggle="tab"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>我的文章</a></li>
+			<li class="active" data-tab="new"><a href="#new" data-toggle="tab"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>新建文章</a></li>
+			<li data-tab="pageTab"><a href="#pageTab" data-toggle="tab"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h7M9 17h7"/></svg>单页管理</a></li>
+			<li data-tab="config"><a href="#config" data-toggle="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06-2 2-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21h-2.8v-.1A1.7 1.7 0 0 0 10.9 19.3a1.7 1.7 0 0 0-1.87.34l-.06.06-2-2 .06-.06A1.7 1.7 0 0 0 7.37 15a1.7 1.7 0 0 0-1.56-1.03H5.7v-2.8h.1A1.7 1.7 0 0 0 7.4 10.1a1.7 1.7 0 0 0-.34-1.87l-.06-.06 2-2 .06.06a1.7 1.7 0 0 0 1.87.34H11a1.7 1.7 0 0 0 1.03-1.56V4.7h2.8v.1A1.7 1.7 0 0 0 15.8 6.4a1.7 1.7 0 0 0 1.87-.34l.06-.06 2 2-.06.06a1.7 1.7 0 0 0-.34 1.87V11a1.7 1.7 0 0 0 1.56 1.03h.1v2.8h-.1A1.7 1.7 0 0 0 19.4 15z"/></svg>设置</a></li>
+			<li data-tab="pub"><a href="#pub" data-toggle="tab"><svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/><path d="M5 20h14"/></svg>发布</a></li>
+		</ul>
+		<div class="ag-side-foot">
+			<a href="/" target="_blank"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg>查看站点</a>
+		</div>
+	</aside>
 
-	<!-- 单页弹窗 -->
-	<div class="modal fade" id="pageModal" tabindex="-1" role="dialog" aria-labelledby="pageModalLabel">
-		<div class="modal-dialog modal-lg" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="pageModalLabel">新建自定义单页</h4>
+	<!-- ======= Main ======= -->
+	<div class="ag-main">
+
+		<!-- Topbar -->
+		<header class="ag-topbar">
+			<div class="ag-crumb">
+				<button class="ag-icon-btn ag-menu-toggle" id="agMenuToggle" aria-label="菜单"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+				<svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+				<span>管理后台 / <b id="agCurCrumb">新建文章</b></span>
+			</div>
+			<div class="ag-tools">
+				<button class="ag-icon-btn" id="agThemeBtn" title="切换深浅色" aria-label="切换深浅色">
+					<svg class="ag-theme-icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+					<svg class="ag-theme-icon-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+				</button>
+				<a href="/" target="_blank" class="ag-site-link"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg><span>访问站点</span></a>
+			</div>
+		</header>
+
+		<!-- Content -->
+		<div class="ag-content">
+			<div id="myTabContent" class="tab-content">
+
+				<!-- 文章列表 -->
+				<div class="tab-pane fade" id="list">
+					<div class="ag-page-head">
+						<div><h2>我的文章</h2><p>所有已发布的文章，点击标题进入编辑</p></div>
+					</div>
+					<div class="ag-card">
+						<div class="ag-table-wrap">
+							<table class="ag-table" id="articleList">
+								<thead><tr><th>ID</th><th>标题</th><th>创建日期</th></tr></thead>
+								<tbody></tbody>
+							</table>
+						</div>
+						<input type="hidden" name="page" id="page" value='1'>
+						<div class="ag-actions" style="margin-top:18px"><button id="loadmore" class="ag-btn ag-btn-ghost">加载更多…</button></div>
+					</div>
 				</div>
-				<div class="modal-body">
-					<form id="pageForm">
-						<input type="hidden" id="oldLink" name="oldLink">
-						<div class="form-group">
-							<label>页面别名(唯一，英文，如 about / links)</label>
-							<input class="form-control" id="pageLink" name="link" required>
+
+				<!-- 新建文章 -->
+				<div class="tab-pane fade in active" id="new">
+					<div class="ag-page-head">
+						<div><h2 id="labelNew">新建文章</h2><p>写一篇新文章，支持 Markdown 与数学公式</p></div>
+					</div>
+					<div class="ag-card">
+						<form id="addNewForm" class="ag-form">
+							<div class="ag-grid">
+								<div class="form-group ag-full">
+									<input type="hidden" name="id" id="id">
+									<label for="title">标题</label>
+									<input type="text" class="form-control" name="title" id="title" placeholder="给文章起个标题" required="true">
+								</div>
+								<div class="form-group">
+									<label>特色图片</label>
+									<input type="url" class="form-control" name="img" id="img" placeholder="https://…（可选）">
+								</div>
+								<div class="form-group">
+									<label>永久链接</label>
+									<input type="text" class="form-control" name="link" id="link" placeholder="URL 路径" required="true">
+								</div>
+								<div class="form-group">
+									<label>创建日期</label>
+									<input type="datetime-local" class="form-control" id="createDate" name="createDate" required="true">
+								</div>
+								<div class="form-group">
+									<label>标签</label>
+									<input type="text" class="form-control" name="tags" id="tags" placeholder="标签1, 标签2">
+								</div>
+								<div class="form-group">
+									<label>分类</label>
+									<select class="selectpicker" multiple name="category[]" id="category"></select>
+								</div>
+								<div class="form-group">
+									<label>权重</label>
+									<input type="text" class="form-control" name="priority" id="priority" value='0.5' placeholder="0.5">
+								</div>
+								<div class="form-group">
+									<label>更新频率</label>
+									<select class="form-control" id="changefreq" name="changefreq">
+										<option value="daily" selected="selected">daily</option>
+										<option value="hourly">hourly</option>
+										<option value="weekly">weekly</option>
+										<option value="monthly">monthly</option>
+										<option value="yearly">yearly</option>
+										<option value="never">never</option>
+										<option value="always">always</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group" style="margin-top:6px">
+								<label>正文内容（Markdown）</label>
+								<div class="ag-editor-wrap"><div id="content"></div></div>
+								<input type="hidden" name="content-markdown-doc" id="content-markdown-doc">
+								<input type="hidden" name="content-html-code" id="content-html-code">
+							</div>
+							<div class="ag-actions">
+								<button type="button" id="btn_saveAddNew" class="ag-btn ag-btn-primary" onclick="saveAddNew()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>保存文章</button>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<!-- 单页管理 -->
+				<div class="tab-pane fade" id="pageTab">
+					<!-- 列表视图 -->
+					<div id="pageListView">
+						<div class="ag-page-head">
+							<div><h2>单页管理</h2><p>自定义独立页面，如关于、友链等</p></div>
+							<button class="ag-btn ag-btn-primary" onclick="newPage()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>新建单页</button>
 						</div>
-						<div class="form-group">
-							<label>页面标题</label>
-							<input class="form-control" id="pageTitle" name="title" required>
-						</div>
-						<div class="form-group">
-							<label>SEO关键词(逗号分隔)</label>
-							<input class="form-control" id="pageKeywords" name="keywords">
-						</div>
-						<div class="form-group">
-							<label>页面内容(Markdown)</label>
-							<div id="pageMdEditor">
-								<textarea style="display:none;" name="contentMD"></textarea>
+						<div class="ag-card">
+							<div class="ag-table-wrap">
+								<table class="ag-table" id="pageListTable">
+									<thead><tr><th>页面别名</th><th>页面标题</th><th>更新日期</th><th>访问地址</th><th>操作</th></tr></thead>
+									<tbody></tbody>
+								</table>
 							</div>
 						</div>
-						<input type="hidden" id="pageHtml" name="contentHtml">
-					</form>
+					</div>
+					<!-- 编辑视图（与新建文章一致的内嵌表单） -->
+					<div id="pageEditorView" style="display:none;">
+						<div class="ag-page-head">
+							<div><h2 id="pageEditorTitle">新建单页</h2><p>自定义独立页面内容，支持 Markdown</p></div>
+							<button class="ag-btn ag-btn-ghost" onclick="showPageView('list')"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>返回列表</button>
+						</div>
+						<div class="ag-card">
+							<form id="pageForm" class="ag-form">
+								<input type="hidden" id="oldLink" name="oldLink">
+								<div class="ag-grid">
+									<div class="form-group">
+										<label>页面别名（唯一，英文，如 about / links）</label>
+										<input class="form-control" id="pageLink" name="link" required>
+									</div>
+									<div class="form-group">
+										<label>页面标题</label>
+										<input class="form-control" id="pageTitle" name="title" required>
+									</div>
+								</div>
+								<div class="form-group">
+									<label>SEO 关键词（逗号分隔）</label>
+									<input class="form-control" id="pageKeywords" name="keywords">
+								</div>
+								<div class="form-group" style="margin-top:6px">
+									<label>页面内容（Markdown）</label>
+									<div class="ag-editor-wrap"><div id="pageMdEditor"></div></div>
+								</div>
+								<input type="hidden" id="pageMdDoc" name="contentMD">
+								<input type="hidden" id="pageHtml" name="contentHtml">
+								<div class="ag-actions">
+									<button type="button" class="ag-btn ag-btn-primary" onclick="savePageData()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>保存单页</button>
+									<button type="button" class="ag-btn ag-btn-ghost" onclick="showPageView('list')">取消</button>
+								</div>
+							</form>
+						</div>
+					</div>
 				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" onclick="savePageData()">保存单页</button>
+
+				<!-- 设置 -->
+				<div class="tab-pane fade" id="config">
+					<div class="ag-page-head"><div><h2>站点设置</h2><p>配置分类、菜单与友链，保存后需发布生效</p></div></div>
+					<div class="ag-card">
+						<form id="configForm" class="ag-form" role="form">
+							<div class="form-group">
+								<label>分类（JSON 数组）</label>
+								<textarea class="form-control" id="WidgetCategory" name="WidgetCategory" rows="3" placeholder='["分类A","分类B"]'></textarea>
+							</div>
+							<div class="form-group">
+								<label>菜单（JSON 数组）</label>
+								<textarea class="form-control" id="WidgetMenu" name="WidgetMenu" rows="5" placeholder='[{"title":"菜单A","url":"/category/菜单A"}]'></textarea>
+							</div>
+							<div class="form-group">
+								<label>其他链接 / 友链（JSON 数组）</label>
+								<textarea class="form-control" id="WidgetLink" name="WidgetLink" rows="5" placeholder='[{"title":"好友","url":"https://example.com/"}]'></textarea>
+							</div>
+							<div class="ag-actions"><button type="button" id="btn_saveConfig" class="ag-btn ag-btn-primary" onclick="saveConfig()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>保存设置</button></div>
+						</form>
+					</div>
+					<div class="ag-card">
+						<h3 class="ag-card-title"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>备份与迁移</h3>
+						<form id="importForm" class="ag-form" role="form">
+							<div class="form-group">
+								<label>导入数据（粘贴导出的完整 JSON）</label>
+								<textarea class="form-control" id="importJson" name="importJson" rows="4" placeholder="复制完整的导出 JSON"></textarea>
+							</div>
+							<div class="ag-actions">
+								<button type="button" id="btn_import" class="ag-btn ag-btn-primary" onclick="importBlog()"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>导入</button>
+								<a id="btn_export" class="ag-btn ag-btn-ghost" href="/admin/export/"><svg viewBox="0 0 24 24"><path d="M12 21V9M7 14l5-5 5 5"/><path d="M4 5h16"/></svg>导出</a>
+							</div>
+						</form>
+					</div>
 				</div>
+
+				<!-- 发布 -->
+				<div class="tab-pane fade" id="pub">
+					<div class="ag-page-head"><div><h2>发布</h2><p>将改动推送到前端</p></div></div>
+					<div class="ag-hero">
+						<span class="ag-hero-shape s1"></span><span class="ag-hero-shape s2"></span>
+						<h3>发布你的改动</h3>
+						<p>由于前端启用了缓存，以下操作需要发布后才能生效：新建 / 修改文章、修改后台配置、修改 Worker 配置、新增 / 修改单页。发布后请在浏览器按 Ctrl + F5 强制刷新查看效果。</p>
+						<a href="#" class="ag-btn" onclick="publish()"><svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/><path d="M5 20h14"/></svg>立即发布</a>
+					</div>
+				</div>
+
 			</div>
 		</div>
 	</div>
-
-	<!-- 设置 -->
-	<div class="tab-pane fade" id="config">
-		<div class="container" >
-			<form id="configForm" role="form" >
-				<div class="form-group">
-				    <label for="name">分类, 例:<code>["类别A","类别B","类别C","类别D"]</code></label>
-					<textarea class="form-control" id="WidgetCategory" name="WidgetCategory" rows="3" placeholder='["分类A","分类B"]'></textarea>
-				</div>
-				<div class="form-group">
-				    <label for="name">菜单, 例:<code>[{"title":"技术文章","url":"/category/技术文章"},{"title":"管理","url":"/admin"}]</code></label>
-					<textarea class="form-control" id="WidgetMenu" name="WidgetMenu" rows="5"  placeholder='[
-	{"title":"菜单A"	,"url":"/category/菜单A"},
-	{"title":"菜单B"	,"url":"/category/菜单B"}
-]'></textarea>
-				</div>
-				<div class="form-group">
-				    <label for="name">其他链接, 例:<code>[{"title":"我的好友","url":"https://blog.gezhong.vip/"},{"title":"谷歌","url":"https://www.google.com/"}]</code></label>
-					<textarea class="form-control" id="WidgetLink" name="WidgetLink" rows="5"  placeholder='[
-	{"title":"好友"	,"url":"https://blog.gezhong.vip/"},
-	{"title":"谷歌"	,"url":"https://www.google.com/"}
-]'></textarea>
-				</div>
-				<a  tabindex="0"  role="button"  type="submit" id="btn_saveConfig" class="btn btn-default" onclick="saveConfig()">保存</a>
-			</form>
-			<form id="importForm" role="form" >
-				<div class="form-group">
-				    <label for="name">导出/导入</label>
-					<textarea class="form-control" id="importJson" name="importJson" rows="3" placeholder='复制完整的导出json'></textarea>
-				</div>
-				<a  tabindex="0"  role="button"  type="submit" id="btn_import" class="btn btn-default" onclick="importBlog()">导入</a>
-				<a  tabindex="0"  role="button"  type="submit" id="btn_export" class="btn btn-default"  href="/admin/export/" >导出</a>
-			</form>
-		</div>
-	</div>
-
-	<!-- 发布 -->
-	<div class="tab-pane fade" id="pub">
-		<div class="container" >
-			<div class="jumbotron" >
-				<p class="lead">
-				由于前端使用缓存,以下操作需要发布:新建文章、发布文章、修改后台配置、修改workers配置、新增/修改单页</br>
-				前端生效需要ctrl+F5 强制刷新
-				</p>
-				<a href="#" class="btn btn-default" onclick="publish()">发布</a>
-			</div>
-		</div>
-	</div>	
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.js"></script>   
+<script src="https://cdn.jsdelivr.net/npm/vditor@3.11.3/dist/index.min.js"></script>
 <script type="text/javascript">
+	// ====== Vditor 公共配置 ======
+	var VDITOR_CDN = "https://cdn.jsdelivr.net/npm/vditor@3.11.3";
+	function agIsDark(){ return document.documentElement.getAttribute('data-theme') === 'dark'; }
+	function applyVditorTheme(){
+		var t  = agIsDark() ? "dark" : "classic";
+		var pt = agIsDark() ? "dark" : "default";
+		[window.mdEditor, window.pageEditor].forEach(function(ed){
+			if (ed && typeof ed.setTheme === 'function') {
+				try { ed.setTheme(t, pt); } catch (e) {}
+			}
+		});
+	}
+	// 保存文章前：把 Vditor 内容同步到隐藏字段（Worker 依赖 content-markdown-doc / content-html-code）
+	function syncArticleFields(){
+		if (window.mdEditor) {
+			$('#content-markdown-doc').val(window.mdEditor.getValue());
+			$('#content-html-code').val(window.mdEditor.getHTML());
+		}
+	}
 	$(function() {
 		$('#myTab li:eq(0) 1').tab('show');
 		var categoryJson = <!--{categoryJson}-->;
@@ -219,25 +285,23 @@
 		var linkJson = <!--{linkJson}-->;
 		var pageJson = <!--{pageJson}-->;
 
-		var mdEditor = editormd("content", {
-			height : 640,
-			path   : "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
-			appendMarkdown : "# MarkDown", 
-			saveHTMLToTextarea : true,
-			mode : "markdown",
-			tex  : true,
-			tocm : true, 
-			codeFold : true
-		});
-
-		window.pageEditor = editormd("pageMdEditor", {
-			height: 400,
-			path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
-			appendMarkdown: "# 自定义页面内容",
-			saveHTMLToTextarea: true,
-			tex: true,
-			tocm: true,
-			codeFold: true
+		window.mdEditor = new Vditor("content", {
+			height: 640,
+			cdn: VDITOR_CDN,
+			mode: "sv",
+			theme: agIsDark() ? "dark" : "classic",
+			preview: { theme: agIsDark() ? "dark" : "default", math: { inlineDigit: true } },
+			toolbar: [
+				"emoji", "headings", "bold", "italic", "strike", "link", "|",
+				"list", "ordered-list", "check", "outdent", "indent", "|",
+				"quote", "line", "code", "inline-code", "insert-before", "insert-after", "|",
+				"upload", "table", "record", "|", "undo", "redo", "|",
+				"fullscreen", "edit-mode", "both", "preview", "outline", "help"
+			],
+			after: function(){
+				// Vditor 的 after 回调中 this 是 options 而非实例，必须用实例变量赋值
+				try { if (window.mdEditor) window.mdEditor.setValue("# MarkDown"); } catch (e) {}
+			}
 		});
 
 		$('#createDate').val(new Date().toISOString().slice(0,16));
@@ -251,23 +315,88 @@
 		}
 		$("#loadmore").click();
 		renderPageList(pageJson);
+		// 保存/删除单页刷新后，自动回到单页管理标签
+		if (sessionStorage.getItem('agGoPageTab') === '1') {
+			sessionStorage.removeItem('agGoPageTab');
+			$('a[href="#pageTab"]').tab('show');
+		}
 
-		$('#pageModal').on('hidden.bs.modal', function () {
-			$('#pageForm')[0].reset();
-			$('#oldLink').val("");
-			$('#pageModalLabel').text("新建自定义单页");
-			if (window.pageEditor) {
-				window.pageEditor.setMarkdown("# 自定义页面内容");
-			}
+		// tab 切换：更新标题与侧边栏高亮
+		$('#myTab a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+			var name=$(e.target).text().trim();
+			$('#agCurCrumb').text(name);
+			$('#myTab li').removeClass('active');
+			$(e.target).parent('li').addClass('active');
 		});
+		// 主题切换
+		$('#agThemeBtn').on('click',function(){
+			var dark=document.documentElement.getAttribute('data-theme')==='dark';
+			if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('pure-admin-theme','light');}
+			else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('pure-admin-theme','dark');}
+			applyVditorTheme();
+		});
+		// 移动端菜单
+		$('#agMenuToggle').on('click',function(){ $('#agApp').toggleClass('nav-open'); });
 	});
 
 	// ====== 单页管理函数（完全重写，确保数据正确） ======
+	// 在「列表 / 编辑」视图之间切换（替代原来的弹窗）
+	// 单页编辑器延迟初始化：必须在容器可见时初始化，否则预览区宽度会算错
+	function ensurePageEditor() {
+		if (window.pageEditor) return window.pageEditor;
+		window.pageEditor = new Vditor("pageMdEditor", {
+			height: 640,
+			cdn: VDITOR_CDN,
+			mode: "sv",
+			theme: agIsDark() ? "dark" : "classic",
+			preview: { theme: agIsDark() ? "dark" : "default", math: { inlineDigit: true } },
+			toolbar: [
+				"emoji", "headings", "bold", "italic", "strike", "link", "|",
+				"list", "ordered-list", "check", "outdent", "indent", "|",
+				"quote", "line", "code", "inline-code", "insert-before", "insert-after", "|",
+				"upload", "table", "record", "|", "undo", "redo", "|",
+				"fullscreen", "edit-mode", "both", "preview", "outline", "help"
+			]
+		});
+		return window.pageEditor;
+	}
+
+	function showPageView(mode, markdown) {
+		if (mode === 'edit') {
+			$('#pageListView').hide();
+			$('#pageEditorView').show();
+			// 等容器 show() 完成布局后再初始化，确保宽度计算正确
+			setTimeout(function() {
+				if ($('#pageEditorView').css('display') === 'none') return;
+				ensurePageEditor();
+				if (typeof markdown === 'string') {
+					window.pageEditor.setValue(markdown);
+				}
+				// Vditor 支持 size() 手动重算，修复从隐藏到显示时的宽度问题
+				try { window.pageEditor.size(); } catch (e) {}
+			}, 60);
+		} else {
+			$('#pageEditorView').hide();
+			$('#pageListView').show();
+		}
+	}
+
+	// 新建单页：清空表单并进入编辑视图
+	function newPage() {
+		$('#pageForm')[0].reset();
+		$('#oldLink').val("");
+		$('#pageLink').val("");
+		$('#pageTitle').val("");
+		$('#pageKeywords').val("");
+		$('#pageEditorTitle').text("新建单页");
+		showPageView('edit', "# 自定义页面内容");
+	}
+
 	function renderPageList(list) {
 		var tbody = $("#pageListTable tbody");
 		tbody.empty();
 		if (!list || list.length === 0) {
-			tbody.append('<tr><td colspan="5" class="text-center">暂无单页</td></tr>');
+			tbody.append('<tr><td colspan="5" class="ag-empty">暂无单页</td></tr>');
 			return;
 		}
 		for (var i = 0; i < list.length; i++) {
@@ -279,8 +408,8 @@
 				.append($('<td>').text(item.updateDate || ''))
 				.append($('<td>').html('<a target="_blank" href="' + url + '">' + url + '</a>'))
 				.append($('<td>').html(
-					'<button class="btn btn-xs btn-info" onclick="editPage(\'' + item.link + '\')">编辑</button> ' +
-					'<button class="btn btn-xs btn-danger" onclick="delPage(\'' + item.link + '\')">删除</button>'
+					'<button class="ag-mini-btn" onclick="editPage(\'' + item.link + '\')">编辑</button> ' +
+					'<button class="ag-mini-btn danger" onclick="delPage(\'' + item.link + '\')">删除</button>'
 				));
 			tbody.append(row);
 		}
@@ -292,27 +421,21 @@
 			type: "GET",
 			dataType: "json",
 			success: function(data) {
-				// 检查是否返回错误
 				if (data.msg && data.msg === "页面不存在") {
 					alert("该页面数据不存在，请刷新列表或重新创建。");
 					location.reload();
 					return;
 				}
-				// 确保 data 是对象且有内容
 				if (typeof data !== 'object' || data === null || Object.keys(data).length === 0) {
 					alert("返回的数据格式错误，请检查 Worker。");
 					return;
 				}
-				// 回填数据（使用 || '' 避免 undefined）
-				$('#oldLink').val(data.link || '');
-				$('#pageLink').val(data.link || '');
-				$('#pageTitle').val(data.title || '');
-				$('#pageKeywords').val(data.keywords || '');
-				if (window.pageEditor) {
-					window.pageEditor.setMarkdown(data.contentMD || '');
-				}
-				$('#pageModalLabel').text("编辑单页：" + (data.title || data.link || ''));
-				$('#pageModal').modal('show');
+			$('#oldLink').val(data.link || '');
+			$('#pageLink').val(data.link || '');
+			$('#pageTitle').val(data.title || '');
+			$('#pageKeywords').val(data.keywords || '');
+			$('#pageEditorTitle').text("编辑单页：" + (data.title || data.link || ''));
+			showPageView('edit', data.contentMD || '');
 			},
 			error: function(xhr, status, err) {
 				alert("请求失败：" + err + "\n请检查网络或Worker状态。");
@@ -321,8 +444,11 @@
 	}
 
 	function savePageData() {
+		ensurePageEditor();
 		var formArray = $("#pageForm").serializeArray();
-		formArray.push({ name: "contentMD", value: window.pageEditor.getMarkdown() });
+		// 用 Vditor 内容覆盖隐藏字段（serializeArray 会先读到空的隐藏 input）
+		formArray = formArray.filter(function(f){ return f.name !== "contentMD" && f.name !== "contentHtml"; });
+		formArray.push({ name: "contentMD", value: window.pageEditor.getValue() });
 		formArray.push({ name: "contentHtml", value: window.pageEditor.getHTML() });
 
 		var apiUrl = ($("#oldLink").val() == "") ? "/admin/saveAddPage/" : "/admin/saveEditPage/";
@@ -335,11 +461,8 @@
 			success: function(ret) {
 				alert(ret.msg);
 				if (ret.rst) {
-					$('#pageModal').modal('hide');
-					// 刷新单页列表
-					$.get("/admin/list", function() {
-						location.reload();
-					});
+					sessionStorage.setItem('agGoPageTab', '1');
+					location.reload();
 				}
 			},
 			error: function(xhr, status, err) {
@@ -356,7 +479,10 @@
 			dataType: "json",
 			success: function(ret) {
 				alert(ret.msg);
-				if (ret.rst) location.reload();
+				if (ret.rst) {
+					sessionStorage.setItem('agGoPageTab', '1');
+					location.reload();
+				}
 			},
 			error: function() {
 				alert("删除请求失败");
@@ -378,7 +504,7 @@
 					var num = i+1;
 					tableContent += '<tr><td>'+Info.id+'</td><td><a href="/admin/edit/'+Info.id+'/">'+Info.title+'</a></td><td>'+Info.createDate.replace("T","")+'</td></tr>';
 				})
-				$("#articleList").append(tableContent);
+				$("#articleList tbody").append(tableContent);
 				$("#page").val(++page);
 			}
 		});
@@ -393,6 +519,7 @@
 		   alert("信息不全");
 		   return;
 		}
+		syncArticleFields();
 		var postURL = "/admin/saveEdit/";
 		if ($('#id').val() == "" || $('#id').val() == null)
 			postURL=  "/admin/saveAddNew/";
@@ -401,7 +528,7 @@
 			dataType: "json",
 			url: postURL,
 			contentType: "application/json; charset=utf-8",
-			data: JSON.stringify($("#addNewForm").serializeArray()), 
+			data: JSON.stringify($("#addNewForm").serializeArray()),
 			success: function (result) {
 				if ("id" in result){
 					$('#id').val(result.id);
@@ -416,11 +543,11 @@
 
 	function saveConfig(){
 		if(!isJSON($('#WidgetCategory').val())){
-			alert("分类格式错误"); 
+			alert("分类格式错误");
 			return false;
 		}
 		if(!isJSON($('#WidgetMenu').val())){
-			alert("菜单格式错误"); 
+			alert("菜单格式错误");
 			return false;
 		}
 		$.ajax({
@@ -428,7 +555,7 @@
 			dataType: "json",
 			contentType: "application/json; charset=utf-8",
 			url: "/admin/saveConfig/",
-			data: JSON.stringify($("#configForm").serializeArray()), 
+			data: JSON.stringify($("#configForm").serializeArray()),
 			success: function (result) {
 				alert(result.msg);
 			}
@@ -437,7 +564,7 @@
 
 	function importBlog(){
 		if(!isJSON($('#importJson').val())){
-			alert("导入格式错误"); 
+			alert("导入格式错误");
 			return false;
 		}
 		$.ajax({
@@ -445,7 +572,7 @@
 			dataType: "json",
 			contentType: "application/json; charset=utf-8",
 			url: "/admin/import/",
-			data: JSON.stringify($("#importForm").serializeArray()), 
+			data: JSON.stringify($("#importForm").serializeArray()),
 			success: function (result) {
 				alert(result.msg);
 			}
@@ -453,8 +580,8 @@
 	}
 
 	function publish(){
-		if (confirm("确定吗?发布将清理所有静态缓存,重新生成")==false){ 
-			return false; 
+		if (confirm("确定吗?发布将清理所有静态缓存,重新生成")==false){
+			return false;
 		}
 		$.ajax({
 			type: "POST",
