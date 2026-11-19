@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ &title }}</title>
+<meta name="keywords" content="{{ &keyWords }}">
+<meta name="description" content="{{ &OPT.siteDescription }}">
+<meta name="theme-color" content="#f4f1e8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12110f" media="(prefers-color-scheme: dark)">
+<script>try{var z=localStorage.getItem('zine-theme');if(z==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+{{ #OPT.favicon }}<link rel="shortcut icon" href="{{ &OPT.favicon }}">{{ /OPT.favicon }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lu85927/cloudflare-workers-blog@master/themes/zine/static/css/main.css">
+<style>{{ &OPT.custom_css }}</style>
+{{ &OPT.codeBeforHead }}
+</head>
+<body>
+<div class="zine-grain" aria-hidden="true"></div>
+<div class="zine-progress" id="zine-progress" aria-hidden="true"></div>
+
+<header class="zine-masthead">
+  <div class="zine-shell">
+    <div class="zine-util">
+      <div class="zine-util-l">
+        <span id="zine-date">—</span>
+        <span class="sep"></span>
+        <a href="/">Return to index</a>
+      </div>
+      <div class="zine-util-r">
+        <button class="zine-theme-btn" id="zine-theme-btn" type="button" aria-label="切换深浅色">
+          <span class="dot"></span><span id="zine-theme-label">Night</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="zine-head" style="padding-bottom:clamp(16px,2vw,24px)">
+      <p class="zine-kicker">Paper &amp; Ink</p>
+      {{ #OPT.logo_url }}
+      <img class="zine-logo-mark" src="{{ &OPT.logo_url }}" alt="{{ &OPT.siteName }}" loading="lazy">
+      {{ /OPT.logo_url }}
+      <h1 class="zine-logo" style="font-size:clamp(30px,4.6vw,58px)"><a href="/">{{ &OPT.siteName }}</a></h1>
+      <p class="zine-tagline">{{ &OPT.siteDescription }}</p>
+    </div>
+
+    <nav class="zine-nav">
+      {{ #widgetMenuList }}<a href="{{ &url }}">{{ &title }}</a>{{ /widgetMenuList }}
+    </nav>
+  </div>
+</header>
+
+<main class="zine-main">
+  <div class="zine-shell">
+    <article class="zine-article">
+      {{ #articleSingle.img }}
+      <figure class="zine-cover" style="margin-top:clamp(18px,2.4vw,30px)">
+        <img src="{{ &articleSingle.img }}" alt="{{ &articleSingle.title }}">
+      </figure>
+      {{ /articleSingle.img }}
+
+      <header class="zine-article-head">
+        <div class="zine-article-crumb">
+          <a href="/">Index</a><span class="slash">/</span>
+          {{ #articleSingle.category }}<a href="/category/{{&.}}">{{&.}}</a><span class="slash">/</span>{{ /articleSingle.category }}
+          <span>Entry No. {{ &articleSingle.id }}</span>
+        </div>
+
+        <h1 class="zine-article-title">{{ &articleSingle.title }}</h1>
+
+        <div class="zine-article-meta">
+          <span class="no">No. {{ &articleSingle.id }}</span>
+          <span class="rule"></span>
+          <time datetime="{{ &articleSingle.createDate10 }}">{{ &articleSingle.createDate10 }}</time>
+          {{ #OPT.author_name }}<span class="rule"></span><span>{{ &OPT.author_name }}</span>{{ /OPT.author_name }}
+          {{ #articleSingle.contentLength }}<span class="rule"></span><span>{{ &articleSingle.contentLength }} 字</span>{{ /articleSingle.contentLength }}
+        </div>
+
+        <div class="zine-article-tags">
+          {{ #articleSingle.tags }}<a href="/tags/{{&.}}"># {{&.}}</a>{{ /articleSingle.tags }}
+        </div>
+      </header>
+
+      <div class="zine-prose">
+        {{ &articleSingle.contentHtml }}
+      </div>
+    </article>
+
+    {{ #OPT.copyright_notice }}
+    <div class="zine-copyright">
+      <p class="link">{{ &OPT.copyright_notice }}</p>
+      <p class="permalink">本文链接：<span id="zine-permalink"></span></p>
+    </div>
+    {{ /OPT.copyright_notice }}
+
+    <nav class="zine-postnav" aria-label="相邻文章">
+      {{ #articleNewer }}
+      <a href="{{ &url }}">
+        <span class="cap">← Newer</span>
+        <span class="ttl">{{ &title }}</span>
+      </a>
+      {{ /articleNewer }}
+      {{ #articleOlder }}
+      <a href="{{ &url }}">
+        <span class="cap">Older →</span>
+        <span class="ttl">{{ &title }}</span>
+      </a>
+      {{ /articleOlder }}
+    </nav>
+
+    {{ #OPT.commentCode }}
+    <div class="zine-comments" id="zine-comments">
+      {{ &OPT.commentCode }}
+    </div>
+    {{ /OPT.commentCode }}
+  </div>
+</main>
+
+<footer class="zine-colophon">
+  <div class="zine-shell">
+    <div class="zine-col-mark">
+      <span class="glyph">❖</span>
+      <span class="line"></span>
+      <span class="txt">Colophon · About this journal</span>
+    </div>
+
+    <div class="zine-col-grid">
+      <section class="zine-col">
+        <h3>最近更新</h3>
+        <ul>
+          {{ #widgetRecentlyList }}<li><a href="{{ &url }}">{{ &title }}</a><span class="date">{{ &createDate10 }}</span></li>{{ /widgetRecentlyList }}
+        </ul>
+      </section>
+
+      <section class="zine-col">
+        <h3>友邻</h3>
+        <ul>
+          {{ #widgetLinkList }}<li><a href="{{ &url }}" target="_blank" rel="noopener">{{ &title }}</a></li>{{ /widgetLinkList }}
+        </ul>
+      </section>
+
+      <section class="zine-col">
+        <h3>标签</h3>
+        <div class="zine-col-tags">
+          {{ #widgetTagsList }}<a href="/tags/{{&.}}">{{&.}}</a>{{ /widgetTagsList }}
+        </div>
+      </section>
+
+      <section class="zine-col">
+        <h3>分类</h3>
+        <ul>
+          {{ #widgetCategoryList }}<li><a href="/category/{{&.}}">{{&.}}</a></li>{{ /widgetCategoryList }}
+        </ul>
+      </section>
+
+      <section class="zine-col">
+        <h3>栏目</h3>
+        <ul>
+          {{ #widgetMenuList }}<li><a href="{{ &url }}">{{ &title }}</a></li>{{ /widgetMenuList }}
+        </ul>
+      </section>
+    </div>
+
+    <div class="zine-col-foot">
+      <span class="copy">{{ &OPT.copyRight }}</span>
+      <span>Set in Song · Zine Theme</span>
+    </div>
+  </div>
+</footer>
+
+<button class="zine-top-btn" id="zine-top-btn" type="button" aria-label="返回顶部">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var saved = localStorage.getItem('zine-theme');
+  if (saved === 'dark') root.setAttribute('data-theme', 'dark');
+  var label = document.getElementById('zine-theme-label');
+  function syncLabel() { if (label) label.textContent = root.getAttribute('data-theme') === 'dark' ? 'Day' : 'Night'; }
+  syncLabel();
+  document.getElementById('zine-theme-btn').addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') === 'dark';
+    if (dark) { root.removeAttribute('data-theme'); localStorage.setItem('zine-theme', 'light'); }
+    else { root.setAttribute('data-theme', 'dark'); localStorage.setItem('zine-theme', 'dark'); }
+    syncLabel();
+  });
+
+  var d = document.getElementById('zine-date');
+  if (d) {
+    var t = new Date();
+    d.textContent = t.getFullYear() + '.' + ('0' + (t.getMonth() + 1)).slice(-2) + '.' + ('0' + t.getDate()).slice(-2);
+  }
+
+  var pl = document.getElementById('zine-permalink');
+  if (pl) pl.textContent = location.href;
+
+  var bar = document.getElementById('zine-progress');
+  var top = document.getElementById('zine-top-btn');
+  function onScroll() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var p = max > 0 ? h.scrollTop / max : 0;
+    if (bar) bar.style.transform = 'scaleX(' + p + ')';
+    if (top) top.classList.toggle('show', h.scrollTop > 420);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  if (top) top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+})();
+</script>
+{{ &OPT.codeBeforBody }}
+</body>
+</html>
