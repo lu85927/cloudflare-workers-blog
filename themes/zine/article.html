@@ -51,13 +51,7 @@
 <main class="zine-main">
   <div class="zine-shell">
     <article class="zine-article">
-      {{ #articleSingle.img }}
-      <figure class="zine-cover" style="margin-top:clamp(18px,2.4vw,30px)">
-        <img src="{{ &articleSingle.img }}" alt="{{ &articleSingle.title }}">
-      </figure>
-      {{ /articleSingle.img }}
-
-      <header class="zine-article-head">
+      <header class="zine-article-head" style="margin-top:clamp(18px,2.4vw,30px)">
         <div class="zine-article-crumb">
           <a href="/">Index</a><span class="slash">/</span>
           {{ #articleSingle.category }}<a href="/category/{{&.}}">{{&.}}</a><span class="slash">/</span>{{ /articleSingle.category }}
