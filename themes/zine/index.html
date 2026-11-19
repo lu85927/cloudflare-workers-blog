@@ -133,7 +133,22 @@
 
     <div class="zine-col-foot">
       <span class="copy">{{ &OPT.copyRight }}</span>
-      <span>Set in Song · Zine Theme</span>
+      <span id="runtime_span" style="font-variant-numeric:tabular-nums;letter-spacing:.04em"></span>
+      <script>
+        function show_runtime() {
+          window.setTimeout("show_runtime()", 1000);
+          X = new Date("6/19/2026 00:00:00"); // 初始建站时间修改此处
+          Y = new Date();
+          T = (Y.getTime() - X.getTime());
+          M = 24 * 60 * 60 * 1000;
+          a = T / M; A = Math.floor(a);
+          b = (a - A) * 24; B = Math.floor(b);
+          c = (b - B) * 60; C = Math.floor((b - B) * 60);
+          D = Math.floor((c - C) * 60);
+          runtime_span.innerHTML = "老壮的小破站已运行: " + A + "天" + B + "小时" + C + "分" + D + "秒";
+        }
+        show_runtime();
+      </script>
     </div>
   </div>
 </footer>
