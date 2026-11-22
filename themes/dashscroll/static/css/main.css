@@ -297,6 +297,7 @@ img{max-width:100%}
 .ds-footer{background:var(--ds-ink);color:var(--ds-muted);margin-top:50px;padding:34px 20px;text-align:center}
 .ds-footer-inner{max-width:var(--ds-max);margin:0 auto}
 .ds-footer p{margin:0;font-size:13px}
+.ds-runtime{margin-bottom:8px!important;color:var(--ds-accent);font-size:12.5px;letter-spacing:.03em;font-variant-numeric:tabular-nums}
 .ds-footer a{color:var(--ds-accent)}
 .ds-top{
   position:fixed;right:26px;bottom:26px;width:44px;height:44px;
