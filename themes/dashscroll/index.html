@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ &title }}</title>
+<meta name="keywords" content="{{ &keyWords }}">
+<meta name="description" content="{{ &OPT.siteDescription }}">
+{{ #OPT.favicon }}<link rel="shortcut icon" href="{{ &OPT.favicon }}">{{ /OPT.favicon }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://img.lblog.cc/themes/dashscroll/static/css/main.css?v=1.0">
+{{ &OPT.codeBeforHead }}
+</head>
+<body>
+
+<!-- ============ Site Header ============ -->
+<header class="ds-header">
+  <div class="ds-header-inner">
+    <h1 class="ds-brand"><a href="/">{{ &OPT.siteName }}</a></h1>
+    <p class="ds-tagline">{{ &OPT.siteDescription }}</p>
+    <div class="ds-social">
+      {{ #OPT.social_items }}<a href="{{ &url }}" title="{{ &title }}" target="_blank" rel="noopener"><i class="fa {{ &icon }}"></i></a>{{ /OPT.social_items }}
+      {{ ^OPT.social_items }}
+      <a href="/" title="首页"><i class="fa fa-home"></i></a>
+      <a href="/sitemap.xml" title="站点地图"><i class="fa fa-sitemap"></i></a>
+      <a href="/admin" title="管理后台"><i class="fa fa-cog"></i></a>
+      {{ /OPT.social_items }}
+    </div>
+  </div>
+</header>
+
+<!-- ============ Nav Bar ============ -->
+<nav class="ds-nav" id="dsNav">
+  <div class="ds-nav-inner">
+    <span class="ds-nav-label">MENU</span>
+    <ul class="ds-nav-menu" id="ds-menu">
+      <li><a href="/"><i class="fa fa-home"></i> 首页</a></li>
+      {{ #widgetMenuList }}<li><a href="{{ &url }}">{{ &title }}</a></li>{{ /widgetMenuList }}
+    </ul>
+    <div class="ds-nav-tools">
+      <button class="ds-icon-btn" id="ds-theme-btn" title="切换深浅色" aria-label="切换深浅色"><i class="fa fa-moon-o"></i></button>
+      <button class="ds-icon-btn ds-menu-toggle" id="ds-menu-toggle" aria-label="菜单"><i class="fa fa-bars"></i></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ Main ============ -->
+<div class="ds-wrap">
+  <main class="ds-main">
+    <div class="ds-panel">
+      <div class="ds-panel-title"><span>The Blog.</span> What's New?</div>
+
+      <div class="ds-stream">
+        {{ #articleList }}
+        <article class="ds-card">
+          <div class="ds-card-date">{{ &createDate10 }}</div>
+          <div class="ds-card-body">
+            {{ #category }}<span class="ds-cat">{{ &. }}</span>{{ /category }}
+            <h2 class="ds-card-title"><a href="{{ &url }}">{{ &title }}</a></h2>
+            <p class="ds-card-excerpt">{{ &contentText }}</p>
+            <a class="ds-readmore" href="{{ &url }}">Read More <i class="fa fa-angle-right"></i></a>
+          </div>
+          <a href="{{ &url }}" class="ds-thumb" aria-label="{{ &title }}">
+            {{ #img }}<img src="{{ &img }}" alt="{{ &title }}" loading="lazy">{{ /img }}
+            {{ ^img }}<img src="https://img.lblog.cc/themes/dashscroll/static/img/thumb.svg" alt="{{ &title }}" loading="lazy">{{ /img }}
+            <span class="ds-diamond"></span>
+          </a>
+        </article>
+        {{ /articleList }}
+        {{ ^articleList }}
+        <div class="ds-empty">还没有文章，先写一篇吧。</div>
+        {{ /articleList }}
+      </div>
+
+      <div class="ds-pager">
+        {{ #pageNewer }}<a href="{{ &url }}"><i class="fa fa-angle-left"></i> {{ &title }}</a>{{ /pageNewer }}
+        {{ #pageOlder }}<a href="{{ &url }}">{{ &title }} <i class="fa fa-angle-right"></i></a>{{ /pageOlder }}
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ Sidebar ============ -->
+  <aside class="ds-side">
+    <section class="ds-widget">
+      <h3 class="ds-widget-title">About</h3>
+      <div class="ds-about">
+        {{ #OPT.logo_url }}<img class="ds-about-avatar" src="{{ &OPT.logo_url }}" alt="{{ &OPT.siteName }}">{{ /OPT.logo_url }}
+        <p><strong>{{ &OPT.siteName }}</strong></p>
+        <p>{{ &OPT.siteDescription }}</p>
+      </div>
+    </section>
+
+    <section class="ds-widget">
+      <h3 class="ds-widget-title">Recent Posts</h3>
+      <ul class="ds-recent">
+        {{ #widgetRecentlyList }}<li><a href="{{ &url }}">{{ &title }}</a><time>{{ &createDate10 }}</time></li>{{ /widgetRecentlyList }}
+      </ul>
+    </section>
+
+    <section class="ds-widget">
+      <h3 class="ds-widget-title">Tags</h3>
+      <div class="ds-tags">{{ #widgetTagsList }}<a href="/tags/{{&.}}">{{&.}}</a>{{ /widgetTagsList }}</div>
+    </section>
+
+    <section class="ds-widget">
+      <h3 class="ds-widget-title">Links</h3>
+      <ul class="ds-links">{{ #widgetLinkList }}<li><a href="{{ &url }}" target="_blank" rel="noopener"><i class="fa fa-link"></i> {{ &title }}</a></li>{{ /widgetLinkList }}</ul>
+    </section>
+
+    {{ &OPT.widgetOther }}
+  </aside>
+</div>
+
+<!-- ============ Footer ============ -->
+<footer class="ds-footer">
+  <div class="ds-footer-inner">
+    <p>&copy; {{ &current_year }} <a href="/">{{ &OPT.siteName }}</a> &nbsp;·&nbsp; {{ &OPT.copyRight }}</p>
+  </div>
+</footer>
+
+<button class="ds-top" id="ds-top" aria-label="返回顶部"><i class="fa fa-angle-up"></i></button>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var btn=document.getElementById('ds-theme-btn');
+  var stored=localStorage.getItem('dashscroll-theme');
+  if(stored==='dark'){root.setAttribute('data-theme','dark');}
+  function icon(){ btn.innerHTML = root.getAttribute('data-theme')==='dark' ? '<i class="fa fa-sun-o"></i>' : '<i class="fa fa-moon-o"></i>'; }
+  icon();
+  btn.addEventListener('click',function(){
+    var dark=root.getAttribute('data-theme')==='dark';
+    if(dark){root.removeAttribute('data-theme');localStorage.setItem('dashscroll-theme','light');}
+    else{root.setAttribute('data-theme','dark');localStorage.setItem('dashscroll-theme','dark');}
+    icon();
+  });
+  var mt=document.getElementById('ds-menu-toggle');
+  if(mt) mt.addEventListener('click',function(){ document.getElementById('ds-menu').classList.toggle('open'); });
+  var top=document.getElementById('ds-top');
+  window.addEventListener('scroll',function(){ if(window.scrollY>300) top.classList.add('show'); else top.classList.remove('show'); },{passive:true});
+  top.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+})();
+</script>
+{{ &OPT.codeBeforBody }}
+</body>
+</html>
