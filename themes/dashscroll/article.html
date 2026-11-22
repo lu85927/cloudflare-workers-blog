@@ -35,7 +35,6 @@
   <div class="ds-nav-inner">
     <span class="ds-nav-label">MENU</span>
     <ul class="ds-nav-menu" id="ds-menu">
-      <li><a href="/"><i class="fa fa-home"></i> 首页</a></li>
       {{ #widgetMenuList }}<li><a href="{{ &url }}">{{ &title }}</a></li>{{ /widgetMenuList }}
     </ul>
     <div class="ds-nav-tools">
@@ -132,6 +131,22 @@
     else{root.setAttribute('data-theme','dark');localStorage.setItem('dashscroll-theme','dark');}
     icon();
   });
+  // 首页链接：给菜单中已有的首页加图标；若菜单无首页则自动补一个，避免与后台菜单重复
+  (function(){
+    var menu=document.getElementById('ds-menu');
+    if(!menu) return;
+    var links=menu.querySelectorAll('a'), home=null;
+    for(var i=0;i<links.length;i++){
+      if(links[i].getAttribute('href')==='/'){ home=links[i]; break; }
+    }
+    if(home){
+      if(!home.querySelector('i')) home.innerHTML='<i class="fa fa-home"></i> '+home.innerHTML;
+    }else{
+      var li=document.createElement('li');
+      li.innerHTML='<a href="/"><i class="fa fa-home"></i> 首页</a>';
+      menu.insertBefore(li, menu.firstChild);
+    }
+  })();
   var mt=document.getElementById('ds-menu-toggle');
   if(mt) mt.addEventListener('click',function(){ document.getElementById('ds-menu').classList.toggle('open'); });
   var top=document.getElementById('ds-top');
