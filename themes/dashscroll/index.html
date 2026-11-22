@@ -116,8 +116,22 @@
 <!-- ============ Footer ============ -->
 <footer class="ds-footer">
   <div class="ds-footer-inner">
+    <p class="ds-runtime"><span id="runtime_span"></span></p>
     <p>&copy; {{ &current_year }} <a href="/">{{ &OPT.siteName }}</a> &nbsp;·&nbsp; {{ &OPT.copyRight }}</p>
   </div>
+  <script type="text/javascript">
+  (function(){
+    function show_runtime(){
+      window.setTimeout(show_runtime,1000);
+      var X=new Date("6/19/2026 00:00:00"); // 初始建站时间修改此处
+      var Y=new Date(),T=(Y.getTime()-X.getTime()),M=24*60*60*1000;
+      var a=T/M,A=Math.floor(a),b=(a-A)*24,B=Math.floor(b),c=(b-B)*60,C=Math.floor(c),D=Math.floor((c-C)*60);
+      var el=document.getElementById("runtime_span");
+      if(el) el.innerHTML="老壮的小破站已运行: "+A+"天"+B+"小时"+C+"分"+D+"秒";
+    }
+    show_runtime();
+  })();
+  </script>
 </footer>
 
 <button class="ds-top" id="ds-top" aria-label="返回顶部"><i class="fa fa-angle-up"></i></button>
