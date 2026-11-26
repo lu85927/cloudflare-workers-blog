@@ -282,6 +282,9 @@ img{max-width:100%}
 .ds-about-avatar{width:72px;height:72px;border-radius:50%;object-fit:cover;margin-bottom:12px;border:4px solid var(--ds-mint)}
 .ds-about p{margin:6px 0}
 .ds-about strong{color:var(--ds-ink);font-size:16px}
+.ds-notice{margin:10px 0 2px;font-size:13.5px;line-height:1.75;color:var(--ds-muted);text-align:left;word-break:break-word}
+.ds-notice p{margin:6px 0}
+.ds-notice a{color:var(--ds-accent)}
 .ds-recent{list-style:none;margin:0;padding:0}
 .ds-recent li{padding:10px 0;border-bottom:1px solid var(--ds-border)}
 .ds-recent li:last-child{border-bottom:0}
