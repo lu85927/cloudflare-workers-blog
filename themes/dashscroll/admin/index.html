@@ -9,7 +9,7 @@
 	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.11.3/dist/index.css" />
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
-	<link rel="stylesheet" href="https://img.lblog.cc/themes/dashscroll/static/css/admin.css?v=1.1">
+	<link rel="stylesheet" href="https://img.lblog.cc/themes/dashscroll/static/css/admin.css?v=1.2">
 
 	<script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -41,7 +41,7 @@
 			<li class="active" data-tab="new"><a href="#new" data-toggle="tab"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>新建文章</a></li>
 			<li data-tab="pageTab"><a href="#pageTab" data-toggle="tab"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h7M9 17h7"/></svg>单页管理</a></li>
 			<li data-tab="config"><a href="#config" data-toggle="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06-2 2-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21h-2.8v-.1A1.7 1.7 0 0 0 10.9 19.3a1.7 1.7 0 0 0-1.87.34l-.06.06-2-2 .06-.06A1.7 1.7 0 0 0 7.37 15a1.7 1.7 0 0 0-1.56-1.03H5.7v-2.8h.1A1.7 1.7 0 0 0 7.4 10.1a1.7 1.7 0 0 0-.34-1.87l-.06-.06 2-2 .06.06a1.7 1.7 0 0 0 1.87.34H11a1.7 1.7 0 0 0 1.03-1.56V4.7h2.8v.1A1.7 1.7 0 0 0 15.8 6.4a1.7 1.7 0 0 0 1.87-.34l.06-.06 2 2-.06.06a1.7 1.7 0 0 0-.34 1.87V11a1.7 1.7 0 0 0 1.56 1.03h.1v2.8h-.1A1.7 1.7 0 0 0 19.4 15z"/></svg>设置</a></li>
-			<li><a href="/admin/theme"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3.5"/></svg>外观设置</a></li>
+			<li data-tab="theme"><a href="#theme" data-toggle="tab"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3.5"/></svg>外观设置</a></li>
 			<li data-tab="pub"><a href="#pub" data-toggle="tab"><svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/><path d="M5 20h14"/></svg>发布</a></li>
 		</ul>
 		<div class="ag-side-foot">
@@ -247,6 +247,18 @@
 					</div>
 				</div>
 
+				<!-- 外观设置 -->
+				<div class="tab-pane fade" id="theme">
+					<div class="ag-page-head"><div><h2>外观设置</h2><p>切换全站主题，前台与后台同时生效</p></div></div>
+					<div id="agThemeMsg" class="ag-theme-msg" style="display:none"></div>
+					<div id="agThemeGrid" class="ag-theme-grid"><div class="ag-muted">正在加载主题列表…</div></div>
+					<div class="ag-card" style="margin-top:18px">
+						<p style="margin:0 0 12px;font-size:13px;color:var(--ag-muted)">主题列表自动从 GitHub 仓库 themes/ 目录读取。增删主题文件夹后点下面按钮刷新。</p>
+						<button type="button" class="ag-btn ag-btn-ghost" onclick="refreshThemes()"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>刷新主题列表</button>
+						<a href="/admin/theme" class="ag-btn ag-btn-ghost" style="margin-left:8px">打开独立页面</a>
+					</div>
+				</div>
+
 				<!-- 发布 -->
 				<div class="tab-pane fade" id="pub">
 					<div class="ag-page-head"><div><h2>发布</h2><p>将改动推送到前端</p></div></div>
@@ -325,6 +337,7 @@
 		}
 		$("#loadmore").click();
 		renderPageList(pageJson);
+		loadThemeList();
 		// 保存/删除单页刷新后，自动回到单页管理标签
 		if (sessionStorage.getItem('agGoPageTab') === '1') {
 			sessionStorage.removeItem('agGoPageTab');
@@ -587,6 +600,42 @@
 				alert(result.msg);
 			}
 		});
+	}
+
+	// ====== 外观设置（后台原生标签页） ======
+	function agThemeMsg(text,type){
+		var m=$('#agThemeMsg');
+		m.removeClass('ok err info').addClass(type||'info').text(text).show();
+	}
+	function loadThemeList(){
+		fetch('/admin/themeList').then(function(r){return r.json()}).then(function(j){
+			if(!j||!j.list){agThemeMsg('主题列表加载失败，请确认已部署最新版 Worker','err');return;}
+			var cur=j.cur||'',html='';
+			(j.list||[]).forEach(function(x){
+				var on=x.id===cur;
+				html+='<div class="ag-theme-card'+(on?' on':'')+'">'
+					+'<div class="ag-theme-name">'+x.name+(on?'<span class="ag-theme-badge">使用中</span>':'')+'</div>'
+					+'<div class="ag-theme-desc">'+(x.desc||'')+'</div>'
+					+'<button type="button" class="ag-theme-btn" '+(on?'disabled':'')+' onclick="applyTheme(\''+x.id+'\')">'+(on?'当前主题':'切换到此主题')+'</button>'
+					+'</div>';
+			});
+			$('#agThemeGrid').html(html||'<div class="ag-muted">暂无主题</div>');
+		}).catch(function(){agThemeMsg('主题列表加载失败，请确认已部署最新版 Worker','err');});
+	}
+	function applyTheme(id){
+		if(!confirm('确定切换到 '+id+' 主题吗？将清除全站缓存。'))return;
+		agThemeMsg('正在切换…','info');
+		fetch('/admin/setTheme/'+encodeURIComponent(id)).then(function(r){return r.json()}).then(function(j){
+			if(j&&j.rst){agThemeMsg('切换成功！正在刷新…','ok');setTimeout(function(){location.reload()},800);}
+			else{agThemeMsg('切换失败：'+((j&&j.msg)||'未知错误'),'err');}
+		}).catch(function(e){agThemeMsg('切换失败：'+e,'err');});
+	}
+	function refreshThemes(){
+		agThemeMsg('正在从 GitHub 重新读取主题…','info');
+		fetch('/admin/refreshThemes').then(function(r){return r.json()}).then(function(j){
+			if(j&&j.rst){agThemeMsg('已刷新，共 '+j.count+' 套主题','ok');loadThemeList();}
+			else{agThemeMsg('刷新失败：'+((j&&j.msg)||'未知错误'),'err');}
+		}).catch(function(e){agThemeMsg('刷新失败：'+e,'err');});
 	}
 
 	function publish(){
