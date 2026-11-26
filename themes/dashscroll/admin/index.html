@@ -7,14 +7,14 @@
 	<link rel="icon" type="image/svg+xml" href="https://img.lblog.cc/blog/logo/favicon.svg" />
 	<link rel="shortcut icon" type="image/png" href="https://img.lblog.cc/blog/logo/favicon.png"/>
 	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.11.3/dist/index.css" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
-	<link rel="stylesheet" href="https://img.lblog.cc/themes/dashscroll/static/css/admin.css?v=1.2">
+	<link rel="stylesheet" href="https://img.lblog.cc/themes/dashscroll/static/vendor/vditor/dist/index.css" />
+	<link rel="stylesheet" href="https://img.lblog.cc/themes/dashscroll/static/vendor/bootstrap-select/bootstrap-select.min.css">
+	<link rel="stylesheet" href="https://img.lblog.cc/themes/dashscroll/static/css/admin.css?v=1.3">
 
 	<script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-zh_CN.min.js"></script>
+	<script src="https://img.lblog.cc/themes/dashscroll/static/vendor/bootstrap-select/bootstrap-select.min.js"></script>
+	<script src="https://img.lblog.cc/themes/dashscroll/static/vendor/bootstrap-select/i18n/defaults-zh_CN.min.js"></script>
 	<script>
 	(function(){
 		var s=localStorage.getItem('dashscroll-admin-theme');
@@ -275,10 +275,10 @@
 	</div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/vditor@3.11.3/dist/index.min.js"></script>
+<script src="https://img.lblog.cc/themes/dashscroll/static/vendor/vditor/dist/index.min.js"></script>
 <script type="text/javascript">
 	// ====== Vditor 公共配置 ======
-	var VDITOR_CDN = "https://cdn.jsdelivr.net/npm/vditor@3.11.3";
+	var VDITOR_CDN = "https://img.lblog.cc/themes/dashscroll/static/vendor/vditor";
 	function agIsDark(){ return document.documentElement.getAttribute('data-theme') === 'dark'; }
 	function applyVditorTheme(){
 		var t  = agIsDark() ? "dark" : "classic";
@@ -306,24 +306,32 @@
 		var noticeRaw = '<!--{noticeJson}-->';
 		var noticeJson = noticeRaw.indexOf('<!--{') === 0 ? '' : decodeURIComponent(noticeRaw);
 
-		window.mdEditor = new Vditor("content", {
-			height: 640,
-			cdn: VDITOR_CDN,
-			mode: "sv",
-			theme: agIsDark() ? "dark" : "classic",
-			preview: { theme: agIsDark() ? "dark" : "default", math: { inlineDigit: true } },
-			toolbar: [
-				"emoji", "headings", "bold", "italic", "strike", "link", "|",
-				"list", "ordered-list", "check", "outdent", "indent", "|",
-				"quote", "line", "code", "inline-code", "insert-before", "insert-after", "|",
-				"upload", "table", "record", "|", "undo", "redo", "|",
-				"fullscreen", "edit-mode", "both", "preview", "outline", "help"
-			],
-			after: function(){
-				// Vditor 的 after 回调中 this 是 options 而非实例，必须用实例变量赋值
-				try { if (window.mdEditor) window.mdEditor.setValue("# MarkDown"); } catch (e) {}
-			}
-		});
+		// 编辑器初始化加保护：即使脚本加载失败，也不能中断后台其余功能
+		try {
+			if (typeof Vditor !== 'function') throw new Error('Vditor 脚本未加载');
+			window.mdEditor = new Vditor("content", {
+				height: 640,
+				cdn: VDITOR_CDN,
+				mode: "sv",
+				theme: agIsDark() ? "dark" : "classic",
+				preview: { theme: agIsDark() ? "dark" : "default", math: { inlineDigit: true } },
+				toolbar: [
+					"emoji", "headings", "bold", "italic", "strike", "link", "|",
+					"list", "ordered-list", "check", "outdent", "indent", "|",
+					"quote", "line", "code", "inline-code", "insert-before", "insert-after", "|",
+					"upload", "table", "record", "|", "undo", "redo", "|",
+					"fullscreen", "edit-mode", "both", "preview", "outline", "help"
+				],
+				after: function(){
+					// Vditor 的 after 回调中 this 是 options 而非实例，必须用实例变量赋值
+					try { if (window.mdEditor) window.mdEditor.setValue("# MarkDown"); } catch (e) {}
+				}
+			});
+		} catch (e) {
+			console.error('Vditor init failed:', e);
+			var ed = document.getElementById('content');
+			if (ed && !ed.value) ed.value = '# MarkDown';
+		}
 
 		$('#createDate').val(new Date().toISOString().slice(0,16));
 		$('#WidgetCategory').val(JSON.stringify(categoryJson));
@@ -367,20 +375,26 @@
 	// 单页编辑器延迟初始化：必须在容器可见时初始化，否则预览区宽度会算错
 	function ensurePageEditor() {
 		if (window.pageEditor) return window.pageEditor;
-		window.pageEditor = new Vditor("pageMdEditor", {
-			height: 640,
-			cdn: VDITOR_CDN,
-			mode: "sv",
-			theme: agIsDark() ? "dark" : "classic",
-			preview: { theme: agIsDark() ? "dark" : "default", math: { inlineDigit: true } },
-			toolbar: [
-				"emoji", "headings", "bold", "italic", "strike", "link", "|",
-				"list", "ordered-list", "check", "outdent", "indent", "|",
-				"quote", "line", "code", "inline-code", "insert-before", "insert-after", "|",
-				"upload", "table", "record", "|", "undo", "redo", "|",
-				"fullscreen", "edit-mode", "both", "preview", "outline", "help"
-			]
-		});
+		try {
+			if (typeof Vditor !== 'function') throw new Error('Vditor 脚本未加载');
+			window.pageEditor = new Vditor("pageMdEditor", {
+				height: 640,
+				cdn: VDITOR_CDN,
+				mode: "sv",
+				theme: agIsDark() ? "dark" : "classic",
+				preview: { theme: agIsDark() ? "dark" : "default", math: { inlineDigit: true } },
+				toolbar: [
+					"emoji", "headings", "bold", "italic", "strike", "link", "|",
+					"list", "ordered-list", "check", "outdent", "indent", "|",
+					"quote", "line", "code", "inline-code", "insert-before", "insert-after", "|",
+					"upload", "table", "record", "|", "undo", "redo", "|",
+					"fullscreen", "edit-mode", "both", "preview", "outline", "help"
+				]
+			});
+		} catch (e) {
+			console.error('Vditor(page) init failed:', e);
+			window.pageEditor = null;
+		}
 		return window.pageEditor;
 	}
 
@@ -392,8 +406,8 @@
 			setTimeout(function() {
 				if ($('#pageEditorView').css('display') === 'none') return;
 				ensurePageEditor();
-				if (typeof markdown === 'string') {
-					window.pageEditor.setValue(markdown);
+				if (typeof markdown === 'string' && window.pageEditor) {
+					try { window.pageEditor.setValue(markdown); } catch (e) {}
 				}
 				// Vditor 支持 size() 手动重算，修复从隐藏到显示时的宽度问题
 				try { window.pageEditor.size(); } catch (e) {}
