@@ -488,6 +488,7 @@
 			window.mdEditor = new Vditor("content", {
 				height: 640,
 				cdn: VDITOR_CDN,
+				icon: false, // 图标 sprite 已内嵌，避免跨域加载
 				mode: "sv",
 				theme: agIsDark() ? "dark" : "classic",
 				preview: { theme: agIsDark() ? "dark" : "default", math: { inlineDigit: true } },
@@ -556,6 +557,7 @@
 			window.pageEditor = new Vditor("pageMdEditor", {
 				height: 640,
 				cdn: VDITOR_CDN,
+				icon: false, // 图标 sprite 已内嵌，避免跨域加载
 				mode: "sv",
 				theme: agIsDark() ? "dark" : "classic",
 				preview: { theme: agIsDark() ? "dark" : "default", math: { inlineDigit: true } },
