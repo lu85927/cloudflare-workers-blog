@@ -159,6 +159,23 @@ a:hover{color:var(--ag-primary-dark)}
 .ag-publish-btn:hover{color:#fff;transform:translateY(-1px);box-shadow:0 8px 20px rgba(217,93,57,.42)}
 .ag-publish-btn svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2}
 @media(max-width:768px){.ag-publish-btn span{display:none}.ag-publish-btn{padding:9px 11px}}
+
+/* ---------- 外观设置标签页 ---------- */
+.ag-theme-msg{padding:11px 15px;border-radius:11px;margin-bottom:16px;font-size:13px}
+.ag-theme-msg.info{background:#e6f1fb;color:#0C447C}
+.ag-theme-msg.ok{background:#e1f5ee;color:#0F6E56}
+.ag-theme-msg.err{background:#fcebeb;color:#A32D2D}
+.ag-muted{color:var(--ag-muted);font-size:13px}
+.ag-theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.ag-theme-card{border:1px solid var(--ag-border);border-radius:var(--ag-radius);padding:18px;background:var(--ag-surface);box-shadow:var(--ag-shadow-sm);transition:transform .18s,box-shadow .18s}
+.ag-theme-card:hover{transform:translateY(-2px);box-shadow:var(--ag-shadow)}
+.ag-theme-card.on{border-color:var(--ag-primary);background:var(--ag-surface-2)}
+.ag-theme-name{font-size:15px;font-weight:700;color:var(--ag-text);margin-bottom:7px}
+.ag-theme-badge{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:10px;background:var(--ag-grad);color:#fff;font-size:11px;font-weight:600;vertical-align:middle}
+.ag-theme-desc{font-size:12.5px;color:var(--ag-muted);line-height:1.6;min-height:40px;margin-bottom:14px}
+.ag-theme-btn{width:100%;padding:9px;border:0;border-radius:9px;background:var(--ag-grad);color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:filter .18s}
+.ag-theme-btn:hover:not(:disabled){filter:brightness(1.08)}
+.ag-theme-btn:disabled{background:var(--ag-border);color:var(--ag-muted);cursor:default}
 .ag-menu-toggle{display:none}
 
 /* ---------- Content ---------- */
