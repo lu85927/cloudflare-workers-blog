@@ -84,11 +84,12 @@
   <!-- ============ Sidebar ============ -->
   <aside class="ds-side">
     <section class="ds-widget">
-      <h3 class="ds-widget-title">About</h3>
+      <h3 class="ds-widget-title">站点公告</h3>
       <div class="ds-about">
         {{ #OPT.logo_url }}<img class="ds-about-avatar" src="{{ &OPT.logo_url }}" alt="{{ &OPT.siteName }}">{{ /OPT.logo_url }}
         <p><strong>{{ &OPT.siteName }}</strong></p>
-        <p>{{ &OPT.siteDescription }}</p>
+        {{ #OPT.siteNotice }}<div class="ds-notice">{{ &OPT.siteNotice }}</div>{{ /OPT.siteNotice }}
+        {{ ^OPT.siteNotice }}<p>{{ &OPT.siteDescription }}</p>{{ /OPT.siteNotice }}
       </div>
     </section>
 
