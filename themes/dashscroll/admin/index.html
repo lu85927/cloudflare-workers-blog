@@ -224,6 +224,10 @@
 								<label>其他链接 / 友链（JSON 数组）</label>
 								<textarea class="form-control" id="WidgetLink" name="WidgetLink" rows="5" placeholder='[{"title":"好友","url":"https://example.com/"}]'></textarea>
 							</div>
+							<div class="form-group">
+								<label>站点公告（显示在右侧栏，支持 HTML）</label>
+								<textarea class="form-control" id="siteNotice" name="siteNotice" rows="4" placeholder="例如：本站已开启 HTTPS，欢迎订阅更新～"></textarea>
+							</div>
 							<div class="ag-actions"><button type="button" id="btn_saveConfig" class="ag-btn ag-btn-primary" onclick="saveConfig()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>保存设置</button></div>
 						</form>
 					</div>
@@ -285,6 +289,9 @@
 		var menuJson = <!--{menuJson}-->;
 		var linkJson = <!--{linkJson}-->;
 		var pageJson = <!--{pageJson}-->;
+		// 站点公告：Worker 注入 URL 编码字符串；旧 Worker 未注入时留空，避免报错
+		var noticeRaw = '<!--{noticeJson}-->';
+		var noticeJson = noticeRaw.indexOf('<!--{') === 0 ? '' : decodeURIComponent(noticeRaw);
 
 		window.mdEditor = new Vditor("content", {
 			height: 640,
@@ -309,6 +316,7 @@
 		$('#WidgetCategory').val(JSON.stringify(categoryJson));
 		$('#WidgetMenu').val(JSON.stringify(menuJson));
 		$('#WidgetLink').val(JSON.stringify(linkJson));
+		$('#siteNotice').val(noticeJson);
 		var category = $('#category');
 		category.empty();
 		for (var i = 0; i < categoryJson.length; i++) {
