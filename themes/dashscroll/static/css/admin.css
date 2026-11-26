@@ -150,6 +150,15 @@ a:hover{color:var(--ag-primary-dark)}
 }
 .ag-site-link:hover{color:#fff;transform:translateY(-1px);box-shadow:0 8px 20px rgba(111,143,95,.42)}
 .ag-site-link svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2}
+.ag-publish-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 15px;border-radius:11px;font-size:12.5px;font-weight:700;color:#fff;
+  background:linear-gradient(135deg,#e8834a,#d95d39);box-shadow:0 5px 16px rgba(217,93,57,.3);
+  transition:transform .18s,box-shadow .18s;
+}
+.ag-publish-btn:hover{color:#fff;transform:translateY(-1px);box-shadow:0 8px 20px rgba(217,93,57,.42)}
+.ag-publish-btn svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2}
+@media(max-width:768px){.ag-publish-btn span{display:none}.ag-publish-btn{padding:9px 11px}}
 .ag-menu-toggle{display:none}
 
 /* ---------- Content ---------- */
